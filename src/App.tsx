@@ -1416,14 +1416,14 @@ export default function App() {
                 <span className="text-[42px] sm:text-[45px] lg:text-[48px] font-extrabold leading-none text-[#15803D] dark:text-[#4ADE80] tracking-tight block">
                   {formatNumberWithDots(kpis.totalUnique)}
                 </span>
-                <span className="text-[14px] font-bold text-[#0F172A] dark:text-[#E2E8F0] tracking-[0.5px] uppercase block mt-2.5">
+                <span className="text-[14px] font-bold text-black dark:text-[#E2E8F0] tracking-[0.5px] uppercase block mt-2.5">
                   Clientes Activos Totales
                 </span>
-                <span className="text-[13px] font-semibold text-[#334155] dark:text-[#94A3B8] block mt-1">
+                <span className="text-[13px] font-semibold text-black/85 dark:text-[#94A3B8] block mt-1">
                   Clientes registrados
                 </span>
                 <div className="mt-5 pt-3 border-t border-slate-200/80 dark:border-slate-800/60">
-                  <span className="text-[12px] font-semibold text-[#475569] dark:text-[#64748B] block">
+                  <span className="text-[12px] font-semibold text-black/75 dark:text-[#64748B] block">
                     En el periodo seleccionado
                   </span>
                 </div>
@@ -1443,14 +1443,14 @@ export default function App() {
                 <span className="text-[42px] sm:text-[45px] lg:text-[48px] font-extrabold leading-none text-[#6B21A8] dark:text-[#C084FC] tracking-tight block">
                   {kpisCobertura.avgCoverage}
                 </span>
-                <span className="text-[14px] font-bold text-[#0F172A] dark:text-[#E2E8F0] tracking-[0.5px] uppercase block mt-2.5">
+                <span className="text-[14px] font-bold text-black dark:text-[#E2E8F0] tracking-[0.5px] uppercase block mt-2.5">
                   Cobertura Promedio
                 </span>
-                <span className="text-[13px] font-semibold text-[#334155] dark:text-[#94A3B8] block mt-1">
+                <span className="text-[13px] font-semibold text-black/85 dark:text-[#94A3B8] block mt-1">
                   Clientes por asesor comercial
                 </span>
                 <div className="mt-5 pt-3 border-t border-slate-200/80 dark:border-slate-800/60">
-                  <span className="text-[12px] font-semibold text-[#475569] dark:text-[#64748B] block">
+                  <span className="text-[12px] font-semibold text-black/75 dark:text-[#64748B] block">
                     Promedio por asesor activo
                   </span>
                 </div>
@@ -1467,10 +1467,10 @@ export default function App() {
                 : 'bg-white border-slate-200/80 shadow-slate-100/50 shadow-md'
             }`}>
               <div className="flex-1 min-w-0 pr-4">
-                <span className="text-[28px] sm:text-[32px] md:text-[34px] font-extrabold leading-tight text-[#0F172A] dark:text-white tracking-tight block truncate-none" title={toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))}>
+                <span className="text-[28px] sm:text-[32px] md:text-[34px] font-extrabold leading-tight text-black dark:text-white tracking-tight block truncate-none" title={toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))}>
                   {toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))}
                 </span>
-                <span className="text-[14px] font-bold text-[#0F172A] dark:text-[#E2E8F0] tracking-[0.5px] uppercase block mt-2.5">
+                <span className="text-[14px] font-bold text-black dark:text-[#E2E8F0] tracking-[0.5px] uppercase block mt-2.5">
                   Mejor Asesor
                 </span>
                 <div className="mt-1.5 block">
@@ -1479,7 +1479,7 @@ export default function App() {
                   </span>
                 </div>
                 <div className="mt-5 pt-3 border-t border-slate-200/80 dark:border-slate-800/60">
-                  <span className="text-[12px] font-semibold text-[#475569] dark:text-[#64748B] block">
+                  <span className="text-[12px] font-semibold text-black/75 dark:text-[#64748B] block">
                     {kpisCobertura.bestAdvisorShare}% del total de cobertura
                   </span>
                 </div>
@@ -1499,14 +1499,14 @@ export default function App() {
                 <span className="text-[42px] sm:text-[45px] lg:text-[48px] font-extrabold leading-none text-[#1D4ED8] dark:text-[#60A5FA] tracking-tight block">
                   {kpisCobertura.diffVsAvg >= 0 ? `+${kpisCobertura.diffVsAvg}%` : `${kpisCobertura.diffVsAvg}%`}
                 </span>
-                <span className="text-[14px] font-bold text-[#0F172A] dark:text-[#E2E8F0] tracking-[0.5px] uppercase block mt-2.5">
+                <span className="text-[14px] font-bold text-black dark:text-[#E2E8F0] tracking-[0.5px] uppercase block mt-2.5">
                   Diferencia vs Promedio
                 </span>
-                <span className="text-[13px] font-semibold text-[#334155] dark:text-[#94A3B8] block mt-1">
+                <span className="text-[13px] font-semibold text-black/85 dark:text-[#94A3B8] block mt-1">
                   Sobre el promedio de cobertura
                 </span>
                 <div className="mt-5 pt-3 border-t border-slate-200/80 dark:border-slate-800/60">
-                  <span className="text-[12px] font-semibold text-[#475569] dark:text-[#64748B] block truncate" title={`${toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))} vs promedio`}>
+                  <span className="text-[12px] font-semibold text-black/75 dark:text-[#64748B] block truncate" title={`${toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))} vs promedio`}>
                     {toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))} vs prom
                   </span>
                 </div>
@@ -1530,14 +1530,14 @@ export default function App() {
                 }`}>
                   {parseFloat(kpisCobertura.growthMesActual) >= 0 ? `+${kpisCobertura.growthMesActual}%` : `${kpisCobertura.growthMesActual}%`}
                 </span>
-                <span className="text-[14px] font-bold text-[#0F172A] dark:text-[#E2E8F0] tracking-[0.5px] uppercase block mt-2.5">
+                <span className="text-[14px] font-bold text-black dark:text-[#E2E8F0] tracking-[0.5px] uppercase block mt-2.5">
                   Crecimiento Mes Actual
                 </span>
-                <span className="text-[13px] font-semibold text-[#334155] dark:text-[#94A3B8] block mt-1">
+                <span className="text-[13px] font-semibold text-black/85 dark:text-[#94A3B8] block mt-1">
                   Vs. período anterior (Mar 26)
                 </span>
                 <div className="mt-5 pt-3 border-t border-slate-200/80 dark:border-slate-800/60">
-                  <span className="text-[12px] font-semibold text-[#475569] dark:text-[#64748B] block">
+                  <span className="text-[12px] font-semibold text-black/75 dark:text-[#64748B] block">
                     Abr 26 vs Mar 26
                   </span>
                 </div>
