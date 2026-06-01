@@ -134,7 +134,7 @@ const CustomTooltip = ({ active, payload, label, isDarkMode, type }: CustomToolt
       }`}>
         {type === 'cobertura-grupal' && (
           <div className="space-y-1.5 font-semibold">
-            <p className={`font-black uppercase tracking-widest text-[10px] border-b pb-1 mb-2 ${
+            <p className={`font-black uppercase tracking-widest text-[12px] border-b pb-1 mb-2 ${
               isDarkMode ? 'border-gray-800 text-gray-100' : 'border-gray-100 text-gray-900'
             }`}>
               Asesor: {label}
@@ -146,7 +146,7 @@ const CustomTooltip = ({ active, payload, label, isDarkMode, type }: CustomToolt
                   {entry.name}:
                 </span>
                 <span className={`font-black ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
-                  {entry.value} <span className="text-[9px] font-normal text-gray-400">Clientes</span>
+                  {entry.value} <span className="text-[12px] font-normal text-gray-400">Clientes</span>
                 </span>
               </p>
             ))}
@@ -155,7 +155,7 @@ const CustomTooltip = ({ active, payload, label, isDarkMode, type }: CustomToolt
 
         {type === 'cobertura-individual' && (
           <div className="space-y-1.5 font-semibold">
-            <p className={`font-black uppercase tracking-widest text-[10px] border-b pb-1 mb-2 ${
+            <p className={`font-black uppercase tracking-widest text-[12px] border-b pb-1 mb-2 ${
               isDarkMode ? 'border-gray-800 text-gray-100' : 'border-gray-100 text-gray-900'
             }`}>
               Periodo: {label}
@@ -171,7 +171,7 @@ const CustomTooltip = ({ active, payload, label, isDarkMode, type }: CustomToolt
 
         {type === 'ventas' && (
           <div className="space-y-1.5 font-semibold">
-            <p className={`font-black uppercase tracking-widest text-[10px] border-b pb-1 mb-2 ${
+            <p className={`font-black uppercase tracking-widest text-[12px] border-b pb-1 mb-2 ${
               isDarkMode ? 'border-gray-800 text-gray-100' : 'border-gray-100 text-gray-900'
             }`}>
               Vendedor: {label}
@@ -1818,7 +1818,7 @@ export default function App() {
               isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
             }`}>
               <div className="mb-4">
-                <span className="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest block mb-1">Facturación por Vendedor (Millones de COP)</span>
+                <span className="text-[14px] font-semibold text-emerald-700 dark:text-emerald-450 uppercase tracking-wider block mb-1">Facturación por Vendedor (Millones de COP)</span>
                 <h3 className="text-[18px] font-bold text-slate-900 dark:text-slate-50 uppercase tracking-tight">Análisis comparativo de ingresos facturados por cada asesor comercial</h3>
               </div>
 
@@ -1880,11 +1880,11 @@ export default function App() {
                 isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
               }`}>
                 <div>
-                  <span className="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest block mb-1">Detalle de Ventas por Vendedor (Millones de COP)</span>
+                  <span className="text-[14px] font-semibold text-emerald-700 dark:text-emerald-450 uppercase tracking-wider block mb-1">Detalle de Ventas por Vendedor (Millones de COP)</span>
                   <div className="overflow-x-auto mt-2">
-                    <table className="w-full text-left border-collapse text-xs">
+                    <table className="w-full text-left border-collapse text-[13px]">
                       <thead>
-                        <tr className={`border-b transition-colors font-extrabold text-[9px] uppercase tracking-wider ${
+                        <tr className={`border-b transition-colors font-extrabold text-[12px] uppercase tracking-wider ${
                           isDarkMode ? 'border-gray-800/60 text-table-header' : 'border-gray-200 text-table-header'
                         }`}>
                           <th className="py-1.5 px-2">#</th>
@@ -1974,7 +1974,7 @@ export default function App() {
                 isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
               }`}>
                 <div>
-                  <span className="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest block mb-1">Participación por Vendedor</span>
+                  <span className="text-[14px] font-semibold text-emerald-700 dark:text-emerald-450 uppercase tracking-wider block mb-1">Participación por Vendedor</span>
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-4 py-2 mt-2">
                     <div className="relative w-52 h-52 shrink-0 flex items-center justify-center">
                       <svg className="w-full h-full -rotate-90 animate-fade-in" viewBox="0 0 100 100">
@@ -2342,9 +2342,9 @@ export default function App() {
                 </div>
 
                 <div className="overflow-x-auto mt-2 select-none">
-                  <table className="w-full text-left border-collapse text-xs">
+                  <table className="w-full text-left border-collapse text-[13px]">
                     <thead>
-                      <tr className={`border-b transition-colors font-extrabold text-[11px] uppercase tracking-wider ${
+                      <tr className={`border-b transition-colors font-extrabold text-[12px] uppercase tracking-wider ${
                         isDarkMode ? 'border-slate-800/60 text-[#94A3B8]' : 'border-slate-200/80 text-[#475569]'
                       }`}>
                         <th className="py-2.5 px-3">Vendedor</th>
@@ -2508,7 +2508,7 @@ export default function App() {
               isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
             }`}>
               <div className="mb-4">
-                <span className="text-[10px] font-extrabold text-violet-600 dark:text-violet-400 uppercase tracking-widest block mb-1">Clientes Únicos por Vendedor</span>
+                <span className="text-[14px] font-semibold text-violet-700 dark:text-violet-400 uppercase tracking-wider block mb-1">Clientes Únicos por Vendedor</span>
                 <h3 className="text-[18px] font-bold text-slate-900 dark:text-slate-50 uppercase tracking-tight">Análisis comparativo de clientes únicos atendidos sin duplicación</h3>
               </div>
 
@@ -2568,11 +2568,11 @@ export default function App() {
                 isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
               }`}>
                 <div>
-                  <span className="text-[10px] font-extrabold text-violet-600 dark:text-violet-400 uppercase tracking-widest block mb-1">Detalle de Clientes Únicos por Vendedor</span>
+                  <span className="text-[14px] font-semibold text-violet-700 dark:text-violet-400 uppercase tracking-wider block mb-1">Detalle de Clientes Únicos por Vendedor</span>
                   <div className="overflow-x-auto mt-2">
-                    <table className="w-full text-left border-collapse text-xs">
+                    <table className="w-full text-left border-collapse text-[13px]">
                       <thead>
-                        <tr className={`border-b transition-colors font-extrabold text-[9px] uppercase tracking-wider ${
+                        <tr className={`border-b transition-colors font-extrabold text-[12px] uppercase tracking-wider ${
                           isDarkMode ? 'border-gray-800/60 text-table-header' : 'border-gray-200 text-table-header'
                         }`}>
                           <th className="py-1.5 px-2">#</th>
@@ -2654,7 +2654,7 @@ export default function App() {
                 isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
               }`}>
                 <div>
-                  <span className="text-[10px] font-extrabold text-violet-600 dark:text-violet-400 uppercase tracking-widest block mb-1">Participación de Clientes</span>
+                  <span className="text-[14px] font-semibold text-violet-700 dark:text-violet-400 uppercase tracking-wider block mb-1">Participación de Clientes</span>
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-4 py-2 mt-2">
                     <div className="relative w-52 h-52 shrink-0 flex items-center justify-center">
                       <svg className="w-full h-full -rotate-90 animate-fade-in" viewBox="0 0 100 100">
@@ -2719,7 +2719,7 @@ export default function App() {
               isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
             }`}>
               <div className="mb-4">
-                <span className="text-[10px] font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-widest block mb-1">Frecuencia de Compra por Vendedor</span>
+                <span className="text-[14px] font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider block mb-1">Frecuencia de Compra por Vendedor</span>
                 <h3 className="text-[18px] font-bold text-slate-900 dark:text-slate-50 uppercase tracking-tight">Promedio de facturas generadas por cliente atendido</h3>
               </div>
 
@@ -2793,11 +2793,11 @@ export default function App() {
                 isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
               }`}>
                 <div>
-                  <span className="text-[10px] font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-widest block mb-1">Detalle de Frecuencias y Documentos</span>
+                  <span className="text-[14px] font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider block mb-1">Detalle de Frecuencias y Documentos</span>
                   <div className="overflow-x-auto mt-2">
-                    <table className="w-full text-left border-collapse text-xs">
+                    <table className="w-full text-left border-collapse text-[13px]">
                       <thead>
-                        <tr className={`border-b transition-colors font-extrabold text-[9px] uppercase tracking-wider ${
+                        <tr className={`border-b transition-colors font-extrabold text-[12px] uppercase tracking-wider ${
                           isDarkMode ? 'border-gray-800/60 text-table-header' : 'border-gray-200 text-table-header'
                         }`}>
                           <th className="py-1.5 px-2">#</th>
@@ -2871,7 +2871,7 @@ export default function App() {
                 isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
               }`}>
                 <div>
-                  <span className="text-[10px] font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-widest block mb-1">Participación de Documentos</span>
+                  <span className="text-[14px] font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider block mb-1">Participación de Documentos</span>
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-4 py-2 mt-2">
                     <div className="relative w-52 h-52 shrink-0 flex items-center justify-center">
                       <svg className="w-full h-full -rotate-90 animate-fade-in" viewBox="0 0 100 100">
@@ -2936,7 +2936,7 @@ export default function App() {
               isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
             }`}>
               <div className="mb-4">
-                <span className="text-[10px] font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest block mb-1">Tendencia de Ventas (Millones de COP)</span>
+                <span className="text-[14px] font-semibold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider block mb-1">Tendencia de Ventas (Millones de COP)</span>
                 <h3 className="text-[18px] font-bold text-slate-900 dark:text-slate-50 uppercase tracking-tight">Evolución del volumen total facturado por mes en períodos activos</h3>
               </div>
 
@@ -3010,11 +3010,11 @@ export default function App() {
               isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
             }`}>
               <div>
-                <span className="text-[10px] font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest block mb-1">Historial Mensual de Desempeño Comercial</span>
+                <span className="text-[14px] font-semibold text-indigo-700 dark:text-indigo-400 uppercase tracking-wider block mb-1">Historial Mensual de Desempeño Comercial</span>
                 <div className="overflow-x-auto mt-2">
-                  <table className="w-full text-left border-collapse text-[11px]">
+                  <table className="w-full text-left border-collapse text-[13px]">
                     <thead>
-                      <tr className={`border-b transition-colors font-extrabold text-[9px] uppercase tracking-wider ${
+                      <tr className={`border-b transition-colors font-extrabold text-[12px] uppercase tracking-wider ${
                         isDarkMode ? 'border-gray-800/60 text-table-header' : 'border-gray-200 text-table-header'
                       }`}>
                         <th className="py-2 px-1">Periodo</th>
@@ -3073,16 +3073,16 @@ export default function App() {
             }`}>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <span className="text-[10px] font-extrabold text-rose-600 dark:text-rose-400 uppercase tracking-widest block mb-1">Análisis Comercial por Asesor</span>
+                  <span className="text-[14px] font-semibold text-rose-700 dark:text-rose-400 uppercase tracking-wider block mb-1">Análisis Comercial por Asesor</span>
                   <h3 className="text-[18px] font-bold text-slate-900 dark:text-slate-50 uppercase tracking-tight">Filtro analítico por vendedor en períodos activos</h3>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-rose-500 dark:text-rose-400">Seleccionar Asesor:</label>
+                <div className="flex items-center gap-2 mt-2">
+                  <label className="text-[12px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-455">Seleccionar Asesor:</label>
                   <select
                     value={selectedIndividualVendor}
                     onChange={(e) => setSelectedIndividualVendor(e.target.value)}
-                    className={`text-xs font-bold py-1.5 px-3 rounded-lg border focus:outline-none focus:ring-1 focus:ring-rose-500/25 transition-all duration-300 ${
+                    className={`text-[13px] font-bold py-1.5 px-3 rounded-lg border focus:outline-none focus:ring-1 focus:ring-rose-500/25 transition-all duration-300 ${
                       isDarkMode 
                         ? 'bg-gray-950 border-gray-800 text-gray-200 focus:border-rose-500/50' 
                         : 'bg-gray-50 border-gray-200 text-gray-800 focus:border-rose-500/50'
@@ -3103,7 +3103,7 @@ export default function App() {
               isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
             }`}>
               <div className="mb-4">
-                <span className="text-[10px] font-extrabold text-rose-600 dark:text-rose-400 uppercase tracking-widest block mb-1">Facturación Mensual de {getShortNameWithLastName(selectedIndividualVendor)}</span>
+                <span className="text-[14px] font-semibold text-rose-700 dark:text-rose-400 uppercase tracking-wider block mb-1">Facturación Mensual de {getShortNameWithLastName(selectedIndividualVendor)}</span>
                 <h3 className="text-[18px] font-bold text-slate-900 dark:text-slate-50 uppercase tracking-tight">Volumen de ventas logradas por mes en millones de COP</h3>
               </div>
 
@@ -3176,11 +3176,11 @@ export default function App() {
               isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
             }`}>
               <div>
-                <span className="text-[10px] font-extrabold text-rose-600 dark:text-rose-400 uppercase tracking-widest block mb-1">Historial de Desempeño de {getShortNameWithLastName(selectedIndividualVendor)}</span>
+                <span className="text-[14px] font-semibold text-rose-700 dark:text-rose-400 uppercase tracking-wider block mb-1">Historial de Desempeño de {getShortNameWithLastName(selectedIndividualVendor)}</span>
                 <div className="overflow-x-auto mt-2">
-                  <table className="w-full text-left border-collapse text-[11px]">
+                  <table className="w-full text-left border-collapse text-[13px]">
                     <thead>
-                      <tr className={`border-b transition-colors font-extrabold text-[9px] uppercase tracking-wider ${
+                      <tr className={`border-b transition-colors font-extrabold text-[12px] uppercase tracking-wider ${
                         isDarkMode ? 'border-gray-800/60 text-table-header' : 'border-gray-200 text-table-header'
                       }`}>
                         <th className="py-2 px-1">Periodo</th>
@@ -3230,7 +3230,7 @@ export default function App() {
               isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
             }`}>
               <div className="mb-4">
-                <span className="text-[10px] font-extrabold text-cyan-600 dark:text-cyan-400 uppercase tracking-widest block mb-1">Comparativo de Eficiencia (Ticket Promedio COP Millones)</span>
+                <span className="text-[14px] font-semibold text-cyan-700 dark:text-cyan-400 uppercase tracking-wider block mb-1">Comparativo de Eficiencia (Ticket Promedio COP Millones)</span>
                 <h3 className="text-[18px] font-bold text-slate-900 dark:text-slate-50 uppercase tracking-tight">Mide la cantidad promedio facturada a cada cliente único por vendedor</h3>
               </div>
 
@@ -3303,11 +3303,11 @@ export default function App() {
               isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
             }`}>
               <div>
-                <span className="text-[10px] font-extrabold text-cyan-600 dark:text-cyan-400 uppercase tracking-widest block mb-1">Matriz Comparativa de Desempeño y Eficiencia</span>
+                <span className="text-[14px] font-semibold text-cyan-700 dark:text-cyan-400 uppercase tracking-wider block mb-1">Matriz Comparativa de Desempeño y Eficiencia</span>
                 <div className="overflow-x-auto mt-2">
-                  <table className="w-full text-left border-collapse text-xs">
+                  <table className="w-full text-left border-collapse text-[13px]">
                     <thead>
-                      <tr className={`border-b transition-colors font-extrabold text-[9px] uppercase tracking-wider ${
+                      <tr className={`border-b transition-colors font-extrabold text-[12px] uppercase tracking-wider ${
                         isDarkMode ? 'border-gray-800/60 text-table-header' : 'border-gray-200 text-table-header'
                       }`}>
                         <th className="py-1.5 px-2">Rank</th>
@@ -3399,7 +3399,7 @@ export default function App() {
               <ChevronLeft size={14} />
             </button>
             {!isFiltersCollapsed && (
-              <span className="text-[10px] font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest flex items-center gap-1.5">
+              <span className="text-[12px] font-extrabold text-emerald-600 dark:text-emerald-450 uppercase tracking-widest flex items-center gap-1.5">
                 <Search size={12} />
                 Filtros Activos
               </span>
@@ -3410,7 +3410,7 @@ export default function App() {
             <div className="space-y-5 flex-1 flex flex-col overflow-hidden">
               {/* Filtro de Períodos */}
               <div className="shrink-0">
-                <label className="text-[10px] font-extrabold text-slate-750 dark:text-slate-300 uppercase tracking-wider block mb-2">Periodos</label>
+                <label className="text-[12px] font-extrabold text-slate-750 dark:text-slate-300 uppercase tracking-wider block mb-2">Periodos</label>
                 <div className="grid grid-cols-4 gap-1">
                   {MESES_CONFIG.map(m => {
                     const active = selectedMonths.includes(m.id);
@@ -3418,7 +3418,7 @@ export default function App() {
                       <button
                         key={m.id}
                         onClick={() => handleToggleMonth(m.id)}
-                        className={`py-1 rounded text-[10px] font-extrabold transition-all duration-350 ${
+                        className={`py-1 rounded text-[12px] font-extrabold transition-all duration-350 ${
                           active 
                             ? 'bg-[#16A34A] text-white shadow-sm font-black' 
                             : isDarkMode 
@@ -3435,7 +3435,7 @@ export default function App() {
 
               {/* Filtro de Vendedores con Buscador y Multiselección */}
               <div className="flex-1 flex flex-col overflow-hidden">
-                <label className="text-[10px] font-extrabold text-slate-750 dark:text-slate-300 uppercase tracking-wider block mb-1">Vendedores</label>
+                <label className="text-[12px] font-extrabold text-slate-750 dark:text-slate-300 uppercase tracking-wider block mb-1">Vendedores</label>
                 
                 {/* Caja de Búsqueda */}
                 <div className="relative shrink-0 mb-2">
@@ -3445,7 +3445,7 @@ export default function App() {
                     placeholder="Buscar asesor..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className={`pl-7 pr-3 py-1.5 border rounded-lg text-xs focus:outline-none w-full placeholder-slate-500 dark:placeholder-slate-400 transition-all duration-300 ${
+                    className={`pl-7 pr-3 py-1.5 border rounded-lg text-[13px] focus:outline-none w-full placeholder-slate-500 dark:placeholder-slate-400 transition-all duration-300 ${
                       isDarkMode 
                         ? 'bg-gray-950 border-gray-800 text-gray-250 focus:border-emerald-500/50' 
                         : 'bg-white border-gray-200 text-slate-900 focus:border-emerald-500/50'
@@ -3454,8 +3454,8 @@ export default function App() {
                 </div>
 
                 {/* Acciones de Vendedores */}
-                <div className="flex justify-between items-center text-[9px] font-bold shrink-0 mb-2 border-b pb-2 border-gray-250/20 dark:border-gray-800/20">
-                  <button onClick={handleSelectAllVendors} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-355 transition-colors font-extrabold">Marcar Todos</button>
+                <div className="flex justify-between items-center text-[12px] font-bold shrink-0 mb-2 border-b pb-2 border-gray-250/20 dark:border-gray-800/20">
+                  <button onClick={handleSelectAllVendors} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-450 dark:hover:text-emerald-355 transition-colors font-extrabold">Marcar Todos</button>
                   <span className="text-slate-400 dark:text-slate-650">•</span>
                   <button onClick={handleDeselectAllVendors} className="text-slate-550 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300 transition-colors font-extrabold">Limpiar</button>
                 </div>
@@ -3470,7 +3470,7 @@ export default function App() {
                        return (
                         <label 
                           key={adv.id} 
-                          className={`flex items-center gap-2 px-2 py-1.5 rounded-lg border cursor-pointer select-none text-[10px] font-bold transition-all ${
+                          className={`flex items-center gap-2 px-2 py-1.5 rounded-lg border cursor-pointer select-none text-[13px] font-medium transition-all ${
                             isChecked
                               ? 'bg-[#16A34A]/10 border-[#16A34A]/30 text-[#16A34A]'
                               : isDarkMode
