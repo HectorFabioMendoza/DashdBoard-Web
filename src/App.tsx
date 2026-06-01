@@ -1407,141 +1407,147 @@ export default function App() {
         {activeTab === 'cobertura' ? (
           <section className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6 animate-fade-in select-none">
             {/* KPI 1: CLIENTES ACTIVOS TOTALES */}
-            <div className={`p-6 rounded-2xl border flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
+            <div className={`p-6 md:p-7 rounded-3xl border flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-black/40 cursor-pointer ${
               isDarkMode 
                 ? 'bg-[#0F1115] border-slate-800/80 shadow-black/30 shadow-md' 
-                : 'bg-white border-slate-200/80 shadow-slate-200/60 shadow-md'
+                : 'bg-white border-slate-200/80 shadow-slate-100/50 shadow-md'
             }`}>
-              <div className="flex-1 min-w-0 pr-2">
-                <span className="text-[36px] font-extrabold text-emerald-700 dark:text-emerald-400 leading-none block tracking-tight font-sans">
+              <div className="flex-1 min-w-0 pr-4">
+                <span className="text-[42px] sm:text-[45px] lg:text-[48px] font-extrabold leading-none text-[#15803D] dark:text-[#4ADE80] tracking-tight block">
                   {formatNumberWithDots(kpis.totalUnique)}
-                  <span className="text-base font-medium text-slate-400 dark:text-slate-500 ml-1.5 font-sans">Clientes</span>
                 </span>
-                <span className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-2">
+                <span className="text-[14px] font-bold text-[#0F172A] dark:text-[#E2E8F0] tracking-[0.5px] uppercase block mt-2.5">
                   Clientes Activos Totales
                 </span>
-                <div className="mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-800/60">
-                  <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-450 block">
+                <span className="text-[13px] font-semibold text-[#334155] dark:text-[#94A3B8] block mt-1">
+                  Clientes registrados
+                </span>
+                <div className="mt-5 pt-3 border-t border-slate-200/80 dark:border-slate-800/60">
+                  <span className="text-[12px] font-semibold text-[#475569] dark:text-[#64748B] block">
                     En el periodo seleccionado
                   </span>
                 </div>
               </div>
-              <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-sm border border-emerald-500/10">
-                <Users size={42} />
+              <div className="w-20 h-20 rounded-3xl bg-[#DCFCE7] text-[#15803D] dark:bg-[#14532D]/40 dark:text-[#4ADE80] flex items-center justify-center shrink-0 shadow-sm border border-emerald-500/20 dark:border-emerald-500/10">
+                <Users size={52} />
               </div>
             </div>
 
             {/* KPI 2: COBERTURA PROMEDIO POR ASESOR */}
-            <div className={`p-6 rounded-2xl border flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
+            <div className={`p-6 md:p-7 rounded-3xl border flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-black/40 cursor-pointer ${
               isDarkMode 
                 ? 'bg-[#0F1115] border-slate-800/80 shadow-black/30 shadow-md' 
-                : 'bg-white border-slate-200/80 shadow-slate-200/60 shadow-md'
+                : 'bg-white border-slate-200/80 shadow-slate-100/50 shadow-md'
             }`}>
-              <div className="flex-1 min-w-0 pr-2">
-                <span className="text-[36px] font-extrabold text-purple-700 dark:text-[#A78BFA] leading-none block tracking-tight font-sans">
+              <div className="flex-1 min-w-0 pr-4">
+                <span className="text-[42px] sm:text-[45px] lg:text-[48px] font-extrabold leading-none text-[#6B21A8] dark:text-[#C084FC] tracking-tight block">
                   {kpisCobertura.avgCoverage}
-                  <span className="text-base font-medium text-slate-400 dark:text-slate-500 ml-1.5 font-sans">Clientes</span>
                 </span>
-                <span className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-2">
+                <span className="text-[14px] font-bold text-[#0F172A] dark:text-[#E2E8F0] tracking-[0.5px] uppercase block mt-2.5">
                   Cobertura Promedio
                 </span>
-                <div className="mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-800/60">
-                  <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-450 block">
+                <span className="text-[13px] font-semibold text-[#334155] dark:text-[#94A3B8] block mt-1">
+                  Clientes por asesor comercial
+                </span>
+                <div className="mt-5 pt-3 border-t border-slate-200/80 dark:border-slate-800/60">
+                  <span className="text-[12px] font-semibold text-[#475569] dark:text-[#64748B] block">
                     Promedio por asesor activo
                   </span>
                 </div>
               </div>
-              <div className="w-16 h-16 rounded-2xl bg-purple-500/10 dark:bg-purple-500/5 text-[#7C3AED] dark:text-[#A78BFA] flex items-center justify-center shrink-0 shadow-sm border border-purple-500/10">
-                <BarChart3 size={42} />
+              <div className="w-20 h-20 rounded-3xl bg-[#F3E8FF] text-[#6B21A8] dark:bg-[#3B0764]/40 dark:text-[#C084FC] flex items-center justify-center shrink-0 shadow-sm border border-purple-500/20 dark:border-purple-500/10">
+                <BarChart3 size={52} />
               </div>
             </div>
 
             {/* KPI 3: MEJOR ASESOR */}
-            <div className={`p-6 rounded-2xl border flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
+            <div className={`p-6 md:p-7 rounded-3xl border flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-black/40 cursor-pointer ${
               isDarkMode 
                 ? 'bg-[#0F1115] border-slate-800/80 shadow-black/30 shadow-md' 
-                : 'bg-white border-slate-200/80 shadow-slate-200/60 shadow-md'
+                : 'bg-white border-slate-200/80 shadow-slate-100/50 shadow-md'
             }`}>
-              <div className="flex-1 min-w-0 pr-2">
-                <span className="text-[36px] font-extrabold text-amber-700 dark:text-amber-400 leading-tight block tracking-tight font-sans truncate" title={toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))}>
+              <div className="flex-1 min-w-0 pr-4">
+                <span className="text-[28px] sm:text-[32px] md:text-[34px] font-extrabold leading-tight text-[#0F172A] dark:text-white tracking-tight block truncate-none" title={toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))}>
                   {toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))}
                 </span>
-                <span className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-2">
+                <span className="text-[14px] font-bold text-[#0F172A] dark:text-[#E2E8F0] tracking-[0.5px] uppercase block mt-2.5">
                   Mejor Asesor
                 </span>
-                <div className="mt-3.5">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-[13px] font-bold bg-emerald-500/10 text-emerald-700 dark:bg-emerald-500/20 dark:text-[#4ADE80]">
+                <div className="mt-1.5 block">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-[13px] font-bold bg-[#DCFCE7] text-[#15803D] dark:bg-[#14532D]/40 dark:text-[#4ADE80]">
                     {kpisCobertura.bestAdvisorCoverage} clientes
                   </span>
                 </div>
-                <div className="mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-800/60">
-                  <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-450 block truncate">
+                <div className="mt-5 pt-3 border-t border-slate-200/80 dark:border-slate-800/60">
+                  <span className="text-[12px] font-semibold text-[#475569] dark:text-[#64748B] block">
                     {kpisCobertura.bestAdvisorShare}% del total de cobertura
                   </span>
                 </div>
               </div>
-              <div className="w-16 h-16 rounded-2xl bg-amber-500/10 dark:bg-amber-500/5 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 shadow-sm border border-amber-500/10">
-                <Crown size={42} />
+              <div className="w-20 h-20 rounded-3xl bg-[#FEF3C7] text-[#D97706] dark:bg-[#78350F]/40 dark:text-[#FBBF24] flex items-center justify-center shrink-0 shadow-sm border border-amber-500/20 dark:border-amber-500/10">
+                <Crown size={52} />
               </div>
             </div>
 
             {/* KPI 4: DIFERENCIA VS PROMEDIO */}
-            <div className={`p-6 rounded-2xl border flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
+            <div className={`p-6 md:p-7 rounded-3xl border flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-black/40 cursor-pointer ${
               isDarkMode 
                 ? 'bg-[#0F1115] border-slate-800/80 shadow-black/30 shadow-md' 
-                : 'bg-white border-slate-200/80 shadow-slate-200/60 shadow-md'
+                : 'bg-white border-slate-200/80 shadow-slate-100/50 shadow-md'
             }`}>
-              <div className="flex-1 min-w-0 pr-2">
-                <span className={`text-[36px] font-extrabold leading-none block tracking-tight font-sans ${
-                  kpisCobertura.diffVsAvg >= 0 
-                    ? 'text-blue-700 dark:text-blue-400' 
-                    : 'text-red-700 dark:text-red-400'
-                }`}>
+              <div className="flex-1 min-w-0 pr-4">
+                <span className="text-[42px] sm:text-[45px] lg:text-[48px] font-extrabold leading-none text-[#1D4ED8] dark:text-[#60A5FA] tracking-tight block">
                   {kpisCobertura.diffVsAvg >= 0 ? `+${kpisCobertura.diffVsAvg}%` : `${kpisCobertura.diffVsAvg}%`}
                 </span>
-                <span className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-2">
+                <span className="text-[14px] font-bold text-[#0F172A] dark:text-[#E2E8F0] tracking-[0.5px] uppercase block mt-2.5">
                   Diferencia vs Promedio
                 </span>
-                <div className="mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-800/60">
-                  <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-450 block truncate">
+                <span className="text-[13px] font-semibold text-[#334155] dark:text-[#94A3B8] block mt-1">
+                  Sobre el promedio de cobertura
+                </span>
+                <div className="mt-5 pt-3 border-t border-slate-200/80 dark:border-slate-800/60">
+                  <span className="text-[12px] font-semibold text-[#475569] dark:text-[#64748B] block truncate" title={`${toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))} vs promedio`}>
                     {toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))} vs prom
                   </span>
                 </div>
               </div>
-              <div className="w-16 h-16 rounded-2xl bg-blue-500/10 dark:bg-blue-500/5 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 shadow-sm border border-blue-500/10">
-                <TrendingUp size={42} />
+              <div className="w-20 h-20 rounded-3xl bg-[#DBEAFE] text-[#1D4ED8] dark:bg-[#1E3A8A]/40 dark:text-[#60A5FA] flex items-center justify-center shrink-0 shadow-sm border border-blue-500/20 dark:border-blue-500/10">
+                <TrendingUp size={52} />
               </div>
             </div>
 
             {/* KPI 5: CRECIMIENTO MES ACTUAL */}
-            <div className={`p-6 rounded-2xl border flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${
+            <div className={`p-6 md:p-7 rounded-3xl border flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-black/40 cursor-pointer ${
               isDarkMode 
                 ? 'bg-[#0F1115] border-slate-800/80 shadow-black/30 shadow-md' 
-                : 'bg-white border-slate-200/80 shadow-slate-200/60 shadow-md'
+                : 'bg-white border-slate-200/80 shadow-slate-100/50 shadow-md'
             }`}>
-              <div className="flex-1 min-w-0 pr-2">
-                <span className={`text-[36px] font-extrabold leading-none block tracking-tight font-sans ${
+              <div className="flex-1 min-w-0 pr-4">
+                <span className={`text-[42px] sm:text-[45px] lg:text-[48px] font-extrabold leading-none tracking-tight block ${
                   parseFloat(kpisCobertura.growthMesActual) >= 0 
-                    ? 'text-emerald-700 dark:text-emerald-400' 
-                    : 'text-red-700 dark:text-red-400'
+                    ? 'text-[#15803D] dark:text-[#4ADE80]' 
+                    : 'text-[#B91C1C] dark:text-[#F87171]'
                 }`}>
                   {parseFloat(kpisCobertura.growthMesActual) >= 0 ? `+${kpisCobertura.growthMesActual}%` : `${kpisCobertura.growthMesActual}%`}
                 </span>
-                <span className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-2">
+                <span className="text-[14px] font-bold text-[#0F172A] dark:text-[#E2E8F0] tracking-[0.5px] uppercase block mt-2.5">
                   Crecimiento Mes Actual
                 </span>
-                <div className="mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-800/60">
-                  <span className="text-[13px] font-semibold text-slate-500 dark:text-slate-450 block">
+                <span className="text-[13px] font-semibold text-[#334155] dark:text-[#94A3B8] block mt-1">
+                  Vs. período anterior (Mar 26)
+                </span>
+                <div className="mt-5 pt-3 border-t border-slate-200/80 dark:border-slate-800/60">
+                  <span className="text-[12px] font-semibold text-[#475569] dark:text-[#64748B] block">
                     Abr 26 vs Mar 26
                   </span>
                 </div>
               </div>
-              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 border transition-colors duration-300 ${
+              <div className={`w-20 h-20 rounded-3xl flex items-center justify-center shrink-0 border transition-colors duration-300 shadow-sm ${
                 parseFloat(kpisCobertura.growthMesActual) >= 0 
-                  ? 'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/5 dark:text-emerald-400 border-emerald-500/10' 
-                  : 'bg-rose-500/10 text-rose-600 dark:bg-rose-500/5 dark:text-rose-400 border-rose-500/10'
+                  ? 'bg-[#DCFCE7] text-[#15803D] border-emerald-500/20 dark:bg-[#14532D]/40 dark:text-[#4ADE80] dark:border-emerald-500/10' 
+                  : 'bg-[#FEE2E2] text-[#B91C1C] border-red-500/20 dark:bg-[#7F1D1D]/40 dark:text-[#F87171] dark:border-red-500/10'
               }`}>
-                {parseFloat(kpisCobertura.growthMesActual) >= 0 ? <TrendingUp size={42} /> : <TrendingDown size={42} />}
+                {parseFloat(kpisCobertura.growthMesActual) >= 0 ? <TrendingUp size={52} /> : <TrendingDown size={52} />}
               </div>
             </div>
           </section>
