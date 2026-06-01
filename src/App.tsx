@@ -2101,17 +2101,26 @@ export default function App() {
               }`}>
                 <div>
                   <div className="mb-5 flex flex-col gap-1">
-                    <h3 className="text-[18px] font-extrabold text-[#0F172A] dark:text-slate-50 uppercase tracking-tight font-sans">
+                    <h3 
+                      style={{ color: isDarkMode ? '#F8FAFC' : '#000000' }}
+                      className="text-[18px] font-extrabold uppercase tracking-tight font-sans"
+                    >
                       RANKING DE COBERTURA POR ASESOR
                     </h3>
-                    <p className="text-[14px] text-[#475569] dark:text-[#94A3B8] font-medium">
+                    <p 
+                      style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.85)' }}
+                      className="text-[14px] font-medium"
+                    >
                       Número de clientes activos por asesor en el período seleccionado.
                     </p>
                   </div>
 
                   <div className="w-full mt-4 pr-2">
                     {/* Encabezados de Columna del Ranking */}
-                    <div className="flex items-center text-[11px] font-bold text-[#475569] dark:text-[#94A3B8] uppercase tracking-wider mb-3.5 px-1">
+                    <div 
+                      style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.80)' }}
+                      className="flex items-center text-[11px] font-bold uppercase tracking-wider mb-3.5 px-1"
+                    >
                       <div className="w-[180px]"></div>
                       <div className="flex-1"></div>
                       <span className="w-[60px] text-right">Clientes</span>
@@ -2153,11 +2162,10 @@ export default function App() {
                               {badgeContent}
                             </div>
                             {/* Nombre del Asesor */}
-                            <span className={`text-[14px] font-bold w-[148px] truncate ml-2 ${
-                              idx < 3 
-                                ? 'text-[#0F172A] dark:text-white' 
-                                : 'text-[#334155] dark:text-slate-300'
-                            }`}>
+                            <span 
+                              style={{ color: isDarkMode ? (idx < 3 ? '#FFFFFF' : '#CBD5E1') : (idx < 3 ? '#000000' : 'rgba(0, 0, 0, 0.85)') }}
+                              className="text-[14px] font-bold w-[148px] truncate ml-2"
+                            >
                               {shortName}
                             </span>
                             {/* Barra de progreso */}
@@ -2168,15 +2176,17 @@ export default function App() {
                               />
                             </div>
                             {/* Clientes */}
-                            <span className={`w-[60px] text-right text-[14px] font-extrabold ${
-                              idx < 3 
-                                ? 'text-[#0F172A] dark:text-white' 
-                                : 'text-[#334155] dark:text-slate-200'
-                            }`}>
+                            <span 
+                              style={{ color: isDarkMode ? (idx < 3 ? '#FFFFFF' : '#E2E8F0') : (idx < 3 ? '#000000' : 'rgba(0, 0, 0, 0.85)') }}
+                              className="w-[60px] text-right text-[14px] font-extrabold"
+                            >
                               {adv.dynamicCoverage}
                             </span>
                             {/* Participación */}
-                            <span className="w-[80px] text-right text-[14px] font-bold text-[#475569] dark:text-[#94A3B8]">
+                            <span 
+                              style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.75)' }}
+                              className="w-[80px] text-right text-[14px] font-bold"
+                            >
                               {percentage}%
                             </span>
                           </div>
@@ -2185,7 +2195,10 @@ export default function App() {
                     </div>
 
                     {/* Eje X de escala */}
-                    <div className="flex items-center mt-4 pt-2 border-t border-slate-200/80 dark:border-slate-700/60 text-[11px] font-bold text-[#475569] dark:text-[#94A3B8] px-1">
+                    <div 
+                      style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.70)' }}
+                      className="flex items-center mt-4 pt-2 border-t border-slate-200/80 dark:border-slate-700/60 text-[11px] font-bold px-1"
+                    >
                       <div className="w-[180px]"></div>
                       <div className="flex-1 flex justify-between relative px-1 pr-4">
                         <span>0</span>
@@ -2196,7 +2209,10 @@ export default function App() {
                       </div>
                       <div className="w-[140px]"></div>
                     </div>
-                    <div className="flex justify-center text-[11px] font-bold text-[#475569] dark:text-[#94A3B8] mt-1">
+                    <div 
+                      style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.70)' }}
+                      className="flex justify-center text-[11px] font-bold mt-1"
+                    >
                       <span>Clientes activos</span>
                     </div>
 
@@ -2210,10 +2226,16 @@ export default function App() {
               }`}>
                 <div className="h-full flex flex-col justify-between">
                   <div className="mb-4 flex flex-col gap-1">
-                    <h3 className="text-[18px] font-extrabold text-[#0F172A] dark:text-slate-50 uppercase tracking-tight">
+                    <h3 
+                      style={{ color: isDarkMode ? '#F8FAFC' : '#000000' }}
+                      className="text-[18px] font-extrabold uppercase tracking-tight"
+                    >
                       DISTRIBUCIÓN DE COBERTURA
                     </h3>
-                    <p className="text-[14px] text-[#475569] dark:text-[#94A3B8] font-medium">
+                    <p 
+                      style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.85)' }}
+                      className="text-[14px] font-medium"
+                    >
                       Participación porcentual de clientes activos por asesor.
                     </p>
                   </div>
@@ -2372,7 +2394,12 @@ export default function App() {
                               <span className="font-bold text-[11px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[6].name))}</span>
                               <div className="flex items-baseline gap-1">
                                 <span className="font-extrabold text-base leading-none">{chartAdvisorsData[6].dynamicCoverage}</span>
-                                <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">{kpis.totalUnique > 0 ? ((chartAdvisorsData[6].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
+                                <span 
+                                  style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.70)' }}
+                                  className="text-[10px] font-semibold"
+                                >
+                                  {kpis.totalUnique > 0 ? ((chartAdvisorsData[6].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%
+                                </span>
                               </div>
                             </div>
                           )}
@@ -2388,7 +2415,12 @@ export default function App() {
                               <span className="font-bold text-[11px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[7].name))}</span>
                               <div className="flex items-baseline gap-1">
                                 <span className="font-extrabold text-base leading-none">{chartAdvisorsData[7].dynamicCoverage}</span>
-                                <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">{kpis.totalUnique > 0 ? ((chartAdvisorsData[7].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
+                                <span 
+                                  style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.70)' }}
+                                  className="text-[10px] font-semibold"
+                                >
+                                  {kpis.totalUnique > 0 ? ((chartAdvisorsData[7].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%
+                                </span>
                               </div>
                             </div>
                           )}
@@ -2404,7 +2436,12 @@ export default function App() {
                               <span className="font-bold text-[11px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[8].name))}</span>
                               <div className="flex items-baseline gap-1">
                                 <span className="font-extrabold text-base leading-none">{chartAdvisorsData[8].dynamicCoverage}</span>
-                                <span className="text-[10px] font-semibold text-slate-550 dark:text-slate-450">{kpis.totalUnique > 0 ? ((chartAdvisorsData[8].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
+                                <span 
+                                  style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.70)' }}
+                                  className="text-[10px] font-semibold"
+                                >
+                                  {kpis.totalUnique > 0 ? ((chartAdvisorsData[8].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%
+                                </span>
                               </div>
                             </div>
                           )}
@@ -2413,7 +2450,10 @@ export default function App() {
                     })()}
                   </div>
 
-                  <div className="text-center font-bold text-[14px] text-[#0F172A] dark:text-slate-200 mt-3 border-t border-slate-200/80 dark:border-slate-700/60 pt-2">
+                  <div 
+                    style={{ color: isDarkMode ? '#E2E8F0' : '#000000' }}
+                    className="text-center font-bold text-[14px] mt-3 border-t border-slate-200/80 dark:border-slate-700/60 pt-2"
+                  >
                     Total: <span className="text-[#059669] font-extrabold">{formatNumberWithDots(kpis.totalUnique)}</span> clientes
                   </div>
                 </div>
@@ -2427,10 +2467,16 @@ export default function App() {
               <div>
                 <div className="mb-5">
                   <div className="flex flex-col gap-1">
-                    <h3 className="text-[18px] font-extrabold text-[#0F172A] dark:text-slate-50 uppercase tracking-tight">
+                    <h3 
+                      style={{ color: isDarkMode ? '#F8FAFC' : '#000000' }}
+                      className="text-[18px] font-extrabold uppercase tracking-tight"
+                    >
                       EVOLUCIÓN DE COBERTURA POR VENDEDOR
                     </h3>
-                    <p className="text-[14px] text-[#475569] dark:text-[#94A3B8] font-medium">
+                    <p 
+                      style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.85)' }}
+                      className="text-[14px] font-medium"
+                    >
                       Clientes activos por asesor en cada período. Los colores indican la variación respecto al período anterior.
                     </p>
                   </div>
@@ -2439,9 +2485,12 @@ export default function App() {
                 <div className="overflow-x-auto mt-2 select-none">
                   <table className="w-full text-left border-collapse text-[13px]">
                     <thead>
-                      <tr className={`border-b transition-colors font-extrabold text-[12px] uppercase tracking-wider ${
-                        isDarkMode ? 'border-slate-800/60 text-[#94A3B8]' : 'border-slate-200/80 text-[#475569]'
-                      }`}>
+                      <tr 
+                        style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.85)' }}
+                        className={`border-b transition-colors font-extrabold text-[12px] uppercase tracking-wider ${
+                          isDarkMode ? 'border-slate-800/60' : 'border-slate-200/80'
+                        }`}
+                      >
                         <th className="py-2.5 px-3">Vendedor</th>
                         <th className="py-2.5 px-3 text-center">Ene 26</th>
                         <th className="py-2.5 px-3 text-center">Feb 26</th>
@@ -2482,10 +2531,13 @@ export default function App() {
                             className={`border-b transition-all duration-200 ${
                               isDarkMode 
                                 ? 'border-gray-800/40 hover:bg-gray-800/60 text-gray-300' 
-                                : 'border-gray-100 hover:bg-slate-50 text-gray-700'
+                                : 'border-gray-100 hover:bg-slate-50 text-gray-750'
                             }`}
                           >
-                            <td className="py-3 px-3 font-bold text-[#0F172A] dark:text-white text-[14px]">
+                            <td 
+                              style={{ color: isDarkMode ? '#FFFFFF' : '#000000' }}
+                              className="py-3 px-3 font-bold text-[14px]"
+                            >
                               {shortName}
                             </td>
                             <td className="py-2.5 px-3 text-center">
@@ -2550,7 +2602,10 @@ export default function App() {
                         const totalSparkColor = totalDiffVal > 0 ? '#16A34A' : totalDiffVal === 0 ? '#F59E0B' : '#EF4444';
 
                         return (
-                          <tr className="font-extrabold border-t-2 border-slate-300 dark:border-slate-600 text-[#0F172A] dark:text-white bg-slate-50/50 dark:bg-slate-800/20">
+                          <tr 
+                            style={{ color: isDarkMode ? '#FFFFFF' : '#000000' }}
+                            className="font-extrabold border-t-2 border-slate-300 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-800/20"
+                          >
                             <td className="py-4 px-3 font-black text-[14px] tracking-tight">TOTAL EMPRESA</td>
                             <td className="py-3 px-3 text-center">
                               <span className={`inline-block px-3 py-1.5 rounded-lg text-[12px] min-w-[48px] ${totalEneCell}`}>
