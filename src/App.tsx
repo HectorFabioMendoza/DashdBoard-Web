@@ -1355,7 +1355,10 @@ export default function App() {
         {/* ENCABEZADO PRINCIPAL DE PÁGINA */}
         <header className="flex items-center justify-between border-b pb-6 mb-6 transition-colors duration-300 border-gray-200/60 dark:border-gray-800/60">
           <div>
-            <h1 className="text-2xl sm:text-[32px] font-black tracking-tight leading-none text-slate-900 dark:text-slate-50 flex items-center gap-2">
+            <h1 
+              style={{ color: isDarkMode ? '#F8FAFC' : '#000000' }}
+              className="text-2xl sm:text-[32px] font-black tracking-tight leading-none flex items-center gap-2"
+            >
               {activeTab === 'ventas' && 'Ventas por Vendedor'}
               {activeTab === 'cobertura' && 'Cobertura de Clientes'}
               {activeTab === 'unicos' && 'Clientes Únicos'}
@@ -1364,7 +1367,10 @@ export default function App() {
               {activeTab === 'asesor' && 'Análisis Individual por Asesor'}
               {activeTab === 'comparativos' && 'Comparativos Comerciales'}
             </h1>
-            <p className="text-[13px] text-slate-600 dark:text-slate-400 mt-2 font-medium">
+            <p 
+              style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.85)' }}
+              className="text-[13px] mt-2 font-medium"
+            >
               {activeTab === 'ventas' && 'Análisis del volumen total de ventas por vendedor en millones de COP.'}
               {activeTab === 'cobertura' && 'Análisis de clientes activos en la base de clientes de la empresa.'}
               {activeTab === 'unicos' && 'Total de clientes únicos atendidos por cada asesor en los periodos seleccionados.'}
