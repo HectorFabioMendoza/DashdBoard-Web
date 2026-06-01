@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+:root {
+  /* Semantic Light Mode Colors */
+  --text-primary: #0F172A;       /* Deep dark slate for primary titles, values, names */
+  --text-secondary: #334155;     /* Dark slate for subtitles, explanations, labels */
+  --text-tertiary: #475569;      /* Medium slate for comments, descriptions, legends */
+  --text-disabled: #64748B;      /* Slate gray for disabled/muted text */
+
+  --border-primary: #E2E8F0;     /* Border gray for structural lines */
+  --border-secondary: #F1F5F9;   /* Faint gray for sub-elements and dividers */
+
+  --surface-primary: #FFFFFF;    /* Clean white for main sections/cards */
+  --surface-secondary: #F8FAFC;  /* Very light blue-gray for background */
+
+  --kpi-title: #475569;
+  --section-title: #0F172A;
+  --caption-color: #475569;
+  --axis-color: #64748B;
+  --table-header: #334155;
+  --table-cell: #0F172A;
+}
+
+.dark {
+  /* Semantic Dark Mode Colors */
+  --text-primary: #F8FAFC;       /* Off-white for high contrast on dark bg */
+  --text-secondary: #CBD5E1;     /* Light slate for readable text */
+  --text-tertiary: #94A3B8;      /* Medium light slate for descriptions */
+  --text-disabled: #64748B;      /* Faded gray for less relevant text */
+
+  --border-primary: #1E293B;     /* Dark slate gray for border contrast */
+  --border-secondary: #334155;   /* Medium dark slate for divider contrast */
+
+  --surface-primary: #0C0E12;    /* Dark bento base bg */
+  --surface-secondary: #11141B;  /* Deeper dark bento bg */
+
+  --kpi-title: #94A3B8;
+  --section-title: #F8FAFC;
+  --caption-color: #94A3B8;
+  --axis-color: #64748B;
+  --table-header: #CBD5E1;
+  --table-cell: #F8FAFC;
+}
+
+/* Custom CSS classes exposed through Tailwind v4 Utilities */
+@utility text-primary {
+  color: var(--text-primary);
+}
+@utility text-secondary {
+  color: var(--text-secondary);
+}
+@utility text-tertiary {
+  color: var(--text-tertiary);
+}
+@utility text-disabled {
+  color: var(--text-disabled);
+}
+
+@utility border-primary {
+  border-color: var(--border-primary);
+}
+@utility border-secondary {
+  border-color: var(--border-secondary);
+}
+
+@utility bg-surface-primary {
+  background-color: var(--surface-primary);
+}
+@utility bg-surface-secondary {
+  background-color: var(--surface-secondary);
+}
+
+@utility text-kpi-title {
+  color: var(--kpi-title);
+}
+@utility text-section-title {
+  color: var(--section-title);
+}
+@utility text-caption-color {
+  color: var(--caption-color);
+}
+@utility text-axis-color {
+  color: var(--axis-color);
+}
+@utility text-table-header {
+  color: var(--table-header);
+}
+@utility text-table-cell {
+  color: var(--table-cell);
+}
+
+/* Typography scale utilities */
+@utility text-executive-title {
+  font-size: 32px;
+  font-weight: 800;
+}
+@utility text-executive-section {
+  font-size: 18px;
+  font-weight: 700;
+}
+@utility text-executive-kpi-label {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+@utility text-executive-kpi-value {
+  font-size: 36px;
+  font-weight: 800;
+}
