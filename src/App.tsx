@@ -1300,7 +1300,7 @@ export default function App() {
               { id: 'cobertura', label: 'Cobertura de Clientes', icon: Users },
               { id: 'asesor', label: 'Análisis por Asesor', icon: User },
               { id: 'ventas', label: 'Ventas por Vendedor', icon: BarChart3 },
-              { id: 'unicos', label: 'Clientes Únicos', icon: Database },
+              // { id: 'unicos', label: 'Clientes Únicos', icon: Database },
               { id: 'frecuencia', label: 'Frecuencia de Compra', icon: RefreshCw },
               { id: 'tendencias', label: 'Tendencias', icon: Calendar },
               { id: 'comparativos', label: 'Comparativos', icon: PieChart },
