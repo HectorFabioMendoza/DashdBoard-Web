@@ -255,13 +255,19 @@ const Sparkline = ({ data, color }: SparklineProps) => {
   );
 };
 
-const getCellClass = (curr: number, prev: number) => {
+const getCellClass = (curr: number, prev: number, isDarkMode: boolean) => {
   if (curr > prev) {
-    return 'bg-[#DCFCE7] text-[#15803D] dark:bg-[#14532D]/40 dark:text-[#4ADE80] font-extrabold shadow-sm border border-[#16A34A]/25';
+    return isDarkMode 
+      ? 'bg-[#14532D]/40 text-[#4ADE80] font-extrabold shadow-sm border border-[#16A34A]/25'
+      : 'bg-[#DCFCE7] text-[#15803D] font-extrabold shadow-sm border border-[#16A34A]/25';
   } else if (curr === prev) {
-    return 'bg-[#FEF3C7] text-[#B45309] dark:bg-[#78350F]/40 dark:text-[#FCD34D] font-extrabold shadow-sm border border-[#F59E0B]/25';
+    return isDarkMode
+      ? 'bg-[#78350F]/40 text-[#FCD34D] font-extrabold shadow-sm border border-[#F59E0B]/25'
+      : 'bg-[#FEF3C7] text-[#B45309] font-extrabold shadow-sm border border-[#F59E0B]/25';
   } else {
-    return 'bg-[#FEE2E2] text-[#B91C1C] dark:bg-[#7F1D1D]/40 dark:text-[#FCA5A5] font-extrabold shadow-sm border border-[#EF4444]/25';
+    return isDarkMode
+      ? 'bg-[#7F1D1D]/40 text-[#FCA5A5] font-extrabold shadow-sm border border-[#EF4444]/25'
+      : 'bg-[#FEE2E2] text-[#B91C1C] font-extrabold shadow-sm border border-[#EF4444]/25';
   }
 };
 
@@ -2523,10 +2529,10 @@ export default function App() {
                     </thead>
                     <tbody>
                       {chartAdvisorsData.map((adv) => {
-                        const cellEne = getCellClass(adv.Enero, adv.Dic25);
-                        const cellFeb = getCellClass(adv.Febrero, adv.Enero);
-                        const cellMar = getCellClass(adv.Marzo, adv.Febrero);
-                        const cellAbr = getCellClass(adv.Abril, adv.Marzo);
+                        const cellEne = getCellClass(adv.Enero, adv.Dic25, isDarkMode);
+                        const cellFeb = getCellClass(adv.Febrero, adv.Enero, isDarkMode);
+                        const cellMar = getCellClass(adv.Marzo, adv.Febrero, isDarkMode);
+                        const cellAbr = getCellClass(adv.Abril, adv.Marzo, isDarkMode);
                         
                         const diffVal = adv.Abril - adv.Marzo;
                         const diffPct = adv.Marzo > 0 ? ((diffVal / adv.Marzo) * 100).toFixed(1) : "0.0";
@@ -2605,10 +2611,10 @@ export default function App() {
                         const sumMar = chartAdvisorsData.reduce((acc, curr) => acc + (curr.Marzo || 0), 0);
                         const sumAbr = chartAdvisorsData.reduce((acc, curr) => acc + (curr.Abril || 0), 0);
 
-                        const totalEneCell = getCellClass(sumEne, sumDic);
-                        const totalFebCell = getCellClass(sumFeb, sumEne);
-                        const totalMarCell = getCellClass(sumMar, sumFeb);
-                        const totalAbrCell = getCellClass(sumAbr, sumMar);
+                        const totalEneCell = getCellClass(sumEne, sumDic, isDarkMode);
+                        const totalFebCell = getCellClass(sumFeb, sumEne, isDarkMode);
+                        const totalMarCell = getCellClass(sumMar, sumFeb, isDarkMode);
+                        const totalAbrCell = getCellClass(sumAbr, sumMar, isDarkMode);
 
                         const totalDiffVal = sumAbr - sumMar;
                         const totalDiffPct = sumMar > 0 ? ((totalDiffVal / sumMar) * 100).toFixed(1) : "0.0";
