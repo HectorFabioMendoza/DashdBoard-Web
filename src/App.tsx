@@ -80,6 +80,18 @@ const toTitleCase = (str: string) => {
     .join(' ');
 };
 
+// Función para convertir fecha serial de Excel a formato de texto DD/MM/AAAA
+const formatExcelDate = (serial: number): string => {
+  if (!serial) return '-';
+  const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+  const jsDate = new Date(excelEpoch.getTime() + serial * 24 * 60 * 60 * 1000);
+  const day = String(jsDate.getUTCDate()).padStart(2, '0');
+  const month = String(jsDate.getUTCMonth() + 1).padStart(2, '0');
+  const year = jsDate.getUTCFullYear();
+  return `${day}/${month}/${year}`;
+};
+
+
 // Formateador financiero premium en Millones/Billones de COP ($X.XXX M / $X,X B)
 const formatMillionsValue = (valInMillions: number) => {
   if (valInMillions >= 10000) {
@@ -311,6 +323,12 @@ export default function App() {
   // Estado para la gráfica individual de tendencia
   const [selectedIndividualVendor, setSelectedIndividualVendor] = useState('');
   const [reloadTrigger, setReloadTrigger] = useState(0);
+
+  // Estados para la pestaña de Frecuencia de Compra - Detalle Operativo de Clientes
+  const [selectedRiskCategory, setSelectedRiskCategory] = useState<'Saludable' | 'Atención' | 'Riesgo' | 'Perdido'>('Perdido');
+  const [clientSearchQuery, setClientSearchQuery] = useState('');
+  const [clientListPage, setClientListPage] = useState(1);
+
 
   // 1. Cargar el Excel local de forma automática al iniciar la página
   useEffect(() => {
@@ -724,7 +742,8 @@ export default function App() {
       return {
         summary: { saludable: 0, atencion: 0, riesgo: 0, perdido: 0, total: 0, avgInactivity: 0 },
         byVendor: [],
-        chartData: []
+        chartData: [],
+        clientsList: []
       };
     }
 
@@ -732,7 +751,8 @@ export default function App() {
       return {
         summary: { saludable: 0, atencion: 0, riesgo: 0, perdido: 0, total: 0, avgInactivity: 0 },
         byVendor: [],
-        chartData: []
+        chartData: [],
+        clientsList: []
       };
     }
 
@@ -782,7 +802,7 @@ export default function App() {
     const referenceDateSerial = getNextMonthFirstDaySerial(latestMonthId);
 
     // Mapa para almacenar la fecha de última compra de cada cliente único
-    const clientLastPurchase: Record<string, { lastDateSerial: number, sellerName: string }> = {};
+    const clientLastPurchase: Record<string, { lastDateSerial: number, sellerName: string, clientName: string }> = {};
 
     const mesMap: Record<string, string> = {
       'Sep25': 'Septiembre', 'Oct25': 'Octubre', 'Nov25': 'Noviembre', 'Dic25': 'Diciembre',
@@ -813,7 +833,8 @@ export default function App() {
       if (!clientLastPurchase[clientCode] || dateSerial > clientLastPurchase[clientCode].lastDateSerial) {
         clientLastPurchase[clientCode] = {
           lastDateSerial: dateSerial,
-          sellerName: name
+          sellerName: name,
+          clientName: row.nombre_cli ? String(row.nombre_cli).trim() : 'CLIENTE SIN NOMBRE'
         };
       }
     });
@@ -832,7 +853,16 @@ export default function App() {
       vendorRiskMap[v] = { saludable: 0, atencion: 0, riesgo: 0, perdido: 0, totalDays: 0, totalClients: 0 };
     });
 
-    Object.entries(clientLastPurchase).forEach(([_, info]) => {
+    const clientsList: Array<{
+      clientCode: string;
+      clientName: string;
+      sellerName: string;
+      lastDateSerial: number;
+      inactivityDays: number;
+      category: 'Saludable' | 'Atención' | 'Riesgo' | 'Perdido';
+    }> = [];
+
+    Object.entries(clientLastPurchase).forEach(([clientCode, info]) => {
       const inactivityDays = Math.max(0, referenceDateSerial - info.lastDateSerial);
       totalInactivityDaysSum += inactivityDays;
       totalClientsCount++;
@@ -845,19 +875,34 @@ export default function App() {
       vendorRiskMap[vName].totalDays += inactivityDays;
       vendorRiskMap[vName].totalClients++;
 
+      let category: 'Saludable' | 'Atención' | 'Riesgo' | 'Perdido';
+
       if (inactivityDays <= 15) {
         saludable++;
         vendorRiskMap[vName].saludable++;
+        category = 'Saludable';
       } else if (inactivityDays <= 30) {
         atencion++;
         vendorRiskMap[vName].atencion++;
+        category = 'Atención';
       } else if (inactivityDays <= 60) {
         riesgo++;
         vendorRiskMap[vName].riesgo++;
+        category = 'Riesgo';
       } else {
         perdido++;
         vendorRiskMap[vName].perdido++;
+        category = 'Perdido';
       }
+
+      clientsList.push({
+        clientCode,
+        clientName: info.clientName,
+        sellerName: info.sellerName,
+        lastDateSerial: info.lastDateSerial,
+        inactivityDays,
+        category
+      });
     });
 
     const avgInactivity = totalClientsCount > 0 ? parseFloat((totalInactivityDaysSum / totalClientsCount).toFixed(1)) : 0;
@@ -886,9 +931,36 @@ export default function App() {
     return {
       summary: { saludable, atencion, riesgo, perdido, total: totalClientsCount, avgInactivity },
       byVendor: byVendorArray,
-      chartData
+      chartData,
+      clientsList
     };
   }, [rawExcelRows, selectedVendors, selectedMonths]);
+
+  // Filtrado, búsqueda y paginación de clientes según estado de riesgo (Frecuencia de Compra)
+  const filteredClients = useMemo(() => {
+    if (!clientRecencyData.clientsList) return [];
+    return clientRecencyData.clientsList.filter(client => {
+      const matchesCategory = client.category === selectedRiskCategory;
+      if (!matchesCategory) return false;
+
+      const query = clientSearchQuery.trim().toLowerCase();
+      if (!query) return true;
+
+      return (
+        client.clientCode.toLowerCase().includes(query) ||
+        client.clientName.toLowerCase().includes(query) ||
+        client.sellerName.toLowerCase().includes(query)
+      );
+    });
+  }, [clientRecencyData.clientsList, selectedRiskCategory, clientSearchQuery]);
+
+  const ITEMS_PER_PAGE = 12;
+  const totalPages = Math.ceil(filteredClients.length / ITEMS_PER_PAGE);
+  const startIndex = (clientListPage - 1) * ITEMS_PER_PAGE;
+  const paginatedClients = useMemo(() => {
+    return filteredClients.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredClients, startIndex]);
+
 
   // TENDENCIAS DE FACTURACION
   const monthlyTrends = useMemo(() => {
@@ -3090,9 +3162,16 @@ export default function App() {
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
               
               {/* Tarjeta 1: Saludable */}
-              <div className={`p-4 rounded-xl border flex items-start gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${
-                isDarkMode ? 'bg-[#0F1115] border-slate-800/80' : 'bg-white border-slate-200/60 shadow-sm'
-              } border-l-4 border-l-[#059669]`}>
+              <div 
+                onClick={() => { setSelectedRiskCategory('Saludable'); setClientListPage(1); }}
+                className={`p-4 rounded-xl border flex items-start gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${
+                  isDarkMode ? 'bg-[#0F1115]' : 'bg-white shadow-sm'
+                } border-l-4 border-l-[#059669] ${
+                  selectedRiskCategory === 'Saludable'
+                    ? isDarkMode ? 'border-slate-700 ring-2 ring-[#059669] bg-emerald-950/5' : 'border-slate-300 ring-2 ring-[#059669] bg-emerald-50/20'
+                    : isDarkMode ? 'border-slate-800/80' : 'border-slate-200/60'
+                }`}
+              >
                 <div className="flex-1 min-w-0">
                   <span style={{ color: isDarkMode ? '#94A3B8' : '#475569' }} className="text-[11px] font-bold tracking-[0.5px] uppercase block">
                     Saludable (0-15 días)
@@ -3107,9 +3186,16 @@ export default function App() {
               </div>
 
               {/* Tarjeta 2: Atención */}
-              <div className={`p-4 rounded-xl border flex items-start gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${
-                isDarkMode ? 'bg-[#0F1115] border-slate-800/80' : 'bg-white border-slate-200/60 shadow-sm'
-              } border-l-4 border-l-[#D97706]`}>
+              <div 
+                onClick={() => { setSelectedRiskCategory('Atención'); setClientListPage(1); }}
+                className={`p-4 rounded-xl border flex items-start gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${
+                  isDarkMode ? 'bg-[#0F1115]' : 'bg-white shadow-sm'
+                } border-l-4 border-l-[#D97706] ${
+                  selectedRiskCategory === 'Atención'
+                    ? isDarkMode ? 'border-slate-700 ring-2 ring-[#D97706] bg-amber-950/5' : 'border-slate-300 ring-2 ring-[#D97706] bg-amber-50/20'
+                    : isDarkMode ? 'border-slate-800/80' : 'border-slate-200/60'
+                }`}
+              >
                 <div className="flex-1 min-w-0">
                   <span style={{ color: isDarkMode ? '#94A3B8' : '#475569' }} className="text-[11px] font-bold tracking-[0.5px] uppercase block">
                     Atención (16-30 días)
@@ -3124,12 +3210,19 @@ export default function App() {
               </div>
 
               {/* Tarjeta 3: Riesgo */}
-              <div className={`p-4 rounded-xl border flex items-start gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${
-                isDarkMode ? 'bg-[#0F1115] border-slate-800/80' : 'bg-white border-slate-200/60 shadow-sm'
-              } border-l-4 border-l-[#F97316]`}>
+              <div 
+                onClick={() => { setSelectedRiskCategory('Riesgo'); setClientListPage(1); }}
+                className={`p-4 rounded-xl border flex items-start gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${
+                  isDarkMode ? 'bg-[#0F1115]' : 'bg-white shadow-sm'
+                } border-l-4 border-l-[#F97316] ${
+                  selectedRiskCategory === 'Riesgo'
+                    ? isDarkMode ? 'border-slate-700 ring-2 ring-[#F97316] bg-orange-950/5' : 'border-slate-300 ring-2 ring-[#F97316] bg-orange-50/20'
+                    : isDarkMode ? 'border-slate-800/80' : 'border-slate-200/60'
+                }`}
+              >
                 <div className="flex-1 min-w-0">
                   <span style={{ color: isDarkMode ? '#94A3B8' : '#475569' }} className="text-[11px] font-bold tracking-[0.5px] uppercase block">
-                    Riesgo ({'>'}30 días)
+                    Riesgo (31-60 días)
                   </span>
                   <span style={{ color: isDarkMode ? '#EA580C' : '#F97316' }} className="text-[25px] font-black leading-none block mt-1">
                     {clientRecencyData.summary.riesgo}
@@ -3141,9 +3234,16 @@ export default function App() {
               </div>
 
               {/* Tarjeta 4: Perdido */}
-              <div className={`p-4 rounded-xl border flex items-start gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${
-                isDarkMode ? 'bg-[#0F1115] border-slate-800/80' : 'bg-white border-slate-200/60 shadow-sm'
-              } border-l-4 border-l-[#E11D48]`}>
+              <div 
+                onClick={() => { setSelectedRiskCategory('Perdido'); setClientListPage(1); }}
+                className={`p-4 rounded-xl border flex items-start gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${
+                  isDarkMode ? 'bg-[#0F1115]' : 'bg-white shadow-sm'
+                } border-l-4 border-l-[#E11D48] ${
+                  selectedRiskCategory === 'Perdido'
+                    ? isDarkMode ? 'border-slate-700 ring-2 ring-[#E11D48] bg-red-950/5' : 'border-slate-300 ring-2 ring-[#E11D48] bg-red-50/20'
+                    : isDarkMode ? 'border-slate-800/80' : 'border-slate-200/60'
+                }`}
+              >
                 <div className="flex-1 min-w-0">
                   <span style={{ color: isDarkMode ? '#94A3B8' : '#475569' }} className="text-[11px] font-bold tracking-[0.5px] uppercase block">
                     Perdido ({'>'}60 días)
@@ -3158,7 +3258,7 @@ export default function App() {
               </div>
 
               {/* Tarjeta 5: Promedio General */}
-              <div className={`p-4 rounded-xl border flex items-start gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${
+              <div className={`p-4 rounded-xl border flex items-start gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md ${
                 isDarkMode ? 'bg-[#0F1115] border-slate-800/80' : 'bg-white border-slate-200/60 shadow-sm'
               } border-l-4 border-l-indigo-500`}>
                 <div className="flex-1 min-w-0">
@@ -3231,7 +3331,15 @@ export default function App() {
                         />
                         <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={40}>
                           {clientRecencyData.chartData.map((entry, idx) => (
-                            <Cell key={`cell-${idx}`} fill={isDarkMode ? entry.darkColor : entry.color} />
+                            <Cell 
+                              key={`cell-${idx}`} 
+                              fill={isDarkMode ? entry.darkColor : entry.color} 
+                              onClick={() => {
+                                setSelectedRiskCategory(entry.name as any);
+                                setClientListPage(1);
+                              }}
+                              className="cursor-pointer"
+                            />
                           ))}
                           <LabelList 
                             dataKey="value" 
@@ -3309,6 +3417,192 @@ export default function App() {
               </section>
 
             </div>
+
+            {/* Listado Detalle de Clientes según Estado de Riesgo */}
+            <section className={`p-6 rounded-2xl border transition-colors duration-300 ${
+              isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
+            }`}>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span style={{ color: isDarkMode ? '#94A3B8' : '#475569' }} className="text-[14px] font-semibold uppercase tracking-wider block">
+                      Detalle Operativo de Clientes
+                    </span>
+                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
+                      selectedRiskCategory === 'Saludable' ? 'bg-emerald-500/10 text-emerald-500' :
+                      selectedRiskCategory === 'Atención' ? 'bg-amber-500/10 text-amber-500' :
+                      selectedRiskCategory === 'Riesgo' ? 'bg-orange-500/10 text-orange-500' :
+                      'bg-red-500/10 text-red-500'
+                    }`}>
+                      {selectedRiskCategory}
+                    </span>
+                  </div>
+                  <h3 style={{ color: isDarkMode ? '#F8FAFC' : '#0F172A' }} className="text-[16px] font-bold uppercase tracking-tight">
+                    Listado de clientes clasificados en estado {selectedRiskCategory}
+                  </h3>
+                </div>
+
+                {/* Selector y Buscador */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  {/* Selector de Categoría (Listbox) */}
+                  <div className="relative">
+                    <select
+                      value={selectedRiskCategory}
+                      onChange={(e) => {
+                        setSelectedRiskCategory(e.target.value as any);
+                        setClientListPage(1);
+                      }}
+                      className={`w-full sm:w-[220px] pl-3 pr-8 py-2 text-[12px] font-extrabold uppercase tracking-wider rounded-xl border appearance-none focus:outline-none focus:ring-2 transition-all cursor-pointer ${
+                        isDarkMode 
+                          ? 'bg-[#0F1115] border-gray-800 text-gray-200 focus:ring-indigo-500 focus:border-indigo-500' 
+                          : 'bg-white border-gray-200 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm'
+                      }`}
+                    >
+                      <option value="Saludable">🟢 Saludable (0-15 días)</option>
+                      <option value="Atención">🟡 Atención (16-30 días)</option>
+                      <option value="Riesgo">🟠 Riesgo (31-60 días)</option>
+                      <option value="Perdido">🔴 Perdido (&gt;60 días)</option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
+                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                    </div>
+                  </div>
+
+                  {/* Buscador */}
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Buscar por nombre o código..."
+                      value={clientSearchQuery}
+                      onChange={(e) => {
+                        setClientSearchQuery(e.target.value);
+                        setClientListPage(1);
+                      }}
+                      className={`w-full sm:w-[240px] pl-9 pr-3 py-2 text-[12px] rounded-xl border focus:outline-none focus:ring-2 transition-all ${
+                        isDarkMode 
+                          ? 'bg-[#0F1115] border-gray-800 text-gray-200 focus:ring-indigo-500 focus:border-indigo-500' 
+                          : 'bg-white border-gray-200 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm'
+                      }`}
+                    />
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                      <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                    {clientSearchQuery && (
+                      <button
+                        onClick={() => {
+                          setClientSearchQuery('');
+                          setClientListPage(1);
+                        }}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+                      >
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Tabla de Clientes */}
+              <div className="overflow-x-auto rounded-xl border border-gray-200/40 dark:border-gray-800/40">
+                <table className="w-full text-left border-collapse text-[12px]">
+                  <thead>
+                    <tr className={`border-b transition-colors font-extrabold text-[11px] uppercase tracking-wider ${
+                      isDarkMode ? 'border-gray-800/60 bg-gray-950/20 text-table-header' : 'border-gray-200 bg-gray-50/50 text-table-header'
+                    }`}>
+                      <th className="py-3 px-4 font-black">Código</th>
+                      <th className="py-3 px-4 font-black">Nombre del Cliente</th>
+                      <th className="py-3 px-4 font-black">Asesor Responsable</th>
+                      <th className="py-3 px-4 font-black text-right">Última Compra</th>
+                      <th className="py-3 px-4 font-black text-right">Días de Inactividad</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedClients.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="py-12 text-center text-gray-500 font-semibold">
+                          No se encontraron clientes en esta categoría con los filtros actuales.
+                        </td>
+                      </tr>
+                    ) : (
+                      paginatedClients.map((client) => (
+                        <tr 
+                          key={client.clientCode}
+                          className={`border-b transition-all duration-200 ${
+                            isDarkMode 
+                              ? 'border-gray-800/40 hover:bg-gray-900/20 text-gray-300' 
+                              : 'border-gray-100 hover:bg-gray-50 text-gray-700'
+                          }`}
+                        >
+                          <td className="py-3 px-4 font-mono font-bold">{client.clientCode}</td>
+                          <td className="py-3 px-4 font-black text-slate-800 dark:text-slate-200 uppercase">{client.clientName}</td>
+                          <td className="py-3 px-4 font-bold">{getShortNameWithLastName(client.sellerName)}</td>
+                          <td className="py-3 px-4 text-right font-bold text-slate-500 dark:text-slate-400">{formatExcelDate(client.lastDateSerial)}</td>
+                          <td className="py-3 px-4 text-right font-black text-indigo-650 dark:text-indigo-400">
+                            {client.inactivityDays} días
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Paginación */}
+              {totalPages > 1 && (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t border-gray-200/40 dark:border-gray-800/40">
+                  <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                    Mostrando {startIndex + 1}-{Math.min(startIndex + ITEMS_PER_PAGE, filteredClients.length)} de {filteredClients.length} clientes
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => setClientListPage(prev => Math.max(1, prev - 1))}
+                      disabled={clientListPage === 1}
+                      className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all ${
+                        clientListPage === 1
+                          ? 'text-gray-400 bg-gray-100 dark:bg-gray-800/40 cursor-not-allowed opacity-50'
+                          : 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-950/20 dark:hover:bg-indigo-950/40'
+                      }`}
+                    >
+                      Anterior
+                    </button>
+                    
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .filter(p => p === 1 || p === totalPages || Math.abs(p - clientListPage) <= 1)
+                      .map((p, i, arr) => {
+                        const showEllipsis = i > 0 && p - arr[i - 1] > 1;
+                        return (
+                          <React.Fragment key={p}>
+                            {showEllipsis && <span className="px-1.5 text-gray-400">...</span>}
+                            <button
+                              onClick={() => setClientListPage(p)}
+                              className={`w-7 h-7 flex items-center justify-center text-[11px] font-bold rounded-lg transition-all ${
+                                clientListPage === p
+                                  ? 'bg-indigo-600 text-white dark:bg-indigo-500'
+                                  : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800/60'
+                              }`}
+                            >
+                              {p}
+                            </button>
+                          </React.Fragment>
+                        );
+                      })}
+
+                    <button
+                      onClick={() => setClientListPage(prev => Math.min(totalPages, prev + 1))}
+                      disabled={clientListPage === totalPages}
+                      className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider rounded-xl transition-all ${
+                        clientListPage === totalPages
+                          ? 'text-gray-400 bg-gray-100 dark:bg-gray-800/40 cursor-not-allowed opacity-50'
+                          : 'text-indigo-600 bg-indigo-50 hover:bg-indigo-100 dark:text-indigo-400 dark:bg-indigo-950/20 dark:hover:bg-indigo-950/40'
+                      }`}
+                    >
+                      Siguiente
+                    </button>
+                  </div>
+                </div>
+              )}
+            </section>
+
           </div>
         )}
 
