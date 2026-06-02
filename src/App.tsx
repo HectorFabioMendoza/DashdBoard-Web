@@ -255,19 +255,31 @@ const Sparkline = ({ data, color }: SparklineProps) => {
   );
 };
 
-const getCellClass = (curr: number, prev: number, isDarkMode: boolean) => {
-  if (curr > prev) {
+const getCellClass = (value: number, avg: number, isDarkMode: boolean) => {
+  if (avg === 0) {
+    return value > 0 
+      ? (isDarkMode 
+          ? 'bg-[#14532D]/40 text-[#4ADE80] font-extrabold shadow-sm border border-[#16A34A]/25'
+          : 'bg-[#DCFCE7] text-[#15803D] font-extrabold shadow-sm border border-[#16A34A]/25')
+      : (isDarkMode 
+          ? 'bg-[#78350F]/40 text-[#FCD34D] font-extrabold shadow-sm border border-[#F59E0B]/25'
+          : 'bg-[#FEF3C7] text-[#B45309] font-extrabold shadow-sm border border-[#F59E0B]/25');
+  }
+
+  const deviation = (value - avg) / avg;
+
+  if (deviation > 0.04) {
     return isDarkMode 
       ? 'bg-[#14532D]/40 text-[#4ADE80] font-extrabold shadow-sm border border-[#16A34A]/25'
       : 'bg-[#DCFCE7] text-[#15803D] font-extrabold shadow-sm border border-[#16A34A]/25';
-  } else if (curr === prev) {
-    return isDarkMode
-      ? 'bg-[#78350F]/40 text-[#FCD34D] font-extrabold shadow-sm border border-[#F59E0B]/25'
-      : 'bg-[#FEF3C7] text-[#B45309] font-extrabold shadow-sm border border-[#F59E0B]/25';
-  } else {
+  } else if (deviation < -0.04) {
     return isDarkMode
       ? 'bg-[#7F1D1D]/40 text-[#FCA5A5] font-extrabold shadow-sm border border-[#EF4444]/25'
       : 'bg-[#FEE2E2] text-[#B91C1C] font-extrabold shadow-sm border border-[#EF4444]/25';
+  } else {
+    return isDarkMode
+      ? 'bg-[#78350F]/40 text-[#FCD34D] font-extrabold shadow-sm border border-[#F59E0B]/25'
+      : 'bg-[#FEF3C7] text-[#B45309] font-extrabold shadow-sm border border-[#F59E0B]/25';
   }
 };
 
@@ -2478,10 +2490,14 @@ export default function App() {
                     </thead>
                     <tbody>
                       {chartAdvisorsData.map((adv) => {
-                        const cellEne = getCellClass(adv.Enero, adv.Dic25, isDarkMode);
-                        const cellFeb = getCellClass(adv.Febrero, adv.Enero, isDarkMode);
-                        const cellMar = getCellClass(adv.Marzo, adv.Febrero, isDarkMode);
-                        const cellAbr = getCellClass(adv.Abril, adv.Marzo, isDarkMode);
+                        const activeMonths = [adv.Dic25 || 0, adv.Enero || 0, adv.Febrero || 0, adv.Marzo || 0, adv.Abril || 0].filter(val => val > 0);
+                        const totalCoverage = activeMonths.reduce((sum, val) => sum + val, 0);
+                        const avgCoverage = activeMonths.length > 0 ? totalCoverage / activeMonths.length : 0;
+
+                        const cellEne = getCellClass(adv.Enero, avgCoverage, isDarkMode);
+                        const cellFeb = getCellClass(adv.Febrero, avgCoverage, isDarkMode);
+                        const cellMar = getCellClass(adv.Marzo, avgCoverage, isDarkMode);
+                        const cellAbr = getCellClass(adv.Abril, avgCoverage, isDarkMode);
                         
                         const diffVal = adv.Abril - adv.Marzo;
                         const diffPct = adv.Marzo > 0 ? ((diffVal / adv.Marzo) * 100).toFixed(1) : "0.0";
@@ -2560,10 +2576,14 @@ export default function App() {
                         const sumMar = chartAdvisorsData.reduce((acc, curr) => acc + (curr.Marzo || 0), 0);
                         const sumAbr = chartAdvisorsData.reduce((acc, curr) => acc + (curr.Abril || 0), 0);
 
-                        const totalEneCell = getCellClass(sumEne, sumDic, isDarkMode);
-                        const totalFebCell = getCellClass(sumFeb, sumEne, isDarkMode);
-                        const totalMarCell = getCellClass(sumMar, sumFeb, isDarkMode);
-                        const totalAbrCell = getCellClass(sumAbr, sumMar, isDarkMode);
+                        const activeTotalMonths = [sumDic, sumEne, sumFeb, sumMar, sumAbr].filter(val => val > 0);
+                        const totalEnterpriseCoverage = activeTotalMonths.reduce((sum, val) => sum + val, 0);
+                        const avgEnterpriseCoverage = activeTotalMonths.length > 0 ? totalEnterpriseCoverage / activeTotalMonths.length : 0;
+
+                        const totalEneCell = getCellClass(sumEne, avgEnterpriseCoverage, isDarkMode);
+                        const totalFebCell = getCellClass(sumFeb, avgEnterpriseCoverage, isDarkMode);
+                        const totalMarCell = getCellClass(sumMar, avgEnterpriseCoverage, isDarkMode);
+                        const totalAbrCell = getCellClass(sumAbr, avgEnterpriseCoverage, isDarkMode);
 
                         const totalDiffVal = sumAbr - sumMar;
                         const totalDiffPct = sumMar > 0 ? ((totalDiffVal / sumMar) * 100).toFixed(1) : "0.0";
