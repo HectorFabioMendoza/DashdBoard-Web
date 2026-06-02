@@ -9,6 +9,7 @@ import {
   Calendar,
   Search,
   Lock,
+  Unlock,
   LogOut,
   Eye,
   EyeOff,
@@ -328,6 +329,26 @@ export default function App() {
   const [selectedRiskCategory, setSelectedRiskCategory] = useState<'Saludable' | 'Atención' | 'Riesgo' | 'Perdido'>('Perdido');
   const [clientSearchQuery, setClientSearchQuery] = useState('');
   const [clientListPage, setClientListPage] = useState(1);
+
+  // Estado para el candado de seguridad de datos financieros (Ventas por Vendedor y Tendencias)
+  const [isFinancialDataUnlocked, setIsFinancialDataUnlocked] = useState(false);
+  const [showFinancialUnlockModal, setShowFinancialUnlockModal] = useState(false);
+  const [financialPassword, setFinancialPassword] = useState('');
+  const [financialPasswordError, setFinancialPasswordError] = useState('');
+
+  const handleFinancialLockToggle = () => {
+    if (isFinancialDataUnlocked) {
+      setIsFinancialDataUnlocked(false);
+      if (activeTab === 'ventas' || activeTab === 'tendencias') {
+        setActiveTab('cobertura');
+      }
+    } else {
+      setFinancialPassword('');
+      setFinancialPasswordError('');
+      setShowFinancialUnlockModal(true);
+    }
+  };
+
 
 
   // 1. Cargar el Excel local de forma automática al iniciar la página
@@ -1552,11 +1573,11 @@ export default function App() {
               { id: 'cobertura', label: 'Cobertura de Clientes', icon: Users },
               { id: 'asesor', label: 'Análisis por Asesor', icon: User },
               { id: 'frecuencia', label: 'Frecuencia de Compra', icon: RefreshCw },
-              { id: 'ventas', label: 'Ventas por Vendedor', icon: BarChart3 },
+              { id: 'ventas', label: 'Ventas por Vendedor', icon: BarChart3, sensitive: true },
               // { id: 'unicos', label: 'Clientes Únicos', icon: Database },
-              { id: 'tendencias', label: 'Tendencias', icon: Calendar },
+              { id: 'tendencias', label: 'Tendencias', icon: Calendar, sensitive: true },
               { id: 'comparativos', label: 'Comparativos', icon: PieChart },
-            ].map(tab => {
+            ].filter(tab => !tab.sensitive || isFinancialDataUnlocked).map(tab => {
               const IconComp = tab.icon;
               const isActive = activeTab === tab.id;
               return (
@@ -1575,6 +1596,24 @@ export default function App() {
                 </button>
               );
             })}
+
+            {/* Botón de Candado de Seguridad */}
+            <button
+              onClick={handleFinancialLockToggle}
+              className={`w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-3 mt-4 border border-dashed ${
+                isFinancialDataUnlocked
+                  ? 'border-emerald-500/20 text-[#10B981] hover:bg-[#10B981]/10'
+                  : 'border-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-800/40'
+              }`}
+              title={isFinancialDataUnlocked ? "Bloquear datos financieros" : "Desbloquear datos financieros"}
+            >
+              {isFinancialDataUnlocked ? <Unlock size={16} className="shrink-0" /> : <Lock size={16} className="shrink-0" />}
+              {!isSidebarCollapsed && (
+                <span className="truncate">
+                  {isFinancialDataUnlocked ? "Financiero Abierto" : "Financiero Cerrado"}
+                </span>
+              )}
+            </button>
           </nav>
         </div>
 
@@ -1692,7 +1731,19 @@ export default function App() {
           </div>
         </header>
 
-        {activeTab === 'cobertura' ? (
+        {(activeTab === 'ventas' || activeTab === 'tendencias') && !isFinancialDataUnlocked ? (
+          <div className="flex flex-col items-center justify-center p-12 min-h-[460px] border border-dashed border-gray-300 dark:border-gray-800 rounded-2xl bg-gray-500/5 backdrop-blur-sm animate-fade-in select-none">
+            <div className="p-4 bg-amber-500/10 text-amber-500 rounded-2xl mb-4 border border-amber-500/20">
+              <Lock size={32} />
+            </div>
+            <h3 style={{ color: isDarkMode ? '#F8FAFC' : '#0F172A' }} className="text-[16px] font-bold uppercase tracking-tight mb-2">Acceso Restringido</h3>
+            <p style={{ color: isDarkMode ? '#94A3B8' : '#475569' }} className="text-xs text-center max-w-sm leading-relaxed">
+              Esta sección contiene información financiera altamente sensible de la compañía. Haz clic en el candado del menú lateral e ingresa la contraseña de seguridad para desbloquearla.
+            </p>
+          </div>
+        ) : (
+          <>
+            {activeTab === 'cobertura' ? (
           <section className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3.5 mb-5 animate-fade-in select-none">
             {/* KPI 1: CLIENTES ACTIVOS TOTALES */}
             <div className={`p-4 rounded-xl border flex items-start gap-3.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/40 dark:hover:shadow-black/30 cursor-pointer ${
@@ -4077,6 +4128,9 @@ export default function App() {
           </div>
         )}
 
+          </>
+        )}
+
       </main>
 
       {/* 3. PANEL DERECHO DE FILTROS (10.5% DE ANCHO - FIJO Y COLAPSABLE) */}
@@ -4237,6 +4291,107 @@ export default function App() {
           )}
         </div>
       </aside>
+
+      {/* MODAL DE SEGURIDAD PARA ACCESO FINANCIERO */}
+      {showFinancialUnlockModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className={`w-full max-w-md border rounded-3xl p-6 relative shadow-2xl transition-all duration-300 ${
+            isDarkMode 
+              ? 'bg-[#111318] border-gray-800 shadow-blue-900/10' 
+              : 'bg-white border-gray-200 shadow-slate-300/40'
+          }`}>
+            <div className="flex flex-col items-center mb-6">
+              <div className={`p-3.5 rounded-2xl border mb-3 shadow-md ${
+                isDarkMode 
+                  ? 'bg-amber-600/10 border-amber-500/20 text-amber-500' 
+                  : 'bg-amber-50 border-amber-200 text-amber-600'
+              }`}>
+                <Lock size={24} />
+              </div>
+              <h3 className={`text-lg font-black tracking-tight ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>Acceso Restringido</h3>
+              <p className={`text-[11px] font-bold uppercase tracking-wider text-center mt-1 ${
+                isDarkMode ? 'text-gray-400' : 'text-gray-500'
+              }`}>
+                Se requieren credenciales financieras para ver esta sección
+              </p>
+            </div>
+
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (financialPassword === CORRECT_PASSWORD) {
+                  setIsFinancialDataUnlocked(true);
+                  setShowFinancialUnlockModal(false);
+                  setFinancialPassword('');
+                  setFinancialPasswordError('');
+                } else {
+                  setFinancialPasswordError('Contraseña incorrecta. Acceso denegado.');
+                }
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className={`block text-[11px] font-bold uppercase tracking-wider mb-2 ${
+                  isDarkMode ? 'text-gray-400' : 'text-gray-600'
+                }`}>
+                  Contraseña de Seguridad
+                </label>
+                <div className="relative">
+                  <span className="absolute left-4 top-3 text-gray-500">
+                    <Lock size={14} />
+                  </span>
+                  <input
+                    type="password"
+                    placeholder="Introduce la contraseña"
+                    value={financialPassword}
+                    onChange={(e) => {
+                      setFinancialPassword(e.target.value);
+                      setFinancialPasswordError('');
+                    }}
+                    autoFocus
+                    className={`w-full border rounded-2xl py-2.5 pl-10 pr-4 text-xs transition-all duration-300 focus:outline-none focus:ring-1 focus:ring-amber-500/20 ${
+                      isDarkMode 
+                        ? 'bg-[#0F1115] border-gray-800 text-gray-100 placeholder-gray-600 focus:border-amber-500/60' 
+                        : 'bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-amber-500/60 shadow-inner'
+                    }`}
+                  />
+                </div>
+                {financialPasswordError && (
+                  <p className="text-red-500 text-[10px] font-bold uppercase tracking-wider mt-2 flex items-center gap-1.5 animate-bounce">
+                    <span>⚠️</span> {financialPasswordError}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowFinancialUnlockModal(false);
+                    setFinancialPassword('');
+                    setFinancialPasswordError('');
+                  }}
+                  className={`flex-1 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider border transition-colors ${
+                    isDarkMode 
+                      ? 'border-gray-800 text-gray-400 hover:bg-gray-800/40 hover:text-white' 
+                      : 'border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl text-[11px] uppercase tracking-wider transition-all shadow-md"
+                >
+                  Desbloquear
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
     </div>
   );
