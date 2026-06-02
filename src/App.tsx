@@ -939,19 +939,21 @@ export default function App() {
   // Filtrado, búsqueda y paginación de clientes según estado de riesgo (Frecuencia de Compra)
   const filteredClients = useMemo(() => {
     if (!clientRecencyData.clientsList) return [];
-    return clientRecencyData.clientsList.filter(client => {
-      const matchesCategory = client.category === selectedRiskCategory;
-      if (!matchesCategory) return false;
+    return clientRecencyData.clientsList
+      .filter(client => {
+        const matchesCategory = client.category === selectedRiskCategory;
+        if (!matchesCategory) return false;
 
-      const query = clientSearchQuery.trim().toLowerCase();
-      if (!query) return true;
+        const query = clientSearchQuery.trim().toLowerCase();
+        if (!query) return true;
 
-      return (
-        client.clientCode.toLowerCase().includes(query) ||
-        client.clientName.toLowerCase().includes(query) ||
-        client.sellerName.toLowerCase().includes(query)
-      );
-    });
+        return (
+          client.clientCode.toLowerCase().includes(query) ||
+          client.clientName.toLowerCase().includes(query) ||
+          client.sellerName.toLowerCase().includes(query)
+        );
+      })
+      .sort((a, b) => b.inactivityDays - a.inactivityDays); // Ordenar de mayor a menor días de inactividad
   }, [clientRecencyData.clientsList, selectedRiskCategory, clientSearchQuery]);
 
   const ITEMS_PER_PAGE = 12;
@@ -3507,19 +3509,19 @@ export default function App() {
                 <table className="w-full text-left border-collapse text-[12px]">
                   <thead>
                     <tr className={`border-b transition-colors font-extrabold text-[11px] uppercase tracking-wider ${
-                      isDarkMode ? 'border-gray-800/60 bg-gray-950/20 text-table-header' : 'border-gray-200 bg-gray-50/50 text-table-header'
+                      isDarkMode ? 'border-gray-800/60 bg-gray-950/20' : 'border-gray-200 bg-gray-50/50'
                     }`}>
-                      <th className="py-3 px-4 font-black">Código</th>
-                      <th className="py-3 px-4 font-black">Nombre del Cliente</th>
-                      <th className="py-3 px-4 font-black">Asesor Responsable</th>
-                      <th className="py-3 px-4 font-black text-right">Última Compra</th>
-                      <th className="py-3 px-4 font-black text-right">Días de Inactividad</th>
+                      <th className="py-3 px-4 font-black" style={{ color: isDarkMode ? '#F1F5F9' : '#000000' }}>Código</th>
+                      <th className="py-3 px-4 font-black" style={{ color: isDarkMode ? '#F1F5F9' : '#000000' }}>Nombre del Cliente</th>
+                      <th className="py-3 px-4 font-black" style={{ color: isDarkMode ? '#F1F5F9' : '#000000' }}>Asesor Responsable</th>
+                      <th className="py-3 px-4 font-black text-right" style={{ color: isDarkMode ? '#F1F5F9' : '#000000' }}>Última Compra</th>
+                      <th className="py-3 px-4 font-black text-right" style={{ color: isDarkMode ? '#F1F5F9' : '#000000' }}>Días de Inactividad</th>
                     </tr>
                   </thead>
                   <tbody>
                     {paginatedClients.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="py-12 text-center text-gray-500 font-semibold">
+                        <td colSpan={5} className="py-12 text-center font-semibold" style={{ color: isDarkMode ? '#94A3B8' : '#334155' }}>
                           No se encontraron clientes en esta categoría con los filtros actuales.
                         </td>
                       </tr>
@@ -3529,14 +3531,14 @@ export default function App() {
                           key={client.clientCode}
                           className={`border-b transition-all duration-200 ${
                             isDarkMode 
-                              ? 'border-gray-800/40 hover:bg-gray-900/20 text-gray-300' 
-                              : 'border-gray-100 hover:bg-gray-50 text-gray-700'
+                              ? 'border-gray-800/40 hover:bg-gray-900/20' 
+                              : 'border-gray-100 hover:bg-gray-50'
                           }`}
                         >
-                          <td className="py-3 px-4 font-mono font-bold">{client.clientCode}</td>
-                          <td className="py-3 px-4 font-black text-slate-800 dark:text-slate-200 uppercase">{client.clientName}</td>
-                          <td className="py-3 px-4 font-bold">{getShortNameWithLastName(client.sellerName)}</td>
-                          <td className="py-3 px-4 text-right font-bold text-slate-500 dark:text-slate-400">{formatExcelDate(client.lastDateSerial)}</td>
+                          <td className="py-3 px-4 font-mono font-bold" style={{ color: isDarkMode ? '#E2E8F0' : '#0F172A' }}>{client.clientCode}</td>
+                          <td className="py-3 px-4 font-black uppercase text-slate-800 dark:text-slate-200" style={{ color: isDarkMode ? '#F8FAFC' : '#000000' }}>{client.clientName}</td>
+                          <td className="py-3 px-4 font-bold" style={{ color: isDarkMode ? '#CBD5E1' : '#334155' }}>{getShortNameWithLastName(client.sellerName)}</td>
+                          <td className="py-3 px-4 text-right font-bold" style={{ color: isDarkMode ? '#94A3B8' : '#334155' }}>{formatExcelDate(client.lastDateSerial)}</td>
                           <td className="py-3 px-4 text-right font-black text-indigo-650 dark:text-indigo-400">
                             {client.inactivityDays} días
                           </td>
@@ -3550,7 +3552,7 @@ export default function App() {
               {/* Paginación */}
               {totalPages > 1 && (
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t border-gray-200/40 dark:border-gray-800/40">
-                  <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                  <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: isDarkMode ? '#94A3B8' : '#334155' }}>
                     Mostrando {startIndex + 1}-{Math.min(startIndex + ITEMS_PER_PAGE, filteredClients.length)} de {filteredClients.length} clientes
                   </span>
                   <div className="flex items-center gap-1.5">
