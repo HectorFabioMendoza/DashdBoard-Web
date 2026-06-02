@@ -1385,7 +1385,11 @@ export default function App() {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setReloadTrigger(prev => prev + 1)}
-              className="p-1.5 px-3 border rounded-xl text-xs font-bold bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-250 hover:bg-gray-50 dark:hover:bg-gray-850 hover:text-gray-900 dark:hover:text-white transition-all flex items-center gap-1.5 shadow-sm"
+              className={`p-1.5 px-3 border rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm ${
+                isDarkMode 
+                  ? 'bg-slate-900 border-slate-800 text-white hover:bg-slate-800' 
+                  : 'bg-white border-slate-200 text-slate-800 hover:bg-slate-50'
+              }`}
               title="Actualizar Datos"
             >
               <RefreshCw size={12} className={loading ? 'animate-spin' : ''} />
@@ -1393,7 +1397,11 @@ export default function App() {
             </button>
             <button 
               onClick={handleClearFilters}
-              className="p-1.5 px-3 border rounded-xl text-xs font-bold bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-250 hover:bg-gray-50 dark:hover:bg-gray-850 hover:text-gray-900 dark:hover:text-white transition-all flex items-center gap-1.5 shadow-sm"
+              className={`p-1.5 px-3 border rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm ${
+                isDarkMode 
+                  ? 'bg-slate-900 border-slate-800 text-white hover:bg-slate-800' 
+                  : 'bg-white border-slate-200 text-slate-800 hover:bg-slate-50'
+              }`}
               title="Limpiar Filtros"
             >
               <RefreshCw size={12} />
@@ -1401,7 +1409,11 @@ export default function App() {
             </button>
             <button 
               onClick={toggleTheme}
-              className="p-1.5 px-3 border rounded-xl text-xs font-bold bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-250 hover:bg-gray-50 dark:hover:bg-gray-850 hover:text-gray-900 dark:hover:text-white transition-all flex items-center gap-1.5 shadow-sm"
+              className={`p-1.5 px-3 border rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm ${
+                isDarkMode 
+                  ? 'bg-slate-900 border-slate-800 text-white hover:bg-slate-800' 
+                  : 'bg-white border-slate-200 text-slate-800 hover:bg-slate-50'
+              }`}
               title={isDarkMode ? "Modo claro" : "Modo oscuro"}
             >
               {isDarkMode ? <Sun size={12} /> : <Moon size={12} />}
