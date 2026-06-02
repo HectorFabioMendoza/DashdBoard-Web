@@ -3575,7 +3575,10 @@ export default function App() {
               <ChevronLeft size={14} />
             </button>
             {!isFiltersCollapsed && (
-              <span className="text-[12px] font-extrabold text-emerald-600 dark:text-emerald-450 uppercase tracking-widest flex items-center gap-1.5">
+              <span 
+                style={{ color: isDarkMode ? '#4ADE80' : '#059669' }}
+                className="text-[12px] font-extrabold uppercase tracking-widest flex items-center gap-1.5"
+              >
                 <Search size={12} />
                 Filtros Activos
               </span>
@@ -3586,7 +3589,12 @@ export default function App() {
             <div className="space-y-5 flex-1 flex flex-col overflow-hidden">
               {/* Filtro de Períodos */}
               <div className="shrink-0">
-                <label className="text-[12px] font-extrabold text-slate-750 dark:text-slate-300 uppercase tracking-wider block mb-2">Periodos</label>
+                <label 
+                  style={{ color: isDarkMode ? '#CBD5E1' : '#000000' }}
+                  className="text-[12px] font-extrabold uppercase tracking-wider block mb-2"
+                >
+                  Periodos
+                </label>
                 <div className="grid grid-cols-4 gap-1">
                   {MESES_CONFIG.map(m => {
                     const active = selectedMonths.includes(m.id);
@@ -3599,7 +3607,7 @@ export default function App() {
                             ? 'bg-[#16A34A] text-white shadow-sm font-black' 
                             : isDarkMode 
                               ? 'bg-slate-900 text-slate-350 border border-slate-800 hover:border-slate-700'
-                              : 'bg-white text-slate-750 border border-slate-200 hover:border-slate-350'
+                              : 'bg-white text-slate-800 border border-slate-200 hover:border-slate-300'
                         }`}
                       >
                         {m.label.split(' ')[0]}
@@ -3611,7 +3619,12 @@ export default function App() {
 
               {/* Filtro de Vendedores con Buscador y Multiselección */}
               <div className="flex-1 flex flex-col overflow-hidden">
-                <label className="text-[12px] font-extrabold text-slate-750 dark:text-slate-300 uppercase tracking-wider block mb-1">Vendedores</label>
+                <label 
+                  style={{ color: isDarkMode ? '#CBD5E1' : '#000000' }}
+                  className="text-[12px] font-extrabold uppercase tracking-wider block mb-1"
+                >
+                  Vendedores
+                </label>
                 
                 {/* Caja de Búsqueda */}
                 <div className="relative shrink-0 mb-2">
@@ -3631,9 +3644,21 @@ export default function App() {
 
                 {/* Acciones de Vendedores */}
                 <div className="flex justify-between items-center text-[12px] font-bold shrink-0 mb-2 border-b pb-2 border-gray-250/20 dark:border-gray-800/20">
-                  <button onClick={handleSelectAllVendors} className="text-emerald-600 hover:text-emerald-700 dark:text-emerald-450 dark:hover:text-emerald-355 transition-colors font-extrabold">Marcar Todos</button>
-                  <span className="text-slate-400 dark:text-slate-650">•</span>
-                  <button onClick={handleDeselectAllVendors} className="text-slate-550 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300 transition-colors font-extrabold">Limpiar</button>
+                  <button 
+                    onClick={handleSelectAllVendors} 
+                    style={{ color: isDarkMode ? '#4ADE80' : '#059669' }}
+                    className="hover:opacity-80 transition-opacity font-extrabold"
+                  >
+                    Marcar Todos
+                  </button>
+                  <span className="text-slate-400 dark:text-slate-600">•</span>
+                  <button 
+                    onClick={handleDeselectAllVendors} 
+                    style={{ color: isDarkMode ? '#94A3B8' : '#475569' }}
+                    className="hover:opacity-80 transition-opacity font-extrabold"
+                  >
+                    Limpiar
+                  </button>
                 </div>
 
                 {/* Lista Multiselección */}
@@ -3651,7 +3676,7 @@ export default function App() {
                               ? 'bg-[#16A34A]/10 border-[#16A34A]/30 text-[#16A34A]'
                               : isDarkMode
                                 ? 'border-slate-800 hover:bg-slate-900 text-slate-300'
-                                : 'border-slate-200 hover:bg-slate-50 text-slate-750'
+                                : 'border-slate-200 hover:bg-slate-50 text-slate-800'
                           }`}
                         >
                           <div className="relative shrink-0">
@@ -3664,7 +3689,9 @@ export default function App() {
                             <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center transition-all ${
                               isChecked 
                                 ? 'bg-[#16A34A] border-[#16A34A] text-white' 
-                                : 'border-slate-350 dark:border-slate-700 bg-white dark:bg-slate-900'
+                                : isDarkMode 
+                                  ? 'border-slate-700 bg-slate-900 text-slate-400' 
+                                  : 'border-slate-300 bg-white text-slate-600'
                             }`}>
                               {isChecked && (
                                 <svg className="w-2.5 h-2.5 stroke-current" fill="none" viewBox="0 0 24 24" strokeWidth="4">
