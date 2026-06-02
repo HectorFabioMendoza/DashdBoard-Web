@@ -301,7 +301,7 @@ export default function App() {
   const [selectedMonths, setSelectedMonths] = useState<string[]>(MESES_CONFIG.map(m => m.id));
   const [selectedVendors, setSelectedVendors] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'cobertura' | 'ventas' | 'unicos' | 'frecuencia' | 'tendencias' | 'asesor' | 'comparativos'>('ventas');
+  const [activeTab, setActiveTab] = useState<'cobertura' | 'ventas' | 'unicos' | 'frecuencia' | 'tendencias' | 'asesor' | 'comparativos'>('cobertura');
 
   // Estados de navegación del nuevo Sidebar SaaS
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -1298,11 +1298,11 @@ export default function App() {
           <nav className="space-y-1">
             {[
               { id: 'cobertura', label: 'Cobertura de Clientes', icon: Users },
+              { id: 'asesor', label: 'Análisis por Asesor', icon: User },
               { id: 'ventas', label: 'Ventas por Vendedor', icon: BarChart3 },
               { id: 'unicos', label: 'Clientes Únicos', icon: Database },
               { id: 'frecuencia', label: 'Frecuencia de Compra', icon: RefreshCw },
               { id: 'tendencias', label: 'Tendencias', icon: Calendar },
-              { id: 'asesor', label: 'Análisis por Asesor', icon: User },
               { id: 'comparativos', label: 'Comparativos', icon: PieChart },
             ].map(tab => {
               const IconComp = tab.icon;
