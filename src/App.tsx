@@ -29,7 +29,8 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  LabelList
+  LabelList,
+  Cell
 } from 'recharts';
 
 const CORRECT_PASSWORD = "JR2026"; // Contraseña de seguridad modificable
@@ -3332,10 +3333,27 @@ export default function App() {
                     />
                     <Bar 
                       dataKey="salesInMillions" 
-                      fill="url(#asesorGradient)"
                       radius={[4, 4, 0, 0]}
                       barSize={50}
                     >
+                      {(selectedAdvisorAnalysis?.monthlyData || []).map((_, index) => {
+                        const BAR_COLORS = [
+                          '#059669', // Verde Esmeralda
+                          '#7C3AED', // Morado Lavanda
+                          '#2563EB', // Azul Eléctrico
+                          '#D97706', // Amarillo Oro
+                          '#0D9488', // Teal Turquesa
+                          '#E11D48', // Rojo Rosado
+                          '#F97316', // Naranja
+                          '#06B6D4', // Cyan Eléctrico
+                        ];
+                        return (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={BAR_COLORS[index % BAR_COLORS.length]} 
+                          />
+                        );
+                      })}
                       <LabelList 
                         dataKey="salesInMillions" 
                         position="top" 
