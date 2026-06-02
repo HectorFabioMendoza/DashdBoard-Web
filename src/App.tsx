@@ -1597,28 +1597,29 @@ export default function App() {
               );
             })}
 
-            {/* Botón de Candado de Seguridad */}
-            <button
-              onClick={handleFinancialLockToggle}
-              className={`w-full py-2.5 px-3 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-3 mt-4 border border-dashed ${
-                isFinancialDataUnlocked
-                  ? 'border-emerald-500/20 text-[#10B981] hover:bg-[#10B981]/10'
-                  : 'border-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-800/40'
-              }`}
-              title={isFinancialDataUnlocked ? "Bloquear datos financieros" : "Desbloquear datos financieros"}
-            >
-              {isFinancialDataUnlocked ? <Unlock size={16} className="shrink-0" /> : <Lock size={16} className="shrink-0" />}
-              {!isSidebarCollapsed && (
-                <span className="truncate">
-                  {isFinancialDataUnlocked ? "Financiero Abierto" : "Financiero Cerrado"}
-                </span>
-              )}
-            </button>
           </nav>
         </div>
 
         {/* Configuración inferior del Sidebar */}
         <div className="space-y-4 pt-4 border-t border-slate-800/60">
+          {/* Botón de Candado de Seguridad */}
+          <button
+            onClick={handleFinancialLockToggle}
+            className={`w-full py-2 px-3 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-3 border border-dashed ${
+              isFinancialDataUnlocked
+                ? 'border-emerald-500/20 text-[#10B981] hover:bg-[#10B981]/10'
+                : 'border-slate-700/50 text-slate-400 hover:text-white hover:bg-slate-800/40'
+            } ${isSidebarCollapsed ? 'justify-center' : ''}`}
+            title={isFinancialDataUnlocked ? "Bloquear datos financieros" : "Desbloquear datos financieros"}
+          >
+            {isFinancialDataUnlocked ? <Unlock size={16} className="shrink-0" /> : <Lock size={16} className="shrink-0" />}
+            {!isSidebarCollapsed && (
+              <span className="truncate">
+                {isFinancialDataUnlocked ? "Financiero Abierto" : "Financiero Cerrado"}
+              </span>
+            )}
+          </button>
+
           <div className="flex items-center justify-between px-1">
             {!isSidebarCollapsed && (
               <div className="flex items-center gap-2 text-slate-400">
