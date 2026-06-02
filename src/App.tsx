@@ -717,6 +717,129 @@ export default function App() {
     };
   }, [selectedMonths, selectedVendors, rawExcelRows, salesData.advisorsSales, advisorsData]);
 
+  // CALCULO DINAMICO DE RECENCIA Y RIESGO DE CLIENTES (RFM)
+  const clientRecencyData = useMemo(() => {
+    if (rawExcelRows.length === 0) {
+      return {
+        summary: { saludable: 0, atencion: 0, riesgo: 0, perdido: 0, total: 0, avgInactivity: 0 },
+        byVendor: [],
+        chartData: []
+      };
+    }
+
+    // 1. Encontrar la fecha máxima en todo el archivo para usarla como punto de referencia ("hoy")
+    let maxDateSerial = 0;
+    rawExcelRows.forEach(row => {
+      const serial = Number(row.fecha);
+      if (serial && serial > maxDateSerial) {
+        maxDateSerial = serial;
+      }
+    });
+
+    if (maxDateSerial === 0) {
+      maxDateSerial = 46142; // Fallback a Mayo 2026
+    }
+
+    // Mapa para almacenar la fecha de última compra de cada cliente único
+    const clientLastPurchase: Record<string, { lastDateSerial: number, sellerName: string }> = {};
+
+    rawExcelRows.forEach(row => {
+      if (!row.vendedor || !row.cod_client || !row.fecha || !row.Tipo) return;
+      if (!['FE', 'CT'].includes(row.Tipo)) return;
+
+      const rawVendedor = row.vendedor.trim();
+      const id = rawVendedor.substring(0, 2);
+      let name = rawVendedor.substring(3).trim();
+      if (id === '01') name = 'PRINCIPAL';
+
+      // Filtrar por vendedores seleccionados
+      if (!selectedVendors.includes(name)) return;
+
+      const clientCode = String(row.cod_client).trim();
+      const dateSerial = Number(row.fecha);
+
+      if (!clientCode || !dateSerial) return;
+
+      if (!clientLastPurchase[clientCode] || dateSerial > clientLastPurchase[clientCode].lastDateSerial) {
+        clientLastPurchase[clientCode] = {
+          lastDateSerial: dateSerial,
+          sellerName: name
+        };
+      }
+    });
+
+    // Clasificar los clientes en las categorías de riesgo
+    let saludable = 0; // 0-15
+    let atencion = 0;  // 16-30
+    let riesgo = 0;    // 31-60 (o >30 y <=60)
+    let perdido = 0;   // >60
+    let totalInactivityDaysSum = 0;
+    let totalClientsCount = 0;
+
+    // Agrupación por vendedor
+    const vendorRiskMap: Record<string, { saludable: number, atencion: number, riesgo: number, perdido: number, totalDays: number, totalClients: number }> = {};
+    selectedVendors.forEach(v => {
+      vendorRiskMap[v] = { saludable: 0, atencion: 0, riesgo: 0, perdido: 0, totalDays: 0, totalClients: 0 };
+    });
+
+    Object.entries(clientLastPurchase).forEach(([_, info]) => {
+      const inactivityDays = Math.max(0, maxDateSerial - info.lastDateSerial);
+      totalInactivityDaysSum += inactivityDays;
+      totalClientsCount++;
+
+      const vName = info.sellerName;
+      if (!vendorRiskMap[vName]) {
+        vendorRiskMap[vName] = { saludable: 0, atencion: 0, riesgo: 0, perdido: 0, totalDays: 0, totalClients: 0 };
+      }
+
+      vendorRiskMap[vName].totalDays += inactivityDays;
+      vendorRiskMap[vName].totalClients++;
+
+      if (inactivityDays <= 15) {
+        saludable++;
+        vendorRiskMap[vName].saludable++;
+      } else if (inactivityDays <= 30) {
+        atencion++;
+        vendorRiskMap[vName].atencion++;
+      } else if (inactivityDays <= 60) {
+        riesgo++;
+        vendorRiskMap[vName].riesgo++;
+      } else {
+        perdido++;
+        vendorRiskMap[vName].perdido++;
+      }
+    });
+
+    const avgInactivity = totalClientsCount > 0 ? parseFloat((totalInactivityDaysSum / totalClientsCount).toFixed(1)) : 0;
+
+    const byVendorArray = Object.entries(vendorRiskMap).map(([sellerName, counts]) => {
+      const avgDays = counts.totalClients > 0 ? parseFloat((counts.totalDays / counts.totalClients).toFixed(1)) : 0;
+      return {
+        sellerName,
+        shortName: getShortNameWithLastName(sellerName),
+        saludable: counts.saludable,
+        atencion: counts.atencion,
+        riesgo: counts.riesgo,
+        perdido: counts.perdido,
+        totalClients: counts.totalClients,
+        avgInactivityDays: avgDays
+      };
+    }).sort((a, b) => b.totalClients - a.totalClients);
+
+    const chartData = [
+      { name: 'Saludable', range: '0-15 días', value: saludable, color: '#059669', darkColor: '#10B981' },
+      { name: 'Atención', range: '16-30 días', value: atencion, color: '#D97706', darkColor: '#F59E0B' },
+      { name: 'Riesgo', range: '31-60 días', value: riesgo, color: '#F97316', darkColor: '#EA580C' },
+      { name: 'Perdido', range: '>60 días', value: perdido, color: '#E11D48', darkColor: '#BE123C' }
+    ];
+
+    return {
+      summary: { saludable, atencion, riesgo, perdido, total: totalClientsCount, avgInactivity },
+      byVendor: byVendorArray,
+      chartData
+    };
+  }, [rawExcelRows, selectedVendors]);
+
   // TENDENCIAS DE FACTURACION
   const monthlyTrends = useMemo(() => {
     if (advisorsData.length === 0 || rawExcelRows.length === 0) {
@@ -1022,7 +1145,8 @@ export default function App() {
     });
   }, [chartAdvisorsData]);
 
-  // DONUT SLICES FOR INVOICES FREQUENCY
+  // DONUT SLICES FOR INVOICES FREQUENCY (Comentado - ya no se usa)
+  /*
   const frequencyDonutSlices = useMemo(() => {
     const C = 2 * Math.PI * 40;
     let accumulatedOffset = 0;
@@ -1048,6 +1172,7 @@ export default function App() {
       };
     });
   }, [frequencyData.advisorsFrequency]);
+  */
 
 
 
@@ -2893,213 +3018,238 @@ export default function App() {
 
         {activeTab === 'frecuencia' && (
           <div className="space-y-4 animate-fade-in">
-            {/* Gráfico de Frecuencia */}
+            {/* Cabecera del Análisis de Riesgo */}
             <section className={`p-4 rounded-2xl border transition-colors duration-300 ${
               isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
             }`}>
-              <div className="mb-4">
-                <span className="text-[14px] font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider block mb-1">Frecuencia de Compra por Vendedor</span>
-                <h3 className="text-[18px] font-bold text-slate-900 dark:text-slate-50 uppercase tracking-tight">Promedio de facturas generadas por cliente atendido</h3>
-              </div>
-
-              <div className="w-full h-[460px]">
-                <ResponsiveContainer width="100%" height={430}>
-                  <BarChart data={frequencyData.advisorsFrequency} margin={{ top: 15, right: 10, left: 10, bottom: 0 }}>
-                    <defs>
-                      <linearGradient id="freqGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.9} />
-                        <stop offset="100%" stopColor="#b45309" stopOpacity={0.65} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid 
-                      strokeDasharray="3 3" 
-                      vertical={false} 
-                      stroke={isDarkMode ? 'rgba(31,41,55,0.4)' : 'rgba(229,231,235,0.6)'} 
-                    />
-                    <XAxis 
-                      dataKey="shortName" 
-                      tick={{ fill: isDarkMode ? '#9ca3af' : '#4b5563', fontSize: 9, fontWeight: 'bold' }} 
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <YAxis 
-                      tick={{ fill: isDarkMode ? '#9ca3af' : '#4b5563', fontSize: 9, fontWeight: 'bold' }} 
-                      axisLine={false}
-                      tickLine={false}
-                      domain={[0, (dataMax: number) => Math.ceil((dataMax || 5) * 1.15)]}
-                    />
-                    <Tooltip 
-                      cursor={{ fill: isDarkMode ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.012)' }} 
-                      content={({ active, payload, label }) => {
-                        if (active && payload && payload.length) {
-                          return (
-                            <div className={`p-4 border rounded-2xl shadow-2xl backdrop-blur-xl transition-all duration-300 font-sans text-xs ${
-                              isDarkMode ? 'bg-[#0f1115]/95 border-gray-800 text-gray-200' : 'bg-white/95 border-gray-200/80 text-gray-800'
-                            }`}>
-                              <p className="font-extrabold border-b pb-1 mb-2">Vendedor: {label}</p>
-                              <p className="flex justify-between gap-6"><span>Frecuencia:</span><span className="font-black text-amber-600 dark:text-amber-400">{payload[0].value} compras/cl</span></p>
-                              <p className="flex justify-between gap-6"><span>Facturas Totales:</span><span className="font-black text-gray-400">{payload[0].payload.invoices} docs</span></p>
-                              <p className="flex justify-between gap-6"><span>Clientes Únicos:</span><span className="font-black text-sky-600 dark:text-sky-400">{payload[0].payload.activeClients} cl</span></p>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                    <Bar 
-                      dataKey="frequency" 
-                      fill="url(#freqGradient)"
-                      radius={[4, 4, 0, 0]}
-                      barSize={frequencyData.advisorsFrequency.length < 5 ? 54 : 32}
-                    >
-                      <LabelList 
-                        dataKey="frequency" 
-                        position="top" 
-                        style={{ fill: isDarkMode ? '#f3f4f6' : '#1f2937', fontSize: 9, fontWeight: 'bold' }} 
-                        offset={6} 
-                      />
-                    </Bar>
-                  </BarChart>
-                </ResponsiveContainer>
+              <div>
+                <span style={{ color: isDarkMode ? '#F59E0B' : '#D97706' }} className="text-[14px] font-semibold uppercase tracking-wider block mb-1">
+                  Análisis de Inactividad y Riesgo de Clientes
+                </span>
+                <h3 style={{ color: isDarkMode ? '#F8FAFC' : '#0F172A' }} className="text-[18px] font-bold uppercase tracking-tight">
+                  Monitoreo del tiempo transcurrido desde la última compra de cada cliente único
+                </h3>
               </div>
             </section>
 
-            {/* Grid Detalle y Donut */}
+            {/* Tarjetas KPI de Estado de Riesgo */}
+            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              
+              {/* Tarjeta 1: Saludable */}
+              <div className={`p-4 rounded-xl border flex items-start gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${
+                isDarkMode ? 'bg-[#0F1115] border-slate-800/80' : 'bg-white border-slate-200/60 shadow-sm'
+              } border-l-4 border-l-[#059669]`}>
+                <div className="flex-1 min-w-0">
+                  <span style={{ color: isDarkMode ? '#94A3B8' : '#475569' }} className="text-[11px] font-bold tracking-[0.5px] uppercase block">
+                    Saludable (0-15 días)
+                  </span>
+                  <span style={{ color: isDarkMode ? '#10B981' : '#059669' }} className="text-[25px] font-black leading-none block mt-1">
+                    {clientRecencyData.summary.saludable}
+                  </span>
+                  <span style={{ color: isDarkMode ? '#64748B' : '#94A3B8' }} className="text-[11px] font-semibold block mt-2">
+                    {clientRecencyData.summary.total > 0 ? ((clientRecencyData.summary.saludable / clientRecencyData.summary.total) * 100).toFixed(1) : '0,0'}% del total
+                  </span>
+                </div>
+              </div>
+
+              {/* Tarjeta 2: Atención */}
+              <div className={`p-4 rounded-xl border flex items-start gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${
+                isDarkMode ? 'bg-[#0F1115] border-slate-800/80' : 'bg-white border-slate-200/60 shadow-sm'
+              } border-l-4 border-l-[#D97706]`}>
+                <div className="flex-1 min-w-0">
+                  <span style={{ color: isDarkMode ? '#94A3B8' : '#475569' }} className="text-[11px] font-bold tracking-[0.5px] uppercase block">
+                    Atención (16-30 días)
+                  </span>
+                  <span style={{ color: isDarkMode ? '#F59E0B' : '#D97706' }} className="text-[25px] font-black leading-none block mt-1">
+                    {clientRecencyData.summary.atencion}
+                  </span>
+                  <span style={{ color: isDarkMode ? '#64748B' : '#94A3B8' }} className="text-[11px] font-semibold block mt-2">
+                    {clientRecencyData.summary.total > 0 ? ((clientRecencyData.summary.atencion / clientRecencyData.summary.total) * 100).toFixed(1) : '0,0'}% del total
+                  </span>
+                </div>
+              </div>
+
+              {/* Tarjeta 3: Riesgo */}
+              <div className={`p-4 rounded-xl border flex items-start gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${
+                isDarkMode ? 'bg-[#0F1115] border-slate-800/80' : 'bg-white border-slate-200/60 shadow-sm'
+              } border-l-4 border-l-[#F97316]`}>
+                <div className="flex-1 min-w-0">
+                  <span style={{ color: isDarkMode ? '#94A3B8' : '#475569' }} className="text-[11px] font-bold tracking-[0.5px] uppercase block">
+                    Riesgo ({'>'}30 días)
+                  </span>
+                  <span style={{ color: isDarkMode ? '#EA580C' : '#F97316' }} className="text-[25px] font-black leading-none block mt-1">
+                    {clientRecencyData.summary.riesgo}
+                  </span>
+                  <span style={{ color: isDarkMode ? '#64748B' : '#94A3B8' }} className="text-[11px] font-semibold block mt-2">
+                    {clientRecencyData.summary.total > 0 ? ((clientRecencyData.summary.riesgo / clientRecencyData.summary.total) * 100).toFixed(1) : '0,0'}% del total
+                  </span>
+                </div>
+              </div>
+
+              {/* Tarjeta 4: Perdido */}
+              <div className={`p-4 rounded-xl border flex items-start gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${
+                isDarkMode ? 'bg-[#0F1115] border-slate-800/80' : 'bg-white border-slate-200/60 shadow-sm'
+              } border-l-4 border-l-[#E11D48]`}>
+                <div className="flex-1 min-w-0">
+                  <span style={{ color: isDarkMode ? '#94A3B8' : '#475569' }} className="text-[11px] font-bold tracking-[0.5px] uppercase block">
+                    Perdido ({'>'}60 días)
+                  </span>
+                  <span style={{ color: isDarkMode ? '#BE123C' : '#E11D48' }} className="text-[25px] font-black leading-none block mt-1">
+                    {clientRecencyData.summary.perdido}
+                  </span>
+                  <span style={{ color: isDarkMode ? '#64748B' : '#94A3B8' }} className="text-[11px] font-semibold block mt-2">
+                    {clientRecencyData.summary.total > 0 ? ((clientRecencyData.summary.perdido / clientRecencyData.summary.total) * 100).toFixed(1) : '0,0'}% del total
+                  </span>
+                </div>
+              </div>
+
+              {/* Tarjeta 5: Promedio General */}
+              <div className={`p-4 rounded-xl border flex items-start gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${
+                isDarkMode ? 'bg-[#0F1115] border-slate-800/80' : 'bg-white border-slate-200/60 shadow-sm'
+              } border-l-4 border-l-indigo-500`}>
+                <div className="flex-1 min-w-0">
+                  <span style={{ color: isDarkMode ? '#94A3B8' : '#475569' }} className="text-[11px] font-bold tracking-[0.5px] uppercase block">
+                    Promedio Inactividad
+                  </span>
+                  <span className="text-[25px] font-black leading-none block mt-1 text-indigo-650 dark:text-indigo-400">
+                    {clientRecencyData.summary.avgInactivity} <span className="text-xs font-normal">días</span>
+                  </span>
+                  <span style={{ color: isDarkMode ? '#64748B' : '#94A3B8' }} className="text-[11px] font-semibold block mt-2">
+                    Total clientes únicos: {clientRecencyData.summary.total}
+                  </span>
+                </div>
+              </div>
+
+            </section>
+
+            {/* Fila del Gráfico y Tabla Detalle */}
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
               
-              {/* Tabla Detalle */}
-              <section className={`p-4 rounded-2xl border transition-colors duration-300 lg:col-span-3 flex flex-col justify-between ${
-                isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
-              }`}>
-                <div>
-                  <span className="text-[14px] font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider block mb-1">Detalle de Frecuencias y Documentos</span>
-                  <div className="overflow-x-auto mt-2">
-                    <table className="w-full text-left border-collapse text-[13px]">
-                      <thead>
-                        <tr className={`border-b transition-colors font-extrabold text-[12px] uppercase tracking-wider ${
-                          isDarkMode ? 'border-gray-800/60 text-table-header' : 'border-gray-200 text-table-header'
-                        }`}>
-                          <th className="py-1.5 px-2">#</th>
-                          <th className="py-1.5 px-2">Vendedor</th>
-                          <th className="py-1.5 px-2 text-center">Facturas Totales</th>
-                          <th className="py-1.5 px-2 text-center">Clientes Únicos</th>
-                          <th className="py-1.5 px-2 text-right">Frecuencia Prom.</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {frequencyData.advisorsFrequency.map((adv, idx) => {
-                          const shortName = getShortNameWithLastName(adv.name);
-
-                          let rowClass = `border-b transition-all duration-200 ${
-                            isDarkMode 
-                              ? 'border-gray-800/40 hover:bg-gray-900/20 text-gray-300' 
-                              : 'border-gray-100 hover:bg-gray-50 text-gray-700'
-                          }`;
-                          let rankBadge = null;
-
-                          if (idx === 0) {
-                            rowClass = `border-b transition-all duration-200 border-l-2 border-l-amber-500/80 ${
-                              isDarkMode 
-                                ? 'bg-amber-500/[0.04] border-gray-800/40 hover:bg-amber-500/[0.07] text-gray-100 font-semibold' 
-                                : 'bg-amber-500/[0.03] border-gray-100 hover:bg-amber-500/[0.06] text-gray-900 font-semibold'
-                            }`;
-                            rankBadge = <span className="inline-flex items-center justify-center gap-1 bg-amber-500/10 text-amber-600 dark:text-amber-455 rounded px-1.5 py-0.5 font-black text-[9px]">🥇 1</span>;
-                          } else if (idx === 1) {
-                            rowClass = `border-b transition-all duration-200 border-l-2 border-l-slate-400/80 ${
-                              isDarkMode 
-                                ? 'bg-slate-400/[0.04] border-gray-800/40 hover:bg-slate-400/[0.07] text-gray-100 font-semibold' 
-                                : 'bg-slate-400/[0.03] border-gray-100 hover:bg-slate-400/[0.06] text-gray-900 font-semibold'
-                            }`;
-                            rankBadge = <span className="inline-flex items-center justify-center gap-1 bg-slate-400/10 text-slate-500 dark:text-slate-400 rounded px-1.5 py-0.5 font-black text-[9px]">🥈 2</span>;
-                          } else if (idx === 2) {
-                            rowClass = `border-b transition-all duration-200 border-l-2 border-l-orange-500/80 ${
-                              isDarkMode 
-                                ? 'bg-orange-500/[0.04] border-gray-800/40 hover:bg-orange-500/[0.07] text-gray-100 font-semibold' 
-                                : 'bg-orange-500/[0.03] border-gray-100 hover:bg-orange-500/[0.06] text-gray-900 font-semibold'
-                            }`;
-                            rankBadge = <span className="inline-flex items-center justify-center gap-1 bg-orange-650/10 text-orange-650 dark:text-orange-400 rounded px-1.5 py-0.5 font-black text-[9px]">🥉 3</span>;
-                          } else {
-                            rankBadge = <span className="text-gray-400 font-bold px-1.5">{idx + 1}</span>;
-                          }
-
-                          return (
-                            <tr key={adv.id} className={rowClass}>
-                              <td className="py-1.5 px-2">{rankBadge}</td>
-                              <td className="py-1.5 px-2 font-bold text-gray-850 dark:text-gray-200">{shortName}</td>
-                              <td className="py-1.5 px-2 text-center font-bold text-gray-400">{adv.invoices}</td>
-                              <td className="py-1.5 px-2 text-center font-bold text-sky-600 dark:text-sky-400">{adv.activeClients}</td>
-                              <td className="py-1.5 px-2 text-right font-black text-amber-600 dark:text-amber-400">{adv.frequency} compras/cl</td>
-                            </tr>
-                          );
-                        })}
-                        {/* TOTAL GENERAL */}
-                        <tr className="font-extrabold border-t-2 border-gray-800 text-gray-900 dark:text-white bg-gray-500/5">
-                          <td className="py-2 px-1" colSpan={2}>Total General</td>
-                          <td className="py-2 px-1 text-center text-gray-400">{frequencyData.totalInvoices}</td>
-                          <td className="py-2 px-1 text-center text-sky-600 dark:text-sky-400">{salesData.globalUniqueClientsCount}</td>
-                          <td className="py-2 px-1 text-right text-amber-600 dark:text-amber-400">{(frequencyData.totalInvoices / (salesData.globalUniqueClientsCount || 1)).toFixed(2)} compras/cl</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </section>
-
-              {/* Donut Chart */}
+              {/* Gráfica de Distribución de Riesgo */}
               <section className={`p-4 rounded-2xl border transition-colors duration-300 lg:col-span-2 flex flex-col justify-between ${
                 isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
               }`}>
                 <div>
-                  <span className="text-[14px] font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wider block mb-1">Participación de Documentos</span>
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4 py-2 mt-2">
-                    <div className="relative w-52 h-52 shrink-0 flex items-center justify-center">
-                      <svg className="w-full h-full -rotate-90 animate-fade-in" viewBox="0 0 100 100">
-                        {frequencyDonutSlices.map((slice, idx) => (
-                          <circle
-                            key={idx}
-                            cx="50"
-                            cy="50"
-                            r="40"
-                            fill="transparent"
-                            stroke={slice.color}
-                            strokeWidth="9"
-                            strokeDasharray={slice.strokeDashArray}
-                            strokeDashoffset={slice.strokeDashOffset}
-                            className="transition-all duration-500 hover:stroke-[11] cursor-pointer"
+                  <span style={{ color: isDarkMode ? '#94A3B8' : '#475569' }} className="text-[14px] font-semibold uppercase tracking-wider block mb-1">
+                    Distribución de Clientes por Nivel de Riesgo
+                  </span>
+                  <h3 style={{ color: isDarkMode ? '#F8FAFC' : '#0F172A' }} className="text-[16px] font-bold uppercase tracking-tight mb-4">
+                    Cantidad total de clientes en cada estado
+                  </h3>
+                  
+                  <div className="w-full h-[320px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={clientRecencyData.chartData} margin={{ top: 15, right: 10, left: 10, bottom: 5 }}>
+                        <CartesianGrid 
+                          strokeDasharray="3 3" 
+                          vertical={false} 
+                          stroke={isDarkMode ? 'rgba(31,41,55,0.4)' : 'rgba(229,231,235,0.6)'} 
+                        />
+                        <XAxis 
+                          dataKey="name" 
+                          tick={{ fill: isDarkMode ? '#9ca3af' : '#4b5563', fontSize: 9, fontWeight: 'bold' }} 
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <YAxis 
+                          tick={{ fill: isDarkMode ? '#9ca3af' : '#4b5563', fontSize: 9, fontWeight: 'bold' }} 
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <Tooltip 
+                          cursor={{ fill: isDarkMode ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.012)' }} 
+                          content={({ active, payload }) => {
+                            if (active && payload && payload.length) {
+                              const data = payload[0].payload;
+                              return (
+                                <div className={`p-4 border rounded-2xl shadow-2xl backdrop-blur-xl transition-all duration-300 font-sans text-xs ${
+                                  isDarkMode ? 'bg-[#0f1115]/95 border-gray-800 text-gray-200' : 'bg-white/95 border-gray-200/80 text-gray-800'
+                                }`}>
+                                  <p className="font-extrabold border-b pb-1 mb-2">Estado: {data.name}</p>
+                                  <p className="flex justify-between gap-6"><span>Rango:</span><span className="font-black text-slate-500">{data.range}</span></p>
+                                  <p className="flex justify-between gap-6"><span>Clientes:</span><span className="font-black" style={{ color: isDarkMode ? data.darkColor : data.color }}>{data.value} cl</span></p>
+                                  <p className="flex justify-between gap-6"><span>Participación:</span><span className="font-black">{clientRecencyData.summary.total > 0 ? ((data.value / clientRecencyData.summary.total) * 100).toFixed(1) : '0'}%</span></p>
+                                </div>
+                              );
+                            }
+                            return null;
+                          }}
+                        />
+                        <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={40}>
+                          {clientRecencyData.chartData.map((entry, idx) => (
+                            <Cell key={`cell-${idx}`} fill={isDarkMode ? entry.darkColor : entry.color} />
+                          ))}
+                          <LabelList 
+                            dataKey="value" 
+                            position="top" 
+                            style={{ fill: isDarkMode ? '#f3f4f6' : '#1f2937', fontSize: 9, fontWeight: 'bold' }} 
+                            offset={6} 
                           />
-                        ))}
-                      </svg>
-                      <div className="absolute flex flex-col items-center justify-center text-center pointer-events-none">
-                        <span className="text-[8px] font-extrabold text-gray-400 uppercase tracking-widest leading-none">Facturas</span>
-                        <span className={`text-[16px] font-black leading-none mt-1 transition-colors ${
-                          isDarkMode ? 'text-white' : 'text-gray-900'
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </section>
+
+              {/* Tabla Detalle por Asesor Comercial */}
+              <section className={`p-4 rounded-2xl border transition-colors duration-300 lg:col-span-3 flex flex-col justify-between ${
+                isDarkMode ? 'bg-[#0c0e12] border-gray-800/80' : 'bg-white border-gray-200 shadow-sm'
+              }`}>
+                <div>
+                  <span style={{ color: isDarkMode ? '#94A3B8' : '#475569' }} className="text-[14px] font-semibold uppercase tracking-wider block mb-1">
+                    Análisis de Riesgo por Asesor Comercial
+                  </span>
+                  <h3 style={{ color: isDarkMode ? '#F8FAFC' : '#0F172A' }} className="text-[16px] font-bold uppercase tracking-tight mb-4">
+                    Clasificación de la cartera de clientes de cada vendedor
+                  </h3>
+                  
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse text-[12px]">
+                      <thead>
+                        <tr className={`border-b transition-colors font-extrabold text-[11px] uppercase tracking-wider ${
+                          isDarkMode ? 'border-gray-800/60 text-table-header' : 'border-gray-200 text-table-header'
                         }`}>
-                          {frequencyData.totalInvoices}
-                        </span>
-                        <span className="text-[8px] font-extrabold text-gray-400 mt-1 leading-none">Generadas</span>
-                      </div>
-                    </div>
-
-                    <div className="flex-1 space-y-1 text-[10px] w-full max-h-[190px] overflow-y-auto pl-2">
-                      {frequencyData.advisorsFrequency.map((adv, idx) => {
-                        const colorIndex = idx;
-                        const legendColor = MESES_CONFIG[colorIndex % MESES_CONFIG.length]?.color || '#f59e0b';
-                        const totalInvoices = frequencyData.advisorsFrequency.reduce((acc, curr) => acc + curr.invoices, 0);
-                        const percentage = totalInvoices > 0 ? ((adv.invoices / totalInvoices) * 100).toFixed(1) : "0";
-                        const shortName = getShortNameWithLastName(adv.name);
-
-                        return (
-                          <div key={adv.id} className="flex items-center gap-1.5 font-semibold">
-                            <div className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: legendColor }}></div>
-                            <div className="min-w-0 flex-1 truncate">
-                              <p className={`font-black truncate text-[10px] ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
-                                {shortName}: {percentage}%
-                              </p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                          <th className="py-2 px-1">Asesor</th>
+                          <th className="py-2 px-1 text-center bg-emerald-50/20 dark:bg-emerald-950/10 text-emerald-700 dark:text-emerald-400">Saludable</th>
+                          <th className="py-2 px-1 text-center bg-amber-50/20 dark:bg-amber-950/10 text-amber-700 dark:text-amber-400">Atención</th>
+                          <th className="py-2 px-1 text-center bg-orange-50/20 dark:bg-orange-950/10 text-orange-700 dark:text-orange-400">Riesgo</th>
+                          <th className="py-2 px-1 text-center bg-red-50/20 dark:bg-red-950/10 text-red-700 dark:text-red-400">Perdido</th>
+                          <th className="py-2 px-1 text-center font-bold">Total Cl.</th>
+                          <th className="py-2 px-1 text-right">Inactividad Prom.</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {clientRecencyData.byVendor.map((adv) => (
+                          <tr 
+                            key={adv.sellerName}
+                            className={`border-b transition-all duration-200 ${
+                              isDarkMode 
+                                ? 'border-gray-800/40 hover:bg-gray-900/20 text-gray-300' 
+                                : 'border-gray-100 hover:bg-gray-50 text-gray-700'
+                            }`}
+                          >
+                            <td className="py-2 px-1 font-bold">{adv.shortName}</td>
+                            <td className="py-2 px-1 text-center font-bold bg-emerald-500/[0.03] text-emerald-600 dark:text-emerald-400">{adv.saludable}</td>
+                            <td className="py-2 px-1 text-center font-bold bg-amber-500/[0.03] text-amber-600 dark:text-amber-400">{adv.atencion}</td>
+                            <td className="py-2 px-1 text-center font-bold bg-orange-500/[0.03] text-orange-600 dark:text-orange-400">{adv.riesgo}</td>
+                            <td className="py-2 px-1 text-center font-bold bg-red-500/[0.03] text-red-600 dark:text-red-400">{adv.perdido}</td>
+                            <td className="py-2 px-1 text-center font-extrabold text-slate-800 dark:text-slate-100">{adv.totalClients}</td>
+                            <td className="py-2 px-1 text-right font-black text-indigo-650 dark:text-indigo-400">{adv.avgInactivityDays} días</td>
+                          </tr>
+                        ))}
+                        {/* TOTAL GENERAL */}
+                        <tr className="font-extrabold border-t-2 border-gray-800 text-gray-900 dark:text-white bg-gray-500/5 text-[12px]">
+                          <td style={{ color: isDarkMode ? '#FFFFFF' : '#000000' }} className="py-2.5 px-1 font-black">Total General</td>
+                          <td className="py-2.5 px-1 text-center text-emerald-600 dark:text-emerald-400">{clientRecencyData.summary.saludable}</td>
+                          <td className="py-2.5 px-1 text-center text-amber-600 dark:text-amber-400">{clientRecencyData.summary.atencion}</td>
+                          <td className="py-2.5 px-1 text-center text-orange-600 dark:text-orange-400">{clientRecencyData.summary.riesgo}</td>
+                          <td className="py-2.5 px-1 text-center text-red-600 dark:text-red-400">{clientRecencyData.summary.perdido}</td>
+                          <td style={{ color: isDarkMode ? '#FFFFFF' : '#000000' }} className="py-2.5 px-1 text-center font-black">{clientRecencyData.summary.total}</td>
+                          <td className="py-2.5 px-1 text-right text-indigo-650 dark:text-indigo-400 font-black">{clientRecencyData.summary.avgInactivity} días</td>
+                        </tr>
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </section>
