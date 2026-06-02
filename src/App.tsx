@@ -3388,7 +3388,7 @@ export default function App() {
                       })}
                       {/* TOTAL ACUMULADO */}
                       <tr className="font-extrabold border-t-2 border-gray-800 text-gray-900 dark:text-white bg-gray-500/5">
-                        <td className="py-2 px-1">Total General</td>
+                        <td style={{ color: isDarkMode ? '#FFFFFF' : '#000000' }} className="py-2 px-1 font-black">Total General</td>
                         <td className="py-2 px-1 text-right text-rose-600 dark:text-rose-400">{formatMillionsCOP(selectedAdvisorAnalysis?.salesRaw || 0)}</td>
                         <td className="py-2 px-1 text-center text-sky-600 dark:text-sky-400">{selectedAdvisorAnalysis?.coverage || 0}</td>
                         <td className="py-2 px-1 text-right text-amber-600 dark:text-amber-400">{formatMillionsCOP(selectedAdvisorAnalysis?.ticketAverage || 0)}</td>
