@@ -2268,7 +2268,7 @@ export default function App() {
 
                   {/* Treemap Bento de 3 Filas Horizontales Proporcionales */}
                   <div className="flex flex-col gap-2 h-[380px] shrink-0 font-sans select-none">
-                    {/* FILA 1: Rank 1 (Emerald) y Rank 2 (Emerald Soft) */}
+                    {/* FILA 1: Rank 1 (Green) y Rank 2 (Purple) */}
                     {(() => {
                       const c1 = chartAdvisorsData[0]?.dynamicCoverage || 1;
                       const c2 = chartAdvisorsData[1]?.dynamicCoverage || 1;
@@ -2281,32 +2281,24 @@ export default function App() {
                           {chartAdvisorsData[0] && (
                             <div 
                               style={{ width: w1 }} 
-                              className={`p-4 rounded-2xl flex flex-col justify-between border transition-all duration-200 cursor-pointer ${
-                                isDarkMode 
-                                  ? 'bg-emerald-950/50 border-emerald-500/20 text-emerald-100 hover:bg-emerald-900/30' 
-                                  : 'bg-emerald-700 border-emerald-800 text-white hover:bg-emerald-800'
-                              }`}
+                              className="p-4 rounded-2xl flex flex-col justify-between border cursor-pointer transition-all duration-200 bg-[#059669] border-[#047857] hover:opacity-90"
                             >
-                              <span className="font-bold text-[13px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[0].name))}</span>
-                              <div className="flex justify-between items-baseline mt-2 w-full">
+                              <span className="font-bold text-[13px] leading-tight block truncate uppercase text-white">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[0].name))}</span>
+                              <div className="flex flex-col mt-1.5 w-full text-white">
                                 <span className="font-extrabold text-[17px] leading-none">{chartAdvisorsData[0].dynamicCoverage}</span>
-                                <span className="font-bold text-[15px] leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[0].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
+                                <span className="font-bold text-[14px] leading-none opacity-90 mt-1">{kpis.totalUnique > 0 ? ((chartAdvisorsData[0].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1).replace('.', ',') : 0}%</span>
                               </div>
                             </div>
                           )}
                           {chartAdvisorsData[1] && (
                             <div 
                               style={{ width: w2 }} 
-                              className={`p-4 rounded-2xl flex flex-col justify-between border transition-all duration-200 cursor-pointer ${
-                                isDarkMode 
-                                  ? 'bg-emerald-900/40 border-emerald-600/20 text-emerald-100 hover:bg-emerald-800/30' 
-                                  : 'bg-emerald-600 border-emerald-700 text-white hover:bg-emerald-700'
-                              }`}
+                              className="p-4 rounded-2xl flex flex-col justify-between border cursor-pointer transition-all duration-200 bg-[#7C3AED] border-[#6D28D9] hover:opacity-90"
                             >
-                              <span className="font-bold text-[13px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[1].name))}</span>
-                              <div className="flex justify-between items-baseline mt-2 w-full">
+                              <span className="font-bold text-[13px] leading-tight block truncate uppercase text-white">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[1].name))}</span>
+                              <div className="flex flex-col mt-1.5 w-full text-white">
                                 <span className="font-extrabold text-[17px] leading-none">{chartAdvisorsData[1].dynamicCoverage}</span>
-                                <span className="font-bold text-[15px] leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[1].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
+                                <span className="font-bold text-[14px] leading-none opacity-90 mt-1">{kpis.totalUnique > 0 ? ((chartAdvisorsData[1].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1).replace('.', ',') : 0}%</span>
                               </div>
                             </div>
                           )}
@@ -2314,7 +2306,7 @@ export default function App() {
                       );
                     })()}
 
-                    {/* FILA 2: Rank 3 (Emerald Muted), Rank 4 (Teal Slate) y Rank 5 (Slate Dark) */}
+                    {/* FILA 2: Rank 3 (Blue), Rank 4 (Amber) y Rank 5 (Teal) */}
                     {(() => {
                       const c3 = chartAdvisorsData[2]?.dynamicCoverage || 1;
                       const c4 = chartAdvisorsData[3]?.dynamicCoverage || 1;
@@ -2329,48 +2321,36 @@ export default function App() {
                           {chartAdvisorsData[2] && (
                             <div 
                               style={{ width: w3 }} 
-                              className={`p-3.5 rounded-2xl flex flex-col justify-between border transition-all duration-200 cursor-pointer ${
-                                isDarkMode 
-                                  ? 'bg-emerald-900/20 border-emerald-700/10 text-emerald-200 hover:bg-emerald-800/20' 
-                                  : 'bg-emerald-500 border-emerald-600 text-white hover:bg-emerald-600'
-                              }`}
+                              className="p-3.5 rounded-2xl flex flex-col justify-between border cursor-pointer transition-all duration-200 bg-[#2563EB] border-[#1D4ED8] hover:opacity-90"
                             >
-                              <span className="font-bold text-[12px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[2].name))}</span>
-                              <div className="flex justify-between items-baseline w-full">
+                              <span className="font-bold text-[12px] leading-tight block truncate uppercase text-white">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[2].name))}</span>
+                              <div className="flex flex-col mt-1 w-full text-white">
                                 <span className="font-extrabold text-[15px] leading-none">{chartAdvisorsData[2].dynamicCoverage}</span>
-                                <span className="font-bold text-[13px] leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[2].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
+                                <span className="font-bold text-[13px] leading-none opacity-90 mt-1">{kpis.totalUnique > 0 ? ((chartAdvisorsData[2].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1).replace('.', ',') : 0}%</span>
                               </div>
                             </div>
                           )}
                           {chartAdvisorsData[3] && (
                             <div 
                               style={{ width: w4 }} 
-                              className={`p-3.5 rounded-2xl flex flex-col justify-between border transition-all duration-200 cursor-pointer ${
-                                isDarkMode 
-                                  ? 'bg-teal-950/40 border-teal-500/20 text-teal-100 hover:bg-teal-900/20' 
-                                  : 'bg-teal-600 border-teal-700 text-white hover:bg-teal-700'
-                              }`}
+                              className="p-3.5 rounded-2xl flex flex-col justify-between border cursor-pointer transition-all duration-200 bg-[#D97706] border-[#B45309] hover:opacity-90"
                             >
-                              <span className="font-bold text-[12px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[3].name))}</span>
-                              <div className="flex justify-between items-baseline w-full">
+                              <span className="font-bold text-[12px] leading-tight block truncate uppercase text-white">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[3].name))}</span>
+                              <div className="flex flex-col mt-1 w-full text-white">
                                 <span className="font-extrabold text-[15px] leading-none">{chartAdvisorsData[3].dynamicCoverage}</span>
-                                <span className="font-bold text-[13px] leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[3].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
+                                <span className="font-bold text-[13px] leading-none opacity-90 mt-1">{kpis.totalUnique > 0 ? ((chartAdvisorsData[3].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1).replace('.', ',') : 0}%</span>
                               </div>
                             </div>
                           )}
                           {chartAdvisorsData[4] && (
                             <div 
                               style={{ width: w5 }} 
-                              className={`p-3.5 rounded-2xl flex flex-col justify-between border transition-all duration-200 cursor-pointer ${
-                                isDarkMode 
-                                  ? 'bg-slate-800/60 border-slate-700/20 text-slate-100 hover:bg-slate-700/30' 
-                                  : 'bg-slate-600 border-slate-700 text-white hover:bg-slate-700'
-                              }`}
+                              className="p-3.5 rounded-2xl flex flex-col justify-between border cursor-pointer transition-all duration-200 bg-[#0D9488] border-[#0F766E] hover:opacity-90"
                             >
-                              <span className="font-bold text-[12px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[4].name))}</span>
-                              <div className="flex justify-between items-baseline w-full">
+                              <span className="font-bold text-[12px] leading-tight block truncate uppercase text-white">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[4].name))}</span>
+                              <div className="flex flex-col mt-1 w-full text-white">
                                 <span className="font-extrabold text-[15px] leading-none">{chartAdvisorsData[4].dynamicCoverage}</span>
-                                <span className="font-bold text-[13px] leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[4].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
+                                <span className="font-bold text-[13px] leading-none opacity-90 mt-1">{kpis.totalUnique > 0 ? ((chartAdvisorsData[4].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1).replace('.', ',') : 0}%</span>
                               </div>
                             </div>
                           )}
@@ -2378,7 +2358,7 @@ export default function App() {
                       );
                     })()}
 
-                    {/* FILA 3: Ranks 6, 7, 8, 9 (Muted Slates de escala decreciente para contraste perfecto) */}
+                    {/* FILA 3: Rank 6 (Red), Rank 7 (Orange), Rank 8 (Blue), Rank 9 (Purple) */}
                     {(() => {
                       const c6 = chartAdvisorsData[5]?.dynamicCoverage || 1;
                       const c7 = chartAdvisorsData[6]?.dynamicCoverage || 1;
@@ -2395,79 +2375,48 @@ export default function App() {
                           {chartAdvisorsData[5] && (
                             <div 
                               style={{ width: w6 }} 
-                              className={`p-2.5 rounded-2xl flex flex-col justify-between border transition-all duration-200 cursor-pointer ${
-                                isDarkMode 
-                                  ? 'bg-slate-800/40 border-slate-700/15 text-slate-200 hover:bg-slate-800/20' 
-                                  : 'bg-slate-500 border-slate-600 text-white hover:bg-slate-600'
-                              }`}
+                              className="p-2.5 rounded-2xl flex flex-col justify-between border cursor-pointer transition-all duration-200 bg-[#DC2626] border-[#B91C1C] hover:opacity-90"
                             >
-                              <span className="font-bold text-[11px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[5].name))}</span>
-                              <div className="flex justify-between items-baseline w-full">
+                              <span className="font-bold text-[11px] leading-tight block truncate uppercase text-white">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[5].name))}</span>
+                              <div className="flex flex-col mt-0.5 w-full text-white">
                                 <span className="font-extrabold text-[13px] leading-none">{chartAdvisorsData[5].dynamicCoverage}</span>
-                                <span className="font-bold text-[11px] leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[5].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
+                                <span className="font-bold text-[11px] leading-none opacity-90 mt-0.5">{kpis.totalUnique > 0 ? ((chartAdvisorsData[5].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1).replace('.', ',') : 0}%</span>
                               </div>
                             </div>
                           )}
                           {chartAdvisorsData[6] && (
                             <div 
                               style={{ width: w7 }} 
-                              className={`p-2.5 rounded-2xl flex flex-col justify-between border transition-all duration-200 cursor-pointer ${
-                                isDarkMode 
-                                  ? 'bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-850' 
-                                  : 'bg-slate-200 border-slate-300 text-slate-800 hover:bg-slate-250'
-                              }`}
+                              className="p-2.5 rounded-2xl flex flex-col justify-between border cursor-pointer transition-all duration-200 bg-[#F97316] border-[#EA580C] hover:opacity-90"
                             >
-                              <span className="font-bold text-[11px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[6].name))}</span>
-                              <div className="flex justify-between items-baseline w-full">
+                              <span className="font-bold text-[11px] leading-tight block truncate uppercase text-white">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[6].name))}</span>
+                              <div className="flex flex-col mt-0.5 w-full text-white">
                                 <span className="font-extrabold text-[13px] leading-none">{chartAdvisorsData[6].dynamicCoverage}</span>
-                                <span 
-                                  style={{ color: isDarkMode ? '#CBD5E1' : '#000000' }}
-                                  className="font-bold text-[11px] leading-none"
-                                >
-                                  {kpis.totalUnique > 0 ? ((chartAdvisorsData[6].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%
-                                </span>
+                                <span className="font-bold text-[11px] leading-none opacity-90 mt-0.5">{kpis.totalUnique > 0 ? ((chartAdvisorsData[6].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1).replace('.', ',') : 0}%</span>
                               </div>
                             </div>
                           )}
                           {chartAdvisorsData[7] && (
                             <div 
                               style={{ width: w8 }} 
-                              className={`p-2.5 rounded-2xl flex flex-col justify-between border transition-all duration-200 cursor-pointer ${
-                                isDarkMode 
-                                  ? 'bg-slate-950 border-slate-900 text-slate-400 hover:bg-slate-900' 
-                                  : 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-150'
-                              }`}
+                              className="p-2.5 rounded-2xl flex flex-col justify-between border cursor-pointer transition-all duration-200 bg-[#2563EB] border-[#1D4ED8] hover:opacity-90"
                             >
-                              <span className="font-bold text-[11px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[7].name))}</span>
-                              <div className="flex justify-between items-baseline w-full">
+                              <span className="font-bold text-[11px] leading-tight block truncate uppercase text-white">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[7].name))}</span>
+                              <div className="flex flex-col mt-0.5 w-full text-white">
                                 <span className="font-extrabold text-[13px] leading-none">{chartAdvisorsData[7].dynamicCoverage}</span>
-                                <span 
-                                  style={{ color: isDarkMode ? '#CBD5E1' : '#000000' }}
-                                  className="font-bold text-[11px] leading-none"
-                                >
-                                  {kpis.totalUnique > 0 ? ((chartAdvisorsData[7].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%
-                                </span>
+                                <span className="font-bold text-[11px] leading-none opacity-90 mt-0.5">{kpis.totalUnique > 0 ? ((chartAdvisorsData[7].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1).replace('.', ',') : 0}%</span>
                               </div>
                             </div>
                           )}
                           {chartAdvisorsData[8] && (
                             <div 
                               style={{ width: w9 }} 
-                              className={`p-2.5 rounded-2xl flex flex-col justify-between border transition-all duration-200 cursor-pointer ${
-                                isDarkMode 
-                                  ? 'bg-[#0c0e12] border-slate-800 text-slate-500 hover:bg-slate-900' 
-                                  : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
-                              }`}
+                              className="p-2.5 rounded-2xl flex flex-col justify-between border cursor-pointer transition-all duration-200 bg-[#7C3AED] border-[#6D28D9] hover:opacity-90"
                             >
-                              <span className="font-bold text-[11px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[8].name))}</span>
-                              <div className="flex justify-between items-baseline w-full">
+                              <span className="font-bold text-[11px] leading-tight block truncate uppercase text-white">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[8].name))}</span>
+                              <div className="flex flex-col mt-0.5 w-full text-white">
                                 <span className="font-extrabold text-[13px] leading-none">{chartAdvisorsData[8].dynamicCoverage}</span>
-                                <span 
-                                  style={{ color: isDarkMode ? '#CBD5E1' : '#000000' }}
-                                  className="font-bold text-[11px] leading-none"
-                                >
-                                  {kpis.totalUnique > 0 ? ((chartAdvisorsData[8].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%
-                                </span>
+                                <span className="font-bold text-[11px] leading-none opacity-90 mt-0.5">{kpis.totalUnique > 0 ? ((chartAdvisorsData[8].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1).replace('.', ',') : 0}%</span>
                               </div>
                             </div>
                           )}
