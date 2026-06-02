@@ -2275,8 +2275,8 @@ export default function App() {
                             >
                               <span className="font-bold text-[13px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[0].name))}</span>
                               <div className="flex justify-between items-baseline mt-2 w-full">
-                                <span className="font-extrabold text-xl leading-none">{chartAdvisorsData[0].dynamicCoverage}</span>
-                                <span className="font-extrabold text-xl leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[0].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
+                                <span className="font-extrabold text-[17px] leading-none">{chartAdvisorsData[0].dynamicCoverage}</span>
+                                <span className="font-bold text-[15px] leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[0].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
                               </div>
                             </div>
                           )}
@@ -2291,8 +2291,8 @@ export default function App() {
                             >
                               <span className="font-bold text-[13px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[1].name))}</span>
                               <div className="flex justify-between items-baseline mt-2 w-full">
-                                <span className="font-extrabold text-xl leading-none">{chartAdvisorsData[1].dynamicCoverage}</span>
-                                <span className="font-extrabold text-xl leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[1].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
+                                <span className="font-extrabold text-[17px] leading-none">{chartAdvisorsData[1].dynamicCoverage}</span>
+                                <span className="font-bold text-[15px] leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[1].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
                               </div>
                             </div>
                           )}
@@ -2323,8 +2323,8 @@ export default function App() {
                             >
                               <span className="font-bold text-[12px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[2].name))}</span>
                               <div className="flex justify-between items-baseline w-full">
-                                <span className="font-extrabold text-lg leading-none">{chartAdvisorsData[2].dynamicCoverage}</span>
-                                <span className="font-extrabold text-lg leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[2].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
+                                <span className="font-extrabold text-[15px] leading-none">{chartAdvisorsData[2].dynamicCoverage}</span>
+                                <span className="font-bold text-[13px] leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[2].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
                               </div>
                             </div>
                           )}
@@ -2339,8 +2339,8 @@ export default function App() {
                             >
                               <span className="font-bold text-[12px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[3].name))}</span>
                               <div className="flex justify-between items-baseline w-full">
-                                <span className="font-extrabold text-lg leading-none">{chartAdvisorsData[3].dynamicCoverage}</span>
-                                <span className="font-extrabold text-lg leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[3].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
+                                <span className="font-extrabold text-[15px] leading-none">{chartAdvisorsData[3].dynamicCoverage}</span>
+                                <span className="font-bold text-[13px] leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[3].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
                               </div>
                             </div>
                           )}
@@ -2355,8 +2355,8 @@ export default function App() {
                             >
                               <span className="font-bold text-[12px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[4].name))}</span>
                               <div className="flex justify-between items-baseline w-full">
-                                <span className="font-extrabold text-lg leading-none">{chartAdvisorsData[4].dynamicCoverage}</span>
-                                <span className="font-extrabold text-lg leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[4].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
+                                <span className="font-extrabold text-[15px] leading-none">{chartAdvisorsData[4].dynamicCoverage}</span>
+                                <span className="font-bold text-[13px] leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[4].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
                               </div>
                             </div>
                           )}
@@ -2389,8 +2389,8 @@ export default function App() {
                             >
                               <span className="font-bold text-[11px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[5].name))}</span>
                               <div className="flex justify-between items-baseline w-full">
-                                <span className="font-extrabold text-base leading-none">{chartAdvisorsData[5].dynamicCoverage}</span>
-                                <span className="font-extrabold text-base leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[5].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
+                                <span className="font-extrabold text-[13px] leading-none">{chartAdvisorsData[5].dynamicCoverage}</span>
+                                <span className="font-bold text-[11px] leading-none opacity-90">{kpis.totalUnique > 0 ? ((chartAdvisorsData[5].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%</span>
                               </div>
                             </div>
                           )}
@@ -2405,10 +2405,10 @@ export default function App() {
                             >
                               <span className="font-bold text-[11px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[6].name))}</span>
                               <div className="flex justify-between items-baseline w-full">
-                                <span className="font-extrabold text-base leading-none">{chartAdvisorsData[6].dynamicCoverage}</span>
+                                <span className="font-extrabold text-[13px] leading-none">{chartAdvisorsData[6].dynamicCoverage}</span>
                                 <span 
                                   style={{ color: isDarkMode ? '#CBD5E1' : '#000000' }}
-                                  className="font-extrabold text-base leading-none"
+                                  className="font-bold text-[11px] leading-none"
                                 >
                                   {kpis.totalUnique > 0 ? ((chartAdvisorsData[6].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%
                                 </span>
@@ -2426,10 +2426,10 @@ export default function App() {
                             >
                               <span className="font-bold text-[11px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[7].name))}</span>
                               <div className="flex justify-between items-baseline w-full">
-                                <span className="font-extrabold text-base leading-none">{chartAdvisorsData[7].dynamicCoverage}</span>
+                                <span className="font-extrabold text-[13px] leading-none">{chartAdvisorsData[7].dynamicCoverage}</span>
                                 <span 
                                   style={{ color: isDarkMode ? '#CBD5E1' : '#000000' }}
-                                  className="font-extrabold text-base leading-none"
+                                  className="font-bold text-[11px] leading-none"
                                 >
                                   {kpis.totalUnique > 0 ? ((chartAdvisorsData[7].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%
                                 </span>
@@ -2447,10 +2447,10 @@ export default function App() {
                             >
                               <span className="font-bold text-[11px] leading-tight block truncate uppercase">{toTitleCase(getShortNameWithLastName(chartAdvisorsData[8].name))}</span>
                               <div className="flex justify-between items-baseline w-full">
-                                <span className="font-extrabold text-base leading-none">{chartAdvisorsData[8].dynamicCoverage}</span>
+                                <span className="font-extrabold text-[13px] leading-none">{chartAdvisorsData[8].dynamicCoverage}</span>
                                 <span 
                                   style={{ color: isDarkMode ? '#CBD5E1' : '#000000' }}
-                                  className="font-extrabold text-base leading-none"
+                                  className="font-bold text-[11px] leading-none"
                                 >
                                   {kpis.totalUnique > 0 ? ((chartAdvisorsData[8].dynamicCoverage / kpis.totalUnique) * 100).toFixed(1) : 0}%
                                 </span>
