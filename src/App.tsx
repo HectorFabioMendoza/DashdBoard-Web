@@ -1425,161 +1425,184 @@ export default function App() {
         {activeTab === 'cobertura' ? (
           <section className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-3.5 mb-5 animate-fade-in select-none">
             {/* KPI 1: CLIENTES ACTIVOS TOTALES */}
-            <div className={`p-4.5 lg:p-5 rounded-2xl border flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-black/40 cursor-pointer ${
+            <div className={`p-4 rounded-xl border flex items-start gap-3.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/40 dark:hover:shadow-black/30 cursor-pointer ${
               isDarkMode 
                 ? 'bg-[#0F1115] border-slate-800/80 shadow-black/30 shadow-md' 
-                : 'bg-white border-slate-200/80 shadow-slate-100/50 shadow-md'
+                : 'bg-white border-slate-200/60 shadow-slate-100/50 shadow-md'
             }`}>
-              <div className="flex-1 min-w-0 pr-4">
-                <span className="text-[30px] sm:text-[32px] lg:text-[34px] font-extrabold leading-none text-[#15803D] dark:text-[#4ADE80] tracking-tight block">
-                  {formatNumberWithDots(kpis.totalUnique)}
-                </span>
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm border transition-all duration-300 ${
+                isDarkMode 
+                  ? 'bg-[#14532D]/35 text-[#4ADE80] border-emerald-500/25' 
+                  : 'bg-[#E8F8EE] text-[#059669] border-[#D1FAE5]'
+              }`}>
+                <Users size={22} className="stroke-[2.5]" />
+              </div>
+              <div className="flex-1 min-w-0">
                 <span 
-                  style={{ color: isDarkMode ? '#E2E8F0' : '#000000' }}
-                  className="text-[12px] sm:text-[13px] font-bold tracking-[0.5px] uppercase block mt-1.5"
+                  style={{ color: isDarkMode ? '#CBD5E1' : '#1E293B' }}
+                  className="text-[11px] font-bold tracking-[0.5px] uppercase block"
                 >
                   Clientes Activos Totales
                 </span>
-                <span 
-                  style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.85)' }}
-                  className="text-[11px] sm:text-[12px] font-semibold block mt-0.5"
-                >
-                  Clientes registrados
+                <span className="text-[25px] sm:text-[27px] font-extrabold leading-none text-[#15803D] dark:text-[#4ADE80] tracking-tight block mt-1">
+                  {formatNumberWithDots(kpis.totalUnique)}
                 </span>
-                <div className="mt-3.5 pt-2 border-t border-slate-200/80 dark:border-slate-800/60">
-                  <span 
-                    style={{ color: isDarkMode ? '#64748B' : 'rgba(0, 0, 0, 0.75)' }}
-                    className="text-[11px] font-semibold block"
-                  >
-                    En el periodo seleccionado
-                  </span>
-                </div>
-              </div>
-              <div className="w-[52px] h-[52px] rounded-2xl bg-[#DCFCE7] text-[#15803D] dark:bg-[#14532D]/40 dark:text-[#4ADE80] flex items-center justify-center shrink-0 shadow-sm border border-emerald-500/20 dark:border-emerald-500/10">
-                <Users size={26} />
+                <span 
+                  style={{ color: isDarkMode ? '#94A3B8' : '#64748B' }}
+                  className="text-[12px] font-medium block mt-0.5"
+                >
+                  Clientes
+                </span>
+                <span 
+                  style={{ color: isDarkMode ? '#64748B' : '#94A3B8' }}
+                  className="text-[11px] font-semibold block mt-3.5"
+                >
+                  En el período seleccionado
+                </span>
               </div>
             </div>
 
             {/* KPI 2: COBERTURA PROMEDIO POR ASESOR */}
-            <div className={`p-4.5 lg:p-5 rounded-2xl border flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-black/40 cursor-pointer ${
+            <div className={`p-4 rounded-xl border flex items-start gap-3.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/40 dark:hover:shadow-black/30 cursor-pointer ${
               isDarkMode 
                 ? 'bg-[#0F1115] border-slate-800/80 shadow-black/30 shadow-md' 
-                : 'bg-white border-slate-200/80 shadow-slate-100/50 shadow-md'
+                : 'bg-white border-slate-200/60 shadow-slate-100/50 shadow-md'
             }`}>
-              <div className="flex-1 min-w-0 pr-4">
-                <span className="text-[30px] sm:text-[32px] lg:text-[34px] font-extrabold leading-none text-[#6B21A8] dark:text-[#C084FC] tracking-tight block">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm border transition-all duration-300 ${
+                isDarkMode 
+                  ? 'bg-[#3B0764]/35 text-[#C084FC] border-purple-500/25' 
+                  : 'bg-[#F0EDFD] text-[#7C3AED] border-[#E0D7FE]'
+              }`}>
+                <BarChart3 size={22} className="stroke-[2.5]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <span 
+                  style={{ color: isDarkMode ? '#CBD5E1' : '#1E293B' }}
+                  className="text-[11px] font-bold tracking-[0.5px] uppercase block"
+                >
+                  Cobertura Promedio Por Asesor
+                </span>
+                <span className="text-[25px] sm:text-[27px] font-extrabold leading-none text-[#6B21A8] dark:text-[#C084FC] tracking-tight block mt-1">
                   {kpisCobertura.avgCoverage}
                 </span>
                 <span 
-                  style={{ color: isDarkMode ? '#E2E8F0' : '#000000' }}
-                  className="text-[12px] sm:text-[13px] font-bold tracking-[0.5px] uppercase block mt-1.5"
+                  style={{ color: isDarkMode ? '#94A3B8' : '#64748B' }}
+                  className="text-[12px] font-medium block mt-0.5"
                 >
-                  Cobertura Promedio
+                  Clientes por asesor activo
                 </span>
                 <span 
-                  style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.85)' }}
-                  className="text-[11px] sm:text-[12px] font-semibold block mt-0.5"
+                  style={{ color: isDarkMode ? '#64748B' : '#94A3B8' }}
+                  className="text-[11px] font-semibold block mt-3.5"
                 >
-                  Clientes por asesor comercial
+                  Promedio del período
                 </span>
-                <div className="mt-3.5 pt-2 border-t border-slate-200/80 dark:border-slate-800/60">
-                  <span 
-                    style={{ color: isDarkMode ? '#64748B' : 'rgba(0, 0, 0, 0.75)' }}
-                    className="text-[11px] font-semibold block"
-                  >
-                    Promedio por asesor activo
-                  </span>
-                </div>
-              </div>
-              <div className="w-[52px] h-[52px] rounded-2xl bg-[#F3E8FF] text-[#6B21A8] dark:bg-[#3B0764]/40 dark:text-[#C084FC] flex items-center justify-center shrink-0 shadow-sm border border-purple-500/20 dark:border-purple-500/10">
-                <BarChart3 size={26} />
               </div>
             </div>
 
             {/* KPI 3: MEJOR ASESOR */}
-            <div className={`p-4.5 lg:p-5 rounded-2xl border flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-black/40 cursor-pointer ${
+            <div className={`p-4 rounded-xl border flex items-start gap-3.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/40 dark:hover:shadow-black/30 cursor-pointer ${
               isDarkMode 
                 ? 'bg-[#0F1115] border-slate-800/80 shadow-black/30 shadow-md' 
-                : 'bg-white border-slate-200/80 shadow-slate-100/50 shadow-md'
+                : 'bg-white border-slate-200/60 shadow-slate-100/50 shadow-md'
             }`}>
-              <div className="flex-1 min-w-0 pr-4">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm border transition-all duration-300 ${
+                isDarkMode 
+                  ? 'bg-[#78350F]/35 text-[#FBBF24] border-amber-500/25' 
+                  : 'bg-[#FEF5E7] text-[#D97706] border-[#FEEBCE]'
+              }`}>
+                <Crown size={22} className="stroke-[2.5]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <span 
+                  style={{ color: isDarkMode ? '#CBD5E1' : '#1E293B' }}
+                  className="text-[11px] font-bold tracking-[0.5px] uppercase block"
+                >
+                  Mejor Asesor
+                </span>
                 <span 
                   style={{ color: isDarkMode ? '#FFFFFF' : '#000000' }}
-                  className="text-[19px] sm:text-[21px] lg:text-[23px] font-extrabold leading-tight tracking-tight block truncate-none" 
+                  className="text-[19px] sm:text-[21px] lg:text-[22px] font-extrabold leading-tight tracking-tight block mt-1 truncate"
                   title={toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))}
                 >
                   {toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))}
                 </span>
-                <span 
-                  style={{ color: isDarkMode ? '#E2E8F0' : '#000000' }}
-                  className="text-[12px] sm:text-[13px] font-bold tracking-[0.5px] uppercase block mt-1.5"
-                >
-                  Mejor Asesor
+                <span className="text-[12px] font-bold text-[#059669] dark:text-[#4ADE80] block mt-0.5">
+                  {kpisCobertura.bestAdvisorCoverage} clientes
                 </span>
-                <div className="mt-1 block">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#DCFCE7] text-[#15803D] dark:bg-[#14532D]/40 dark:text-[#4ADE80]">
-                    {kpisCobertura.bestAdvisorCoverage} clientes
-                  </span>
-                </div>
-                <div className="mt-3.5 pt-2 border-t border-slate-200/80 dark:border-slate-800/60">
-                  <span 
-                    style={{ color: isDarkMode ? '#64748B' : 'rgba(0, 0, 0, 0.75)' }}
-                    className="text-[11px] font-semibold block"
-                  >
-                    {kpisCobertura.bestAdvisorShare}% del total de cobertura
-                  </span>
-                </div>
-              </div>
-              <div className="w-[52px] h-[52px] rounded-2xl bg-[#FEF3C7] text-[#D97706] dark:bg-[#78350F]/40 dark:text-[#FBBF24] flex items-center justify-center shrink-0 shadow-sm border border-amber-500/20 dark:border-amber-500/10">
-                <Crown size={26} />
+                <span 
+                  style={{ color: isDarkMode ? '#64748B' : '#94A3B8' }}
+                  className="text-[11px] font-semibold block mt-3.5"
+                >
+                  {kpisCobertura.bestAdvisorShare}% del total de cobertura
+                </span>
               </div>
             </div>
 
             {/* KPI 4: DIFERENCIA VS PROMEDIO */}
-            <div className={`p-4.5 lg:p-5 rounded-2xl border flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-black/40 cursor-pointer ${
+            <div className={`p-4 rounded-xl border flex items-start gap-3.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/40 dark:hover:shadow-black/30 cursor-pointer ${
               isDarkMode 
                 ? 'bg-[#0F1115] border-slate-800/80 shadow-black/30 shadow-md' 
-                : 'bg-white border-slate-200/80 shadow-slate-100/50 shadow-md'
+                : 'bg-white border-slate-200/60 shadow-slate-100/50 shadow-md'
             }`}>
-              <div className="flex-1 min-w-0 pr-4">
-                <span className="text-[30px] sm:text-[32px] lg:text-[34px] font-extrabold leading-none text-[#1D4ED8] dark:text-[#60A5FA] tracking-tight block">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 shadow-sm border transition-all duration-300 ${
+                isDarkMode 
+                  ? 'bg-[#1E3A8A]/35 text-[#60A5FA] border-blue-500/25' 
+                  : 'bg-[#EEF2FF] text-[#2563EB] border-[#DBEAFE]'
+              }`}>
+                <TrendingUp size={22} className="stroke-[2.5]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <span 
+                  style={{ color: isDarkMode ? '#CBD5E1' : '#1E293B' }}
+                  className="text-[11px] font-bold tracking-[0.5px] uppercase block"
+                >
+                  Diferencia Vs Promedio
+                </span>
+                <span className="text-[25px] sm:text-[27px] font-extrabold leading-none text-[#1D4ED8] dark:text-[#60A5FA] tracking-tight block mt-1">
                   {kpisCobertura.diffVsAvg >= 0 ? `+${kpisCobertura.diffVsAvg}%` : `${kpisCobertura.diffVsAvg}%`}
                 </span>
                 <span 
-                  style={{ color: isDarkMode ? '#E2E8F0' : '#000000' }}
-                  className="text-[12px] sm:text-[13px] font-bold tracking-[0.5px] uppercase block mt-1.5"
-                >
-                  Diferencia vs Promedio
-                </span>
-                <span 
-                  style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.85)' }}
-                  className="text-[11px] sm:text-[12px] font-semibold block mt-0.5"
+                  style={{ color: isDarkMode ? '#94A3B8' : '#64748B' }}
+                  className="text-[12px] font-medium block mt-0.5"
                 >
                   Sobre el promedio de cobertura
                 </span>
-                <div className="mt-3.5 pt-2 border-t border-slate-200/80 dark:border-slate-800/60">
-                  <span 
-                    style={{ color: isDarkMode ? '#64748B' : 'rgba(0, 0, 0, 0.75)' }}
-                    className="text-[11px] font-semibold block truncate" 
-                    title={`${toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))} vs promedio`}
-                  >
-                    {toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))} vs prom
-                  </span>
-                </div>
-              </div>
-              <div className="w-[52px] h-[52px] rounded-2xl bg-[#DBEAFE] text-[#1D4ED8] dark:bg-[#1E3A8A]/40 dark:text-[#60A5FA] flex items-center justify-center shrink-0 shadow-sm border border-blue-500/20 dark:border-blue-500/10">
-                <TrendingUp size={26} />
+                <span 
+                  style={{ color: isDarkMode ? '#64748B' : '#94A3B8' }}
+                  className="text-[11px] font-semibold block mt-3.5 truncate"
+                  title={`${toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))} vs promedio`}
+                >
+                  {toTitleCase(getShortNameWithLastName(kpisCobertura.bestAdvisorName || "Miguel Agudelo"))} vs promedio
+                </span>
               </div>
             </div>
 
             {/* KPI 5: CRECIMIENTO MES ACTUAL */}
-            <div className={`p-4.5 lg:p-5 rounded-2xl border flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/50 dark:hover:shadow-black/40 cursor-pointer ${
+            <div className={`p-4 rounded-xl border flex items-start gap-3.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-200/40 dark:hover:shadow-black/30 cursor-pointer ${
               isDarkMode 
                 ? 'bg-[#0F1115] border-slate-800/80 shadow-black/30 shadow-md' 
-                : 'bg-white border-slate-200/80 shadow-slate-100/50 shadow-md'
+                : 'bg-white border-slate-200/60 shadow-slate-100/50 shadow-md'
             }`}>
-              <div className="flex-1 min-w-0 pr-4">
-                <span className={`text-[30px] sm:text-[32px] lg:text-[34px] font-extrabold leading-none tracking-tight block ${
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border transition-all duration-300 shadow-sm ${
+                parseFloat(kpisCobertura.growthMesActual) >= 0 
+                  ? (isDarkMode 
+                      ? 'bg-[#14532D]/35 text-[#4ADE80] border-emerald-500/25' 
+                      : 'bg-[#E8F8EE] text-[#059669] border-[#D1FAE5]')
+                  : (isDarkMode 
+                      ? 'bg-[#7F1D1D]/35 text-[#F87171] border-red-500/25' 
+                      : 'bg-[#FDF2F2] text-[#DC2626] border-[#FEE2E2]')
+              }`}>
+                {parseFloat(kpisCobertura.growthMesActual) >= 0 ? <TrendingUp size={22} className="stroke-[2.5]" /> : <TrendingDown size={22} className="stroke-[2.5]" />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <span 
+                  style={{ color: isDarkMode ? '#CBD5E1' : '#1E293B' }}
+                  className="text-[11px] font-bold tracking-[0.5px] uppercase block"
+                >
+                  Crecimiento Mes Actual
+                </span>
+                <span className={`text-[25px] sm:text-[27px] font-extrabold leading-none tracking-tight block mt-1 ${
                   parseFloat(kpisCobertura.growthMesActual) >= 0 
                     ? 'text-[#15803D] dark:text-[#4ADE80]' 
                     : 'text-[#B91C1C] dark:text-[#F87171]'
@@ -1587,32 +1610,17 @@ export default function App() {
                   {parseFloat(kpisCobertura.growthMesActual) >= 0 ? `+${kpisCobertura.growthMesActual}%` : `${kpisCobertura.growthMesActual}%`}
                 </span>
                 <span 
-                  style={{ color: isDarkMode ? '#E2E8F0' : '#000000' }}
-                  className="text-[12px] sm:text-[13px] font-bold tracking-[0.5px] uppercase block mt-1.5"
-                >
-                  Crecimiento Mes Actual
-                </span>
-                <span 
-                  style={{ color: isDarkMode ? '#94A3B8' : 'rgba(0, 0, 0, 0.85)' }}
-                  className="text-[11px] sm:text-[12px] font-semibold block mt-0.5"
+                  style={{ color: isDarkMode ? '#94A3B8' : '#64748B' }}
+                  className="text-[12px] font-medium block mt-0.5"
                 >
                   Vs. período anterior (Mar 26)
                 </span>
-                <div className="mt-3.5 pt-2 border-t border-slate-200/80 dark:border-slate-800/60">
-                  <span 
-                    style={{ color: isDarkMode ? '#64748B' : 'rgba(0, 0, 0, 0.75)' }}
-                    className="text-[11px] font-semibold block"
-                  >
-                    Abr 26 vs Mar 26
-                  </span>
-                </div>
-              </div>
-              <div className={`w-[52px] h-[52px] rounded-2xl flex items-center justify-center shrink-0 border transition-colors duration-300 shadow-sm ${
-                parseFloat(kpisCobertura.growthMesActual) >= 0 
-                  ? 'bg-[#DCFCE7] text-[#15803D] border-emerald-500/20 dark:bg-[#14532D]/40 dark:text-[#4ADE80] dark:border-emerald-500/10' 
-                  : 'bg-[#FEE2E2] text-[#B91C1C] border-red-500/20 dark:bg-[#7F1D1D]/40 dark:text-[#F87171] dark:border-red-500/10'
-              }`}>
-                {parseFloat(kpisCobertura.growthMesActual) >= 0 ? <TrendingUp size={26} /> : <TrendingDown size={26} />}
+                <span 
+                  style={{ color: isDarkMode ? '#64748B' : '#94A3B8' }}
+                  className="text-[11px] font-semibold block mt-3.5"
+                >
+                  Abr 26 vs Mar 26
+                </span>
               </div>
             </div>
           </section>
