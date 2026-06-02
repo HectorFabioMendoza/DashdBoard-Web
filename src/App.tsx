@@ -718,6 +718,7 @@ export default function App() {
   }, [selectedMonths, selectedVendors, rawExcelRows, salesData.advisorsSales, advisorsData]);
 
   // CALCULO DINAMICO DE RECENCIA Y RIESGO DE CLIENTES (RFM)
+  // CALCULO DINAMICO DE RECENCIA Y RIESGO DE CLIENTES (RFM)
   const clientRecencyData = useMemo(() => {
     if (rawExcelRows.length === 0) {
       return {
@@ -727,25 +728,74 @@ export default function App() {
       };
     }
 
-    // 1. Encontrar la fecha máxima en todo el archivo para usarla como punto de referencia ("hoy")
-    let maxDateSerial = 0;
-    rawExcelRows.forEach(row => {
-      const serial = Number(row.fecha);
-      if (serial && serial > maxDateSerial) {
-        maxDateSerial = serial;
+    if (selectedMonths.length === 0) {
+      return {
+        summary: { saludable: 0, atencion: 0, riesgo: 0, perdido: 0, total: 0, avgInactivity: 0 },
+        byVendor: [],
+        chartData: []
+      };
+    }
+
+    // Metadatos de meses base para mapear de forma cronológica exacta
+    const MONTH_METADATA: Record<string, { year: number, monthZeroIndexed: number }> = {
+      'Sep25': { year: 2025, monthZeroIndexed: 8 },
+      'Oct25': { year: 2025, monthZeroIndexed: 9 },
+      'Nov25': { year: 2025, monthZeroIndexed: 10 },
+      'Dic25': { year: 2025, monthZeroIndexed: 11 },
+      'Enero': { year: 2026, monthZeroIndexed: 0 },
+      'Febrero': { year: 2026, monthZeroIndexed: 1 },
+      'Marzo': { year: 2026, monthZeroIndexed: 2 },
+      'Abril': { year: 2026, monthZeroIndexed: 3 }
+    };
+
+    // Helper para obtener el número de serie de Excel del primer día del mes calendario posterior
+    const getNextMonthFirstDaySerial = (monthId: string): number => {
+      const meta = MONTH_METADATA[monthId];
+      if (!meta) return 46143; // Mayo 1, 2026 por defecto (Abril 2026 + 1 mes)
+
+      let nextYear = meta.year;
+      let nextMonth = meta.monthZeroIndexed + 1;
+      if (nextMonth > 11) {
+        nextMonth = 0;
+        nextYear += 1;
+      }
+
+      const jsDate = new Date(Date.UTC(nextYear, nextMonth, 1));
+      const excelEpoch = new Date(Date.UTC(1899, 11, 30));
+      const msPerDay = 24 * 60 * 60 * 1000;
+      return Math.round((jsDate.getTime() - excelEpoch.getTime()) / msPerDay);
+    };
+
+    // 1. Encontrar el mes más tardío dentro del rango de meses seleccionado
+    let latestMonthId = 'Abril'; // Fallback por defecto si no se encuentra
+    let maxMonthIndex = -1;
+
+    selectedMonths.forEach(mId => {
+      const idx = MESES_CONFIG.findIndex(m => m.id === mId);
+      if (idx > maxMonthIndex) {
+        maxMonthIndex = idx;
+        latestMonthId = mId;
       }
     });
 
-    if (maxDateSerial === 0) {
-      maxDateSerial = 46142; // Fallback a Mayo 2026
-    }
+    // 2. Determinar la fecha de referencia dinámica (primer día del mes siguiente al último seleccionado)
+    const referenceDateSerial = getNextMonthFirstDaySerial(latestMonthId);
 
     // Mapa para almacenar la fecha de última compra de cada cliente único
     const clientLastPurchase: Record<string, { lastDateSerial: number, sellerName: string }> = {};
 
+    const mesMap: Record<string, string> = {
+      'Sep25': 'Septiembre', 'Oct25': 'Octubre', 'Nov25': 'Noviembre', 'Dic25': 'Diciembre',
+      'Enero': 'Enero', 'Febrero': 'Febrero', 'Marzo': 'Marzo', 'Abril': 'Abril'
+    };
+    const selectedExcelMonths = selectedMonths.map(m => mesMap[m]);
+
     rawExcelRows.forEach(row => {
       if (!row.vendedor || !row.cod_client || !row.fecha || !row.Tipo) return;
       if (!['FE', 'CT'].includes(row.Tipo)) return;
+
+      // Filtrar únicamente por los meses elegidos por el usuario
+      if (!row.Mes || !selectedExcelMonths.includes(row.Mes)) return;
 
       const rawVendedor = row.vendedor.trim();
       const id = rawVendedor.substring(0, 2);
@@ -771,7 +821,7 @@ export default function App() {
     // Clasificar los clientes en las categorías de riesgo
     let saludable = 0; // 0-15
     let atencion = 0;  // 16-30
-    let riesgo = 0;    // 31-60 (o >30 y <=60)
+    let riesgo = 0;    // 31-60
     let perdido = 0;   // >60
     let totalInactivityDaysSum = 0;
     let totalClientsCount = 0;
@@ -783,7 +833,7 @@ export default function App() {
     });
 
     Object.entries(clientLastPurchase).forEach(([_, info]) => {
-      const inactivityDays = Math.max(0, maxDateSerial - info.lastDateSerial);
+      const inactivityDays = Math.max(0, referenceDateSerial - info.lastDateSerial);
       totalInactivityDaysSum += inactivityDays;
       totalClientsCount++;
 
@@ -838,7 +888,7 @@ export default function App() {
       byVendor: byVendorArray,
       chartData
     };
-  }, [rawExcelRows, selectedVendors]);
+  }, [rawExcelRows, selectedVendors, selectedMonths]);
 
   // TENDENCIAS DE FACTURACION
   const monthlyTrends = useMemo(() => {
