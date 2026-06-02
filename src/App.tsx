@@ -1389,6 +1389,8 @@ export default function App() {
     );
   }
 
+  const currentTab: string = activeTab;
+
   return (
     <div className={`min-h-screen flex font-sans transition-colors duration-300 overflow-hidden ${
       isDarkMode ? 'bg-[#0a0c10] text-gray-100' : 'bg-[#F8FAFC] text-gray-800'
@@ -1769,7 +1771,8 @@ export default function App() {
             </div>
           </section>
         ) : (
-          <section className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-5 select-none animate-fade-in">
+          currentTab !== 'frecuencia' && (
+            <section className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-5 select-none animate-fade-in">
             {/* KPI 1 */}
             <div className={`p-6 rounded-2xl border flex items-center justify-between transition-all duration-300 ${
               isDarkMode ? 'bg-[#0f1115] border-gray-800/80 shadow-black/30 shadow-md' : 'bg-white border-slate-200/80 shadow-slate-200/60 shadow-md'
@@ -2064,7 +2067,8 @@ export default function App() {
               </div>
             </div>
           </section>
-        )}
+        )
+      )}
 
         {/* 4. SECCIÓN PRINCIPAL: GRÁFICO PROTAGONISTA (PROPORCIONAL, OPTIMIZADO E IMPECABLE) */}
         {activeTab === 'ventas' && (
