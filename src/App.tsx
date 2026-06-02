@@ -2181,7 +2181,7 @@ export default function App() {
                               {shortName}
                             </span>
                             {/* Barra de progreso */}
-                            <div className="flex-1 h-4 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mr-4 relative">
+                            <div className={`flex-1 h-4 rounded-full overflow-hidden mr-4 relative ${isDarkMode ? 'bg-slate-800/80' : 'bg-slate-100'}`}>
                               <div 
                                 className={barClass}
                                 style={{ width: `${(adv.dynamicCoverage / 280) * 100}%` }}
