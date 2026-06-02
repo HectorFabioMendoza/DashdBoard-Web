@@ -1679,7 +1679,10 @@ export default function App() {
                   )}
                   {activeTab === 'asesor' && formatMillionsCOP(selectedAdvisorAnalysis?.salesRaw || 0)}
                 </span>
-                <span className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-2">
+                <span 
+                  style={{ color: isDarkMode ? '#94A3B8' : '#475569' }}
+                  className="text-[14px] font-semibold uppercase tracking-wider block mt-2"
+                >
                   {activeTab === 'ventas' && 'Ventas Totales'}
                   {activeTab === 'unicos' && 'Total Clientes Únicos'}
                   {activeTab === 'frecuencia' && 'Frecuencia Promedio'}
@@ -1712,30 +1715,51 @@ export default function App() {
                     : 'border-l-4 border-l-sky-500'
             }`}>
               <div className="flex-1 min-w-0 pr-2">
-                <span className="text-[36px] font-extrabold tracking-tight block leading-none mb-1.5 text-slate-900 dark:text-slate-100 truncate">
+                <span 
+                  style={{ color: isDarkMode ? '#FFFFFF' : '#0F172A' }}
+                  className="text-[36px] font-extrabold tracking-tight block leading-none mb-1.5 truncate"
+                >
                   {activeTab === 'ventas' && getShortNameWithLastName(salesData.leaderName)}
                   {activeTab === 'unicos' && getShortNameWithLastName(kpis.leaderName)}
                   {activeTab === 'frecuencia' && (
                     <>
                       {formatNumberWithDots(frequencyData.totalInvoices)}
-                      <span className="text-base font-medium text-slate-400 dark:text-slate-500 ml-1.5 font-sans">FE+CT</span>
+                      <span 
+                        style={{ color: isDarkMode ? '#94A3B8' : '#475569' }}
+                        className="text-base font-medium ml-1.5 font-sans"
+                      >
+                        FE+CT
+                      </span>
                     </>
                   )}
                   {activeTab === 'tendencias' && (((monthlyTrends.reduce((max, curr) => curr.salesRaw > max.salesRaw ? curr : max, { label: 'Ninguno', salesRaw: 0 } as any) as any).label || 'Ninguno'))}
                   {activeTab === 'asesor' && (
                     <>
                       {selectedAdvisorAnalysis?.coverage || 0}
-                      <span className="text-base font-medium text-slate-400 dark:text-slate-500 ml-1.5 font-sans">Clientes</span>
+                      <span 
+                        style={{ color: isDarkMode ? '#94A3B8' : '#475569' }}
+                        className="text-base font-medium ml-1.5 font-sans"
+                      >
+                        Clientes
+                      </span>
                     </>
                   )}
                   {activeTab === 'comparativos' && (
                     <>
                       {formatNumberWithDots(kpis.totalUnique)}
-                      <span className="text-base font-medium text-slate-400 dark:text-slate-500 ml-1.5 font-sans">Únicos</span>
+                      <span 
+                        style={{ color: isDarkMode ? '#94A3B8' : '#475569' }}
+                        className="text-base font-medium ml-1.5 font-sans"
+                      >
+                        Únicos
+                      </span>
                     </>
                   )}
                 </span>
-                <span className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-2">
+                <span 
+                  style={{ color: isDarkMode ? '#94A3B8' : '#475569' }}
+                  className="text-[14px] font-semibold uppercase tracking-wider block mt-2"
+                >
                   {activeTab === 'ventas' && 'Líder en Ventas'}
                   {activeTab === 'unicos' && 'Líder de Clientes'}
                   {activeTab === 'frecuencia' && 'Total Invoices'}
@@ -1790,7 +1814,10 @@ export default function App() {
                   {activeTab === 'asesor' && formatMillionsCOP(selectedAdvisorAnalysis?.ticketAverage || 0)}
                   {activeTab === 'comparativos' && formatMillionsCOP(salesData.globalTicketAverage)}
                 </span>
-                <span className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-2">
+                <span 
+                  style={{ color: isDarkMode ? '#94A3B8' : '#475569' }}
+                  className="text-[14px] font-semibold uppercase tracking-wider block mt-2"
+                >
                   {activeTab === 'ventas' && 'Venta Promedio'}
                   {activeTab === 'unicos' && 'Promedio Clientes'}
                   {activeTab === 'frecuencia' && 'Mayor Frecuencia'}
@@ -1856,7 +1883,10 @@ export default function App() {
                     </>
                   )}
                 </span>
-                <span className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-2">
+                <span 
+                  style={{ color: isDarkMode ? '#94A3B8' : '#475569' }}
+                  className="text-[14px] font-semibold uppercase tracking-wider block mt-2"
+                >
                   {activeTab === 'ventas' && 'Asesores Activos'}
                   {activeTab === 'unicos' && 'Asesores Activos'}
                   {activeTab === 'frecuencia' && 'Asesores Activos'}
@@ -1891,7 +1921,10 @@ export default function App() {
                   {activeTab === 'asesor' && `${selectedAdvisorAnalysis?.percentage || 0}%`}
                   {activeTab === 'comparativos' && `${formatMillionsValue(salesData.totalSales / (kpis.totalUnique || 1) / 1000000)}/cl`}
                 </span>
-                <span className="text-[14px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mt-2">
+                <span 
+                  style={{ color: isDarkMode ? '#94A3B8' : '#475569' }}
+                  className="text-[14px] font-semibold uppercase tracking-wider block mt-2"
+                >
                   {activeTab === 'ventas' && 'Participación Líder'}
                   {activeTab === 'unicos' && 'Participación Líder'}
                   {activeTab === 'frecuencia' && 'Frecuencia Líder'}
@@ -3219,7 +3252,7 @@ export default function App() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <span className="text-[14px] font-semibold text-rose-700 dark:text-rose-400 uppercase tracking-wider block mb-1">Análisis Comercial por Asesor</span>
-                  <h3 className="text-[18px] font-bold text-slate-900 dark:text-slate-50 uppercase tracking-tight">Filtro analítico por vendedor en períodos activos</h3>
+                  <h3 style={{ color: isDarkMode ? '#F8FAFC' : '#0F172A' }} className="text-[18px] font-bold uppercase tracking-tight">Filtro analítico por vendedor en períodos activos</h3>
                 </div>
 
                 <div className="flex items-center gap-2 mt-2">
@@ -3249,7 +3282,7 @@ export default function App() {
             }`}>
               <div className="mb-4">
                 <span className="text-[14px] font-semibold text-rose-700 dark:text-rose-400 uppercase tracking-wider block mb-1">Facturación Mensual de {getShortNameWithLastName(selectedIndividualVendor)}</span>
-                <h3 className="text-[18px] font-bold text-slate-900 dark:text-slate-50 uppercase tracking-tight">Volumen de ventas logradas por mes en millones de COP</h3>
+                <h3 style={{ color: isDarkMode ? '#F8FAFC' : '#0F172A' }} className="text-[18px] font-bold uppercase tracking-tight">Volumen de ventas logradas por mes en millones de COP</h3>
               </div>
 
               <div className="w-full h-[460px]">
