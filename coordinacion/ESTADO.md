@@ -22,5 +22,6 @@ En Dashboard Web, según el historial de commits reciente, ya se implementó: ta
 3. **Independización de Repositorios**: `.gitignore` individuales y despliegue a repos propios de GitHub (`Inventario-JRP` y `Extractor-Unilever`).
 
 ## Siguiente paso recomendado
-* Revisar y aprobar el plan de implementación del módulo de Cartera comercial (ver implementation_plan.md) y autorizar el inicio de la Fase 1 (Diagnóstico de DBFs de Cartera en el servidor de producción).
+* Ejecutar la extracción `python actualizar_dashboard_dbf.py` en el servidor de producción para generar `Cartera.xlsx` con datos reales y copiarlo al directorio local de desarrollo (`/public/`).
+* Iniciar el desarrollo de la interfaz responsiva en React para el módulo de Cartera (Fase 3).
 * (Diferido) Pruebas de campo del Inventario JRP con operarios concurrentes bajo túnel Cloudflare.
