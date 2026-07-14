@@ -1,7 +1,7 @@
 # Plan de Trabajo / Backlog - Coordinación
 
 ## En progreso
-- [/] **Fase 3: Desarrollo de la Interfaz de Cartera (React)** (Gemini, 2026-07-14 16:00)
+* *(No hay tareas activas en progreso en este momento)*
 
 ## Pendientes sin asignar
 ### Dashboard Web (proyecto principal)
@@ -18,6 +18,7 @@
 - [ ] **Mapeo de Productos Desalineados**: Depurar el archivo `productos_unilever_desalineados.xlsx` para corregir las inconsistencias de referencias cruzadas entre el inventario local y las plantillas solicitadas por Unilever.
 
 ## Completadas
+- [x] **Fase 3: Desarrollo de la Interfaz de Cartera (React)**: Diseñar la pestaña de Cartera protegida por contraseña con KPIs de cartera, gráfico de aging (vencimientos), tabla de clientes y detalle expandible de facturas.
 - [x] **Fase 2: Extracción y Generación de Excel**: Ampliar `actualizar_dashboard_dbf.py` para procesar la cartera y exportar `Cartera.xlsx` (resumen por cliente y detalle de documentos).
 - [x] **Fase 1: Diagnóstico de DBFs de Cartera**: Crear y ejecutar un script de descubrimiento para encontrar e inspeccionar las tablas de cartera (CxC) en el servidor de producción.
 - [x] Filtro dinámico de diferencias por signo (Positivo/Negativo) en el dashboard del supervisor.
