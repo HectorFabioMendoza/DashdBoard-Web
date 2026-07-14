@@ -1,13 +1,11 @@
 # Plan de Trabajo / Backlog - Coordinación
 
 ## En progreso
-* *(No hay tareas activas en progreso en este momento)*
+- [/] **Fase 3: Desarrollo de la Interfaz de Cartera (React)** (Gemini, 2026-07-14 16:00)
 
 ## Pendientes sin asignar
 ### Dashboard Web (proyecto principal)
-- [ ] **Fase 1: Diagnóstico de DBFs de Cartera**: Crear y ejecutar un script de descubrimiento para encontrar e inspeccionar las tablas de cartera (CxC) en el servidor de producción.
-- [ ] **Fase 2: Extracción y Generación de Excel**: Ampliar `actualizar_dashboard_dbf.py` para procesar la cartera y exportar `Cartera.xlsx` (resumen por cliente y detalle de documentos).
-- [ ] **Fase 3: Desarrollo de la Interfaz de Cartera (React)**: Diseñar la pestaña de Cartera protegida por contraseña con KPIs de cartera, gráfico de aging (vencimientos), tabla de clientes y detalle expandible de facturas.
+* *(No hay más tareas pendientes sin asignar en esta fase)*
 
 ### Inventario JRP
 - [ ] **Pruebas de Concurrencia de Red**: Validar el correcto funcionamiento del buffer de congelación de grilla bajo condiciones de envío masivo y simultáneo de datos de conteo por parte de múltiples operarios.
@@ -20,6 +18,8 @@
 - [ ] **Mapeo de Productos Desalineados**: Depurar el archivo `productos_unilever_desalineados.xlsx` para corregir las inconsistencias de referencias cruzadas entre el inventario local y las plantillas solicitadas por Unilever.
 
 ## Completadas
+- [x] **Fase 2: Extracción y Generación de Excel**: Ampliar `actualizar_dashboard_dbf.py` para procesar la cartera y exportar `Cartera.xlsx` (resumen por cliente y detalle de documentos).
+- [x] **Fase 1: Diagnóstico de DBFs de Cartera**: Crear y ejecutar un script de descubrimiento para encontrar e inspeccionar las tablas de cartera (CxC) en el servidor de producción.
 - [x] Filtro dinámico de diferencias por signo (Positivo/Negativo) en el dashboard del supervisor.
 - [x] Refinamiento de tiempos en scripts de emulación de teclado (`digitar_ajustes_erp.py`) para evitar saltarse campos en Siesa/DataX.
 - [x] Sistema de teclas de escape (`BACKSPACE` para iniciar, `1`/`S` para confirmar, `Espacio` para abortar de emergencia).
