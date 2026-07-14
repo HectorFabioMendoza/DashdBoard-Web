@@ -4,6 +4,11 @@
 * *(No hay tareas activas en progreso en este momento)*
 
 ## Pendientes sin asignar
+### Dashboard Web (proyecto principal)
+- [ ] **Fase 1: Diagnóstico de DBFs de Cartera**: Crear y ejecutar un script de descubrimiento para encontrar e inspeccionar las tablas de cartera (CxC) en el servidor de producción.
+- [ ] **Fase 2: Extracción y Generación de Excel**: Ampliar `actualizar_dashboard_dbf.py` para procesar la cartera y exportar `Cartera.xlsx` (resumen por cliente y detalle de documentos).
+- [ ] **Fase 3: Desarrollo de la Interfaz de Cartera (React)**: Diseñar la pestaña de Cartera protegida por contraseña con KPIs de cartera, gráfico de aging (vencimientos), tabla de clientes y detalle expandible de facturas.
+
 ### Inventario JRP
 - [ ] **Pruebas de Concurrencia de Red**: Validar el correcto funcionamiento del buffer de congelación de grilla bajo condiciones de envío masivo y simultáneo de datos de conteo por parte de múltiples operarios.
 - [ ] **Alertas en Consola de Operarios**: Implementar una señal sonora (mediante Beep/Web Audio API) o una alerta visual parpadeante en `OperatorConsole.tsx` cuando un operario reciba un artículo devuelto para reconteo, mejorando la visibilidad del operador.

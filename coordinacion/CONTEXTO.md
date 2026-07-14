@@ -4,6 +4,37 @@ Este documento reúne las decisiones arquitectónicas estables del proyecto, con
 
 ---
 
+## 🖥️ 0. Proyecto Principal: Dashboard Web (Dashboard Comercial JR)
+Este es el **proyecto raíz** del repositorio. `Inventario JRP` y `unilever` (Extractor Unilever) son subcarpetas que a su vez son subproyectos independientes (con sus propios repos de GitHub) — no forman parte de este dashboard y no deben mezclarse en su lógica.
+
+### Arquitectura y Stack Tecnológico
+* **Backend (extracción de datos)**: Python autónomo. `actualizar_dashboard_dbf.py` lee directamente las tablas DBF del ERP SIESA (FoxPro) desde `E:\DataX_NUEVO\datos` (producción) o `D:\4 Hector Fabio\Distribuidora JR\Base de datos` (fallback dev), consolida ventas/clientes/inventario y genera los Excel que consume el frontend.
+* **Automatización**: `programar_actualizacion_dbf.ps1` programa la actualización 4 veces al día (7am, 1pm, 5pm, 10pm) vía Programador de Tareas de Windows con permisos elevados. `actualizar_datos_dbf_silencioso.bat` es la versión sin `pause` para tareas programadas; `actualizar_datos_dbf.bat` es la versión interactiva para depuración manual.
+* **Frontend**: React + TypeScript, un único archivo grande `src/App.tsx` (~6200 líneas) con estado, lógica financiera y UI en Bento Grid. **100% serverless en el navegador**: no hay backend de datos en producción, el frontend lee directamente los `.xlsx` de `/public/` con la librería `xlsx` de JS (`1Maestra de clientes2026.xlsx`, `Ventas por linea.xlsx`, `Inventario.xlsx`).
+* **Despliegue**: `npm run build` genera `/dist`, servido como estático en IIS o cualquier servidor HTTP. El script de Python en el servidor copia los Excel generados tanto a `/public` (dev) como a `/dist` (producción).
+* **Acceso**: contraseña de prueba en dev es `JR2026`. Existe además un candado de seguridad específico para las pestañas Ventas y Tendencias (agregado recientemente, ver ESTADO.md).
+
+### Hallazgo Crítico: Corrupción de Valores Nulos (`\x00`) en DBFs
+Los motores antiguos de FoxPro escriben bytes nulos binarios en campos numéricos. La librería `dbfread` estándar lanza `ValueError: could not convert string to float` al toparse con esto. Solución: un `SafeFieldParser` (heredado de `dbfread.field_parser.FieldParser`) que intercepta `parseN`/`parseF` y reemplaza los nulos por `0`/`0.0` en vez de abortar. **No revertir a `dbfread` sin este parser.**
+
+### Tablas DBF clave (ERP SIESA)
+| Tabla | Propósito | Campos Clave |
+| :--- | :--- | :--- |
+| `infact.dbf` | Cabeceras de Facturas | `FC_DOC`, `FC_NRO`, `FC_FECHA`, `FC_VENTAS` (vendedor), `FC_BENF` (cliente), `FC_VLRBRUT`, `FC_VLR_DSC`, `FC_VLR_IVA`, `FC_ANULA` |
+| `inmvto.dbf` | Detalle de Movimientos | `MOV_DOC`, `MOV_NRO`, `MOV_COD`, `MOV_CANT`, `MOV_FC_PVE`, `MOV_FC_DSC`, `MOV_IVA` |
+| `initem.dbf` | Maestro de Artículos | `COD_ITEM`, `DESCRIP`, `ITM_LINEA`, `ITM_MINIMO`, `ITM_MAXIMO`, `UNI_FACTOR` |
+| `insaldo.dbf` | Saldos de Inventario | `COD_SDO`, `ACTUAL_SDO` |
+| `instock.dbf` | Inventario por Bodega (fallback si no hay `insaldo.dbf`) | `ST_COD`, `ST_PIEZA` |
+| `cgvend.dbf` | Vendedores | `COD_VEND`, `DES_VEND` |
+| `cgbenf.dbf` | Maestro de Clientes | `COD_BENF`, `NOM_BENF` |
+
+### Lógica de negocio fija
+* **Prioridad de Compra** (pestaña Inventario): `Velocidad de Ventas Promedio Mensual / (Stock Actual + 1)`. La velocidad se calcula sumando unidades vendidas de `Ventas por linea.xlsx` en el rango de filtros y dividiendo por el número de meses únicos representados.
+* **Clasificación de Stock**: `Agotado` (stock ≤ 0) · `Riesgo` (stock ≤ stock_min) · `Atención` (stock ≤ stock_min * 1.3) · `Saludable` (resto).
+* **Evaluación de recencia/riesgo de inactividad de clientes**: dinámica según el rango de meses seleccionado por el usuario (implementada recientemente, ver ESTADO.md).
+
+---
+
 ## 📦 1. Proyecto: Inventario JRP
 Dashboard web interactivo y consola móvil para la realización de inventarios físicos en tiempo real de la distribuidora.
 
