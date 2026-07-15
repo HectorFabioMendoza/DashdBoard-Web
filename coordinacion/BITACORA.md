@@ -76,3 +76,34 @@
   - Se desarrolló un diseño de pantalla dividida responsive (Master-Detail): listado general de clientes paginado a la izquierda y composición de facturas en mora del cliente seleccionado a la derecha.
   - Verificado el correcto build del bundle mediante `npm run build` sin errores de compilación TypeScript.
 * **Siguiente paso sugerido**: Validar visualmente la interfaz cargando datos reales en el navegador de producción y desplegar.
+
+---
+
+### [2026-07-14 20:50:00 (Local Time)] - Agente: Gemini (Antigravity IDE)
+* **Tarea realizada**: Implementación de filtros interactivos de Aging y ordenación por prioridad de cobro en el módulo de Cartera Comercial.
+* **Archivos tocados**:
+  - `d:/4 Hector Fabio/Dashboard Web/src/App.tsx`
+* **Resultado**:
+  - Añadido el estado `carteraAgingFilter` y el mapa optimizado `clientDocsMap` para filtrar interactivamente la lista de clientes al hacer clic sobre los segmentos de la barra o las tarjetas de Aging.
+  - Implementado el score de prioridad de cobro ($\text{Saldo Vencido} \times (\text{Días Mora Máxima} + 1)$) y la ordenación descendente automática de la grilla de clientes.
+  - Diseñada la columna **Prioridad** con badges temáticos responsivos y animados (Crítica, Alta, Media, Baja, Al día).
+  - Incluido un indicador flotante interactivo para limpiar el filtro de Aging seleccionado.
+  - Verificada la compilación limpia del bundle con `npm run build` y el correcto funcionamiento en navegador.
+* **Siguiente paso sugerido**: Obtener feedback del usuario tras probar los filtros y prioridades interactivos.
+
+---
+
+### [2026-07-15 10:00:00 (Local Time)] - Agente: Gemini (Antigravity IDE)
+* **Tarea realizada**: Implementación de ordenación interactiva, checkboxes para exclusión de KPIs, y mejoras en scroll y paginación en Cartera.
+* **Archivos tocados**:
+  - `d:/4 Hector Fabio/Dashboard Web/src/App.tsx`
+  - `d:/4 Hector Fabio/Dashboard Web/coordinacion/BITACORA.md`
+  - `d:/4 Hector Fabio/Dashboard Web/coordinacion/ESTADO.md`
+* **Resultado**:
+  - Incorporada ordenación interactiva (ascendente/descendente) en todos los encabezados de columna en la tabla de Cartera Comercial (Cliente, Prioridad, Cupo Asignado, Saldo Total, Saldo Vencido, Mora Máxima) con indicadores visuales de Chevron.
+  - Implementadas casillas de selección (checkboxes) individuales y selección global en cabecera para excluir/incluir clientes específicos en tiempo real del cómputo de los KPIs globales (Bento Grid) y la distribución de Aging.
+  - Añadido scroll vertical (`max-h-[550px] overflow-y-auto`) a la grilla y selector desplegable para elegir cantidad de clientes por página (15, 30, 50, 100), con un tamaño inicial de 30.
+  - Rediseñado el panel de detalle derecho: se renombró el listado a **"Facturas Pendientes"**, se acotó su altura a `max-h-[320px]` y se movió el saldo total a una tarjeta footer destacada e independiente con estilo y contraste premium (con `mr-5` para alinearla con el listado).
+  - Diseñado e implementado el gráfico de barras apiladas (**Stacked Bar Chart**) de Aging por Asesor Comercial a la derecha de la distribución global de Aging (rediseñados como componentes side-by-side en una cuadrícula), con tooltip personalizado que desglosa detalladamente en COP los saldos corrientes y de mora de cada vendedor.
+  - Verificada la compilación exitosa sin errores y la interactividad fluida mediante agente automatizado.
+* **Siguiente paso sugerido**: Obtener la validación del usuario en producción.

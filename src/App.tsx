@@ -19,6 +19,7 @@ import {
   BarChart3,
   ChevronLeft,
   ChevronDown,
+  ChevronUp,
   Crown,
   TrendingUp,
   TrendingDown,
@@ -33,6 +34,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   LabelList,
   Cell
 } from 'recharts';
@@ -380,6 +382,84 @@ const CustomTooltip = ({ active, payload, label, isDarkMode, type }: CustomToolt
   return null;
 };
 
+const CarteraSellersTooltip = ({ active, payload, isDarkMode }: any) => {
+  if (active && payload && payload.length) {
+    const formatCOP = (val: number) => {
+      return `$${Math.round(val).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+    };
+    const data = payload[0].payload;
+    return (
+      <div className={`p-4 border rounded-2xl shadow-2xl backdrop-blur-xl transition-all duration-300 font-sans text-xs ${
+        isDarkMode 
+          ? 'bg-[#0f172a]/95 border-gray-800 text-gray-200 shadow-black/60' 
+          : 'bg-white/95 border-gray-200/80 text-gray-800 shadow-slate-350/20 shadow-lg'
+      }`}>
+        <p className={`font-black uppercase tracking-widest text-[12px] border-b pb-1 mb-2 ${
+          isDarkMode ? 'border-gray-800 text-gray-100' : 'border-gray-100 text-gray-900'
+        }`}>
+          Vendedor: {data.vendedor}
+        </p>
+        <div className="space-y-1 font-semibold">
+          <p className="flex items-center gap-4 justify-between">
+            <span className="flex items-center gap-2 text-gray-400">
+              <span className="w-2.5 h-2.5 rounded-full shrink-0 bg-[#10b981]" />
+              Corriente:
+            </span>
+            <span className={`font-black ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              {formatCOP(data.corriente)}
+            </span>
+          </p>
+          <p className="flex items-center gap-4 justify-between">
+            <span className="flex items-center gap-2 text-gray-400">
+              <span className="w-2.5 h-2.5 rounded-full shrink-0 bg-[#facc15]" />
+              1-30 días:
+            </span>
+            <span className={`font-black ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              {formatCOP(data.range1_30)}
+            </span>
+          </p>
+          <p className="flex items-center gap-4 justify-between">
+            <span className="flex items-center gap-2 text-gray-400">
+              <span className="w-2.5 h-2.5 rounded-full shrink-0 bg-[#fb923c]" />
+              31-60 días:
+            </span>
+            <span className={`font-black ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              {formatCOP(data.range31_60)}
+            </span>
+          </p>
+          <p className="flex items-center gap-4 justify-between">
+            <span className="flex items-center gap-2 text-gray-400">
+              <span className="w-2.5 h-2.5 rounded-full shrink-0 bg-[#ea580c]" />
+              61-90 días:
+            </span>
+            <span className={`font-black ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              {formatCOP(data.range61_90)}
+            </span>
+          </p>
+          <p className="flex items-center gap-4 justify-between">
+            <span className="flex items-center gap-2 text-gray-400">
+              <span className="w-2.5 h-2.5 rounded-full shrink-0 bg-[#dc2626]" />
+              &gt;90 días:
+            </span>
+            <span className={`font-black ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+              {formatCOP(data.rangeOver90)}
+            </span>
+          </p>
+          <p className="flex items-center gap-4 justify-between border-t pt-1.5 mt-1 border-gray-800/20 font-black">
+            <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+              Total Cartera:
+            </span>
+            <span className={isDarkMode ? 'text-[#a5b4fc]' : 'text-[#4f46e5]'}>
+              {formatCOP(data.total)}
+            </span>
+          </p>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
 // --- SPARKLINE Y BENTO GRID HELPERS ---
 interface SparklineProps {
   data: number[];
@@ -490,9 +570,13 @@ export default function App() {
   const [carteraSearchQuery, setCarteraSearchQuery] = useState('');
   const [carteraVendedorFilter, setCarteraVendedorFilter] = useState('TODOS');
   const [carteraStatusFilter, setCarteraStatusFilter] = useState('TODOS'); // 'TODOS' | 'MORA' | 'CORRIENTE'
+  const [carteraAgingFilter, setCarteraAgingFilter] = useState<'TODOS' | 'current' | 'range1_30' | 'range31_60' | 'range61_90' | 'rangeOver90'>('TODOS');
   const [carteraSelectedCliente, setCarteraSelectedCliente] = useState<any | null>(null);
   const [carteraListPage, setCarteraListPage] = useState(1);
-  const [carteraPageSize] = useState(50);
+  const [carteraPageSize, setCarteraPageSize] = useState(30);
+  const [carteraSortColumn, setCarteraSortColumn] = useState<'nombre' | 'prioridadScore' | 'cupo_asignado' | 'saldo_total' | 'saldo_vencido' | 'mora_maxima'>('prioridadScore');
+  const [carteraSortDirection, setCarteraSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [carteraExcludedClientes, setCarteraExcludedClientes] = useState<string[]>([]);
 
   const [selectedMonths, setSelectedMonths] = useState<string[]>(MESES_CONFIG.map(m => m.id));
   const [selectedVendors, setSelectedVendors] = useState<string[]>([]);
@@ -1223,10 +1307,13 @@ export default function App() {
     let totalCupoDisponible = 0;
     
     filteredClientes.forEach(c => {
-      totalCartera += Number(c.saldo_total || 0);
-      totalMora += Number(c.saldo_vencido || 0);
-      totalCupoAsignado += Number(c.cupo_asignado || 0);
-      totalCupoDisponible += Number(c.cupo_disponible || 0);
+      // Excluir del cómputo de KPIs si el cliente está desmarcado
+      if (!carteraExcludedClientes.includes(String(c.cod_benf))) {
+        totalCartera += Number(c.saldo_total || 0);
+        totalMora += Number(c.saldo_vencido || 0);
+        totalCupoAsignado += Number(c.cupo_asignado || 0);
+        totalCupoDisponible += Number(c.cupo_disponible || 0);
+      }
     });
 
     let current = 0;
@@ -1236,24 +1323,88 @@ export default function App() {
     let rangeOver90 = 0;
 
     filteredDocs.forEach(d => {
-      const saldo = Number(d.saldo || 0);
-      const mora = Number(d.dias_mora || 0);
-      if (d.estado === 'Corriente' || mora === 0) {
-        current += saldo;
-      } else if (mora >= 1 && mora <= 30) {
-        range1_30 += saldo;
-      } else if (mora >= 31 && mora <= 60) {
-        range31_60 += saldo;
-      } else if (mora >= 61 && mora <= 90) {
-        range61_90 += saldo;
-      } else if (mora > 90) {
-        rangeOver90 += saldo;
+      // Excluir de la distribución de vencimientos si el cliente está desmarcado
+      if (!carteraExcludedClientes.includes(String(d.cod_benf))) {
+        const saldo = Number(d.saldo || 0);
+        const mora = Number(d.dias_mora || 0);
+        if (d.estado === 'Corriente' || mora === 0) {
+          current += saldo;
+        } else if (mora >= 1 && mora <= 30) {
+          range1_30 += saldo;
+        } else if (mora >= 31 && mora <= 60) {
+          range31_60 += saldo;
+        } else if (mora >= 61 && mora <= 90) {
+          range61_90 += saldo;
+        } else if (mora > 90) {
+          rangeOver90 += saldo;
+        }
       }
     });
+
+    // Mapeo de documentos por cliente para verificación de Aging
+    const clientDocsMap = new Map<string, any[]>();
+    rawCarteraDocumentos.forEach(d => {
+      const key = String(d.cod_benf);
+      if (!clientDocsMap.has(key)) clientDocsMap.set(key, []);
+      clientDocsMap.get(key)!.push(d);
+    });
+
+    const clientMatchesAging = (codBenf: string) => {
+      if (carteraAgingFilter === 'TODOS') return true;
+      const docs = clientDocsMap.get(String(codBenf)) || [];
+      return docs.some(d => {
+        const saldo = Number(d.saldo || 0);
+        if (saldo <= 0) return false;
+        const mora = Number(d.dias_mora || 0);
+        if (carteraAgingFilter === 'current') {
+          return d.estado === 'Corriente' || mora === 0;
+        } else if (carteraAgingFilter === 'range1_30') {
+          return mora >= 1 && mora <= 30;
+        } else if (carteraAgingFilter === 'range31_60') {
+          return mora >= 31 && mora <= 60;
+        } else if (carteraAgingFilter === 'range61_90') {
+          return mora >= 61 && mora <= 90;
+        } else if (carteraAgingFilter === 'rangeOver90') {
+          return mora > 90;
+        }
+        return false;
+      });
+    };
+
+    // Agregar score de prioridad y estado 'checked'
+    const clientsWithPriority = filteredClientes.map(c => {
+      const score = Number(c.saldo_vencido || 0) * (Number(c.mora_maxima || 0) + 1);
+      const isChecked = !carteraExcludedClientes.includes(String(c.cod_benf));
+      return { ...c, prioridadScore: score, checked: isChecked };
+    });
+
+    const finalClientes = clientsWithPriority.filter(c => clientMatchesAging(c.cod_benf));
+    
+    // Ordenar dinámicamente por la columna y dirección seleccionadas
+    const sortedClientes = finalClientes.sort((a, b) => {
+      let valA = a[carteraSortColumn];
+      let valB = b[carteraSortColumn];
+
+      if (carteraSortColumn === 'nombre') {
+        valA = String(valA).toLowerCase();
+        valB = String(valB).toLowerCase();
+        if (valA < valB) return carteraSortDirection === 'asc' ? -1 : 1;
+        if (valA > valB) return carteraSortDirection === 'asc' ? 1 : -1;
+        return 0;
+      }
+
+      const numA = Number(valA || 0);
+      const numB = Number(valB || 0);
+      return carteraSortDirection === 'asc' ? numA - numB : numB - numA;
+    });
+
+    const isAllChecked = sortedClientes.length > 0 && sortedClientes.every(c => c.checked);
 
     return {
       filteredClientes,
       filteredDocs,
+      sortedClientes,
+      isAllChecked,
       totalCartera,
       totalMora,
       moraPercent: totalCartera > 0 ? (totalMora / totalCartera) * 100 : 0,
@@ -1267,19 +1418,100 @@ export default function App() {
         rangeOver90
       }
     };
-  }, [rawCarteraClientes, rawCarteraDocumentos, carteraSearchQuery, carteraVendedorFilter, carteraStatusFilter]);
+  }, [rawCarteraClientes, rawCarteraDocumentos, carteraSearchQuery, carteraVendedorFilter, carteraStatusFilter, carteraAgingFilter, carteraSortColumn, carteraSortDirection, carteraExcludedClientes]);
 
   const carteraVendedores = useMemo(() => {
     const list = rawCarteraClientes.map(c => String(c.nombre_vend || 'Sin Vendedor'));
     return Array.from(new Set(list)).filter(x => x.trim() !== '').sort();
   }, [rawCarteraClientes]);
 
-  const carteraTotalPages = Math.ceil(carteraKPIs.filteredClientes.length / carteraPageSize) || 1;
+  const carteraSellersChartData = useMemo(() => {
+    if (rawCarteraClientes.length === 0) return [];
+
+    const clientToSellerMap = new Map<string, string>();
+    rawCarteraClientes.forEach(c => {
+      clientToSellerMap.set(String(c.cod_benf), String(c.nombre_vend || 'Sin Vendedor'));
+    });
+
+    const sellerDataMap = new Map<string, {
+      vendedor: string;
+      corriente: number;
+      range1_30: number;
+      range31_60: number;
+      range61_90: number;
+      rangeOver90: number;
+      total: number;
+    }>();
+
+    const activeClientCodes = new Set(
+      carteraKPIs.filteredClientes
+        .filter(c => !carteraExcludedClientes.includes(String(c.cod_benf)))
+        .map(c => String(c.cod_benf))
+    );
+
+    rawCarteraDocumentos.forEach(d => {
+      const clientCode = String(d.cod_benf);
+      if (!activeClientCodes.has(clientCode)) return;
+
+      const seller = clientToSellerMap.get(clientCode) || 'Sin Vendedor';
+      const saldo = Number(d.saldo || 0);
+      if (saldo <= 0) return;
+      const mora = Number(d.dias_mora || 0);
+
+      if (!sellerDataMap.has(seller)) {
+        sellerDataMap.set(seller, {
+          vendedor: seller,
+          corriente: 0,
+          range1_30: 0,
+          range31_60: 0,
+          range61_90: 0,
+          rangeOver90: 0,
+          total: 0
+        });
+      }
+
+      const sData = sellerDataMap.get(seller)!;
+      sData.total += saldo;
+
+      if (d.estado === 'Corriente' || mora === 0) {
+        sData.corriente += saldo;
+      } else if (mora >= 1 && mora <= 30) {
+        sData.range1_30 += saldo;
+      } else if (mora >= 31 && mora <= 60) {
+        sData.range31_60 += saldo;
+      } else if (mora >= 61 && mora <= 90) {
+        sData.range61_90 += saldo;
+      } else if (mora > 90) {
+        sData.rangeOver90 += saldo;
+      }
+    });
+
+    return Array.from(sellerDataMap.values())
+      .map(item => {
+        const parts = item.vendedor.split(' ');
+        const shortName = parts.length > 2 
+          ? `${parts[0]} ${parts[1].charAt(0)}.` 
+          : item.vendedor;
+        return {
+          ...item,
+          shortName,
+          corrienteMillions: item.corriente / 1_000_000,
+          range1_30Millions: item.range1_30 / 1_000_000,
+          range31_60Millions: item.range31_60 / 1_000_000,
+          range61_90Millions: item.range61_90 / 1_000_000,
+          rangeOver90Millions: item.rangeOver90 / 1_000_000,
+          totalMillions: item.total / 1_000_000
+        };
+      })
+      .sort((a, b) => b.total - a.total);
+  }, [rawCarteraClientes, rawCarteraDocumentos, carteraKPIs.filteredClientes, carteraExcludedClientes]);
+
+  const carteraTotalPages = Math.ceil(carteraKPIs.sortedClientes.length / carteraPageSize) || 1;
   
   const paginatedCarteraClientes = useMemo(() => {
     const start = (carteraListPage - 1) * carteraPageSize;
-    return carteraKPIs.filteredClientes.slice(start, start + carteraPageSize);
-  }, [carteraKPIs.filteredClientes, carteraListPage, carteraPageSize]);
+    return carteraKPIs.sortedClientes.slice(start, start + carteraPageSize);
+  }, [carteraKPIs.sortedClientes, carteraListPage, carteraPageSize]);
 
   const inventoryLineChartData = useMemo(() => {
     const group: Record<string, { name: string, agotado: number, riesgo: number, totalAlerts: number }> = {};
@@ -6114,9 +6346,44 @@ export default function App() {
             return `$${Math.round(val).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
           };
 
+          const getPriorityBadge = (score: number) => {
+            if (score >= 100_000_000) {
+              return (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-red-500/10 text-red-500 border border-red-500/25 animate-pulse">
+                  Crítica
+                </span>
+              );
+            } else if (score >= 10_000_000) {
+              return (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-orange-500/10 text-orange-500 border border-orange-500/20">
+                  Alta
+                </span>
+              );
+            } else if (score >= 1_000_000) {
+              return (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                  Media
+                </span>
+              );
+            } else if (score > 0) {
+              return (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-blue-500/10 text-blue-500 border border-blue-500/25">
+                  Baja
+                </span>
+              );
+            } else {
+              return (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-500 border border-emerald-500/25">
+                  Al día
+                </span>
+              );
+            }
+          };
+
           const {
-            filteredClientes,
             filteredDocs,
+            sortedClientes,
+            isAllChecked,
             totalCartera,
             totalMora,
             moraPercent,
@@ -6126,8 +6393,25 @@ export default function App() {
           } = carteraKPIs;
 
           const paginatedClientes = paginatedCarteraClientes;
-          const totalClientes = filteredClientes.length;
+          const totalClientes = sortedClientes.length;
           const totalPages = carteraTotalPages;
+
+          const handleHeaderClick = (column: typeof carteraSortColumn) => {
+            if (carteraSortColumn === column) {
+              setCarteraSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+            } else {
+              setCarteraSortColumn(column);
+              setCarteraSortDirection('desc');
+            }
+            setCarteraListPage(1);
+          };
+
+          const renderSortIcon = (column: typeof carteraSortColumn) => {
+            if (carteraSortColumn !== column) return null;
+            return carteraSortDirection === 'asc' 
+              ? <ChevronUp size={11} className="inline ml-0.5 stroke-[2.5]" /> 
+              : <ChevronDown size={11} className="inline ml-0.5 stroke-[2.5]" />;
+          };
 
           const selectedClienteDocs = carteraSelectedCliente
             ? rawCarteraDocumentos.filter(d => String(d.cod_benf) === String(carteraSelectedCliente.cod_benf))
@@ -6254,21 +6538,28 @@ export default function App() {
                 
                 {/* Visual Aging Bar */}
                 <div className="w-full h-4 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden flex mb-6">
-                  {[
+                  {([
                     { key: 'current', label: 'Corriente', val: aging.current, color: 'bg-emerald-500' },
                     { key: 'range1_30', label: '1-30 días', val: aging.range1_30, color: 'bg-yellow-400' },
                     { key: 'range31_60', label: '31-60 días', val: aging.range31_60, color: 'bg-orange-400' },
                     { key: 'range61_90', label: '61-90 días', val: aging.range61_90, color: 'bg-orange-600' },
                     { key: 'rangeOver90', label: '>90 días', val: aging.rangeOver90, color: 'bg-red-600' }
-                  ].map(bucket => {
+                  ] as const).map(bucket => {
                     const pct = totalCartera > 0 ? (bucket.val / totalCartera) * 100 : 0;
                     if (pct <= 0) return null;
+                    const isSelected = carteraAgingFilter === bucket.key;
                     return (
                       <div 
                         key={bucket.key}
-                        className={`${bucket.color} h-full transition-all duration-500 hover:opacity-90`}
+                        onClick={() => {
+                          setCarteraAgingFilter(carteraAgingFilter === bucket.key ? 'TODOS' : bucket.key);
+                          setCarteraListPage(1);
+                        }}
+                        className={`${bucket.color} h-full transition-all duration-500 hover:opacity-90 cursor-pointer ${
+                          isSelected ? 'ring-2 ring-white ring-inset opacity-100 shadow-md' : 'opacity-85'
+                        }`}
                         style={{ width: `${pct}%` }}
-                        title={`${bucket.label}: ${formatCOP(bucket.val)} (${pct.toFixed(1)}%)`}
+                        title={`${bucket.label}: ${formatCOP(bucket.val)} (${pct.toFixed(1)}%) - Haz clic para filtrar`}
                       />
                     );
                   })}
@@ -6276,19 +6567,26 @@ export default function App() {
 
                 {/* Aging Cards Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-5 gap-3.5">
-                  {[
-                    { label: 'Corriente (Al Día)', val: aging.current, colorText: 'text-emerald-600 dark:text-emerald-450', border: 'border-l-emerald-500' },
-                    { label: '1 a 30 Días', val: aging.range1_30, colorText: 'text-yellow-600 dark:text-yellow-400', border: 'border-l-yellow-400' },
-                    { label: '31 a 60 Días', val: aging.range31_60, colorText: 'text-orange-600 dark:text-orange-400', border: 'border-l-orange-400' },
-                    { label: '61 a 90 Días', val: aging.range61_90, colorText: 'text-orange-700 dark:text-orange-500', border: 'border-l-orange-600' },
-                    { label: 'Más de 90 Días', val: aging.rangeOver90, colorText: 'text-red-700 dark:text-red-400', border: 'border-l-red-600' }
-                  ].map((bucket, idx) => {
+                  {([
+                    { key: 'current', label: 'Corriente (Al Día)', val: aging.current, colorText: 'text-emerald-600 dark:text-emerald-455', border: 'border-l-emerald-500', activeBg: 'bg-emerald-500/10 dark:bg-emerald-500/20' },
+                    { key: 'range1_30', label: '1 a 30 Días', val: aging.range1_30, colorText: 'text-yellow-600 dark:text-yellow-400', border: 'border-l-yellow-400', activeBg: 'bg-yellow-500/10 dark:bg-yellow-500/20' },
+                    { key: 'range31_60', label: '31 a 60 Días', val: aging.range31_60, colorText: 'text-orange-600 dark:text-orange-400', border: 'border-l-orange-400', activeBg: 'bg-orange-500/10 dark:bg-orange-500/20' },
+                    { key: 'range61_90', label: '61 a 90 Días', val: aging.range61_90, colorText: 'text-orange-700 dark:text-orange-500', border: 'border-l-orange-600', activeBg: 'bg-orange-600/10 dark:bg-orange-600/20' },
+                    { key: 'rangeOver90', label: 'Más de 90 Días', val: aging.rangeOver90, colorText: 'text-red-700 dark:text-red-400', border: 'border-l-red-600', activeBg: 'bg-red-500/10 dark:bg-red-500/20' }
+                  ] as const).map((bucket) => {
+                    const isSelected = carteraAgingFilter === bucket.key;
                     const pct = totalCartera > 0 ? (bucket.val / totalCartera) * 100 : 0;
                     return (
                       <div 
-                        key={idx} 
-                        className={`p-3 border-l-4 rounded-xl border flex flex-col justify-between transition-all duration-300 hover:shadow-md ${bucket.border} ${
-                          isDarkMode ? 'bg-[#1e293b]/40 border-slate-800' : 'bg-slate-50 border-slate-200'
+                        key={bucket.key} 
+                        onClick={() => {
+                          setCarteraAgingFilter(carteraAgingFilter === bucket.key ? 'TODOS' : bucket.key);
+                          setCarteraListPage(1);
+                        }}
+                        className={`p-3 border-l-4 rounded-xl border flex flex-col justify-between transition-all duration-300 hover:shadow-md cursor-pointer ${
+                          isSelected 
+                            ? `${bucket.activeBg} border-indigo-500 ring-2 ring-indigo-500/30` 
+                            : isDarkMode ? 'bg-[#1e293b]/40 border-slate-800' : 'bg-slate-50 border-slate-200'
                         }`}
                       >
                         <span style={{ color: isDarkMode ? '#94A3B8' : '#64748B' }} className="text-[10px] font-bold uppercase tracking-wider block">
@@ -6389,29 +6687,98 @@ export default function App() {
                   isDarkMode ? 'bg-[#0f172a] border-slate-800/80 shadow-black/20' : 'bg-white border-slate-200 shadow-sm'
                 }`}>
                   <div className="flex justify-between items-center mb-3">
-                    <h3 style={{ color: isDarkMode ? '#F8FAFC' : '#0F172A' }} className="text-[13px] font-extrabold uppercase tracking-wider">
-                      Clientes en Cartera ({formatNumberWithDots(totalClientes)})
-                    </h3>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 style={{ color: isDarkMode ? '#F8FAFC' : '#0F172A' }} className="text-[13px] font-extrabold uppercase tracking-wider">
+                        Clientes en Cartera ({formatNumberWithDots(totalClientes)})
+                      </h3>
+                      {carteraAgingFilter !== 'TODOS' && (
+                        <span 
+                          onClick={() => {
+                            setCarteraAgingFilter('TODOS');
+                            setCarteraListPage(1);
+                          }}
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#4f46e5]/10 text-[#4f46e5] dark:bg-[#4f46e5]/20 dark:text-[#a5b4fc] cursor-pointer hover:bg-[#4f46e5]/20 transition-colors"
+                        >
+                          Aging: {
+                            carteraAgingFilter === 'current' ? 'Corriente' :
+                            carteraAgingFilter === 'range1_30' ? '1-30 días' :
+                            carteraAgingFilter === 'range31_60' ? '31-60 días' :
+                            carteraAgingFilter === 'range61_90' ? '61-90 días' : 'Más de 90 días'
+                          } ✕
+                        </span>
+                      )}
+                    </div>
                   </div>
 
-                  {/* Tabla Clientes */}
-                  <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800/60">
+                  {/* Tabla Clientes con Scroll Vertical */}
+                  <div className="overflow-x-auto overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-800/60 max-h-[550px]">
                     <table className="w-full text-left border-collapse">
                       <thead>
                         <tr className={`${
                           isDarkMode ? 'bg-[#1e293b]/70 border-slate-800 text-slate-300' : 'bg-slate-50 border-slate-200 text-slate-600'
                         } border-b text-[10px] font-extrabold uppercase tracking-wider`}>
-                          <th className="py-2.5 px-3">Cliente</th>
-                          <th className="py-2.5 px-3 text-right">Cupo Asig.</th>
-                          <th className="py-2.5 px-3 text-right">Saldo Total</th>
-                          <th className="py-2.5 px-3 text-right">Saldo Venc.</th>
-                          <th className="py-2.5 px-3 text-center">Mora Max</th>
+                          <th className="py-2.5 px-3 w-8 text-center">
+                            <div className="relative flex items-center justify-center">
+                              <input 
+                                type="checkbox"
+                                checked={isAllChecked}
+                                onChange={(e) => {
+                                  const allFilteredCodes = sortedClientes.map(c => String(c.cod_benf));
+                                  if (e.target.checked) {
+                                    setCarteraExcludedClientes(prev => prev.filter(code => !allFilteredCodes.includes(code)));
+                                  } else {
+                                    setCarteraExcludedClientes(prev => {
+                                      const next = new Set([...prev, ...allFilteredCodes]);
+                                      return Array.from(next);
+                                    });
+                                  }
+                                }}
+                                className="rounded border-slate-300 dark:border-slate-700 bg-transparent text-[#4f46e5] focus:ring-[#4f46e5] w-3.5 h-3.5 cursor-pointer"
+                              />
+                            </div>
+                          </th>
+                          <th 
+                            onClick={() => handleHeaderClick('nombre')}
+                            className="py-2.5 px-3 cursor-pointer select-none hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors"
+                          >
+                            <span className="flex items-center">Cliente {renderSortIcon('nombre')}</span>
+                          </th>
+                          <th 
+                            onClick={() => handleHeaderClick('prioridadScore')}
+                            className="py-2.5 px-3 cursor-pointer select-none text-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors border-l border-transparent"
+                          >
+                            <span className="flex items-center justify-center">Prioridad {renderSortIcon('prioridadScore')}</span>
+                          </th>
+                          <th 
+                            onClick={() => handleHeaderClick('cupo_asignado')}
+                            className="py-2.5 px-3 cursor-pointer select-none text-right hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors"
+                          >
+                            <span className="flex items-center justify-end">Cupo Asig. {renderSortIcon('cupo_asignado')}</span>
+                          </th>
+                          <th 
+                            onClick={() => handleHeaderClick('saldo_total')}
+                            className="py-2.5 px-3 cursor-pointer select-none text-right hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors"
+                          >
+                            <span className="flex items-center justify-end">Saldo Total {renderSortIcon('saldo_total')}</span>
+                          </th>
+                          <th 
+                            onClick={() => handleHeaderClick('saldo_vencido')}
+                            className="py-2.5 px-3 cursor-pointer select-none text-right hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors"
+                          >
+                            <span className="flex items-center justify-end">Saldo Venc. {renderSortIcon('saldo_vencido')}</span>
+                          </th>
+                          <th 
+                            onClick={() => handleHeaderClick('mora_maxima')}
+                            className="py-2.5 px-3 cursor-pointer select-none text-center hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors"
+                          >
+                            <span className="flex items-center justify-center">Mora Max {renderSortIcon('mora_maxima')}</span>
+                          </th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60">
                         {paginatedClientes.length === 0 ? (
                           <tr>
-                            <td colSpan={5} className="py-8 text-center text-slate-450 dark:text-slate-500 text-xs">
+                            <td colSpan={7} className="py-8 text-center text-slate-450 dark:text-slate-500 text-xs">
                               No hay clientes que coincidan con los filtros aplicados.
                             </td>
                           </tr>
@@ -6419,19 +6786,35 @@ export default function App() {
                           paginatedClientes.map((c) => {
                             const isSelected = carteraSelectedCliente && String(c.cod_benf) === String(carteraSelectedCliente.cod_benf);
                             const hasMora = Number(c.saldo_vencido) > 1.0;
+                            const isChecked = c.checked;
                             return (
                               <tr 
                                 key={c.cod_benf}
-                                onClick={() => setCarteraSelectedCliente(c)}
                                 className={`text-xs cursor-pointer transition-colors ${
                                   isSelected
                                     ? 'bg-[#4f46e5]/10 dark:bg-[#4f46e5]/20 text-[#4f46e5] dark:text-[#a5b4fc] font-semibold'
                                     : isDarkMode 
                                       ? 'hover:bg-slate-800/40 text-slate-300' 
                                       : 'hover:bg-slate-50 text-slate-700'
-                                }`}
+                                } ${!isChecked ? 'opacity-40' : ''}`}
                               >
-                                <td className="py-2.5 px-3 min-w-[200px]">
+                                <td className="py-2.5 px-3 text-center w-8" onClick={(e) => e.stopPropagation()}>
+                                  <div className="relative flex items-center justify-center">
+                                    <input 
+                                      type="checkbox"
+                                      checked={isChecked}
+                                      onChange={() => {
+                                        if (isChecked) {
+                                          setCarteraExcludedClientes(prev => [...prev, String(c.cod_benf)]);
+                                        } else {
+                                          setCarteraExcludedClientes(prev => prev.filter(code => code !== String(c.cod_benf)));
+                                        }
+                                      }}
+                                      className="rounded border-slate-300 dark:border-slate-700 bg-transparent text-[#4f46e5] focus:ring-[#4f46e5] w-3.5 h-3.5 cursor-pointer animate-none"
+                                    />
+                                  </div>
+                                </td>
+                                <td className="py-2.5 px-3 min-w-[200px]" onClick={() => setCarteraSelectedCliente(c)}>
                                   <div className="font-extrabold text-[12px] uppercase truncate max-w-[220px]" title={c.nombre}>
                                     {c.nombre}
                                   </div>
@@ -6441,16 +6824,19 @@ export default function App() {
                                     <span>Vend: {c.nombre_vend}</span>
                                   </div>
                                 </td>
-                                <td className="py-2.5 px-3 text-right font-semibold">
+                                <td className="py-2.5 px-3 text-center" onClick={() => setCarteraSelectedCliente(c)}>
+                                  {getPriorityBadge(c.prioridadScore)}
+                                </td>
+                                <td className="py-2.5 px-3 text-right font-semibold" onClick={() => setCarteraSelectedCliente(c)}>
                                   {c.cupo_asignado > 0 ? formatCOP(c.cupo_asignado) : '—'}
                                 </td>
-                                <td className="py-2.5 px-3 text-right font-black">
+                                <td className="py-2.5 px-3 text-right font-black" onClick={() => setCarteraSelectedCliente(c)}>
                                   {formatCOP(c.saldo_total)}
                                 </td>
-                                <td className={`py-2.5 px-3 text-right font-black ${hasMora ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-450'}`}>
+                                <td className={`py-2.5 px-3 text-right font-black ${hasMora ? 'text-red-600 dark:text-red-400' : 'text-emerald-600 dark:text-emerald-455'}`} onClick={() => setCarteraSelectedCliente(c)}>
                                   {formatCOP(c.saldo_vencido)}
                                 </td>
-                                <td className="py-2.5 px-3 text-center">
+                                <td className="py-2.5 px-3 text-center" onClick={() => setCarteraSelectedCliente(c)}>
                                   {hasMora ? (
                                     <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-red-500/10 text-red-500">
                                       {c.mora_maxima} días
@@ -6467,36 +6853,69 @@ export default function App() {
                     </table>
                   </div>
 
-                  {/* Paginación */}
-                  {totalPages > 1 && (
-                    <div className="flex items-center justify-between mt-4">
-                      <span className="text-[10px] font-black uppercase tracking-wider text-slate-450 dark:text-slate-500">
-                        Página {carteraListPage} de {totalPages}
-                      </span>
-                      <div className="flex items-center gap-1.5">
-                        <button
-                          disabled={carteraListPage === 1}
-                          onClick={() => setCarteraListPage(prev => Math.max(1, prev - 1))}
-                          className={`p-1 px-3 border rounded-lg text-[11px] font-bold transition-all ${
-                            carteraListPage === 1
-                              ? 'border-transparent text-slate-400 cursor-not-allowed'
-                              : isDarkMode ? 'border-gray-800 text-gray-300 hover:bg-slate-800' : 'border-gray-200 text-slate-800 hover:bg-slate-50'
+                  {/* Paginación y Selector de Tamaño de Página */}
+                  {totalClientes > 0 && (
+                    <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
+                      {/* Selector de tamaño de página */}
+                      <div className="flex items-center gap-2">
+                        <span style={{ color: isDarkMode ? '#94A3B8' : '#64748B' }} className="text-[10px] font-extrabold uppercase tracking-wider">
+                          Clientes por pág:
+                        </span>
+                        <select
+                          value={carteraPageSize}
+                          onChange={(e) => {
+                            setCarteraPageSize(Number(e.target.value));
+                            setCarteraListPage(1);
+                          }}
+                          className={`py-1 px-2.5 rounded-lg border text-[11px] font-bold focus:outline-none cursor-pointer ${
+                            isDarkMode 
+                              ? 'bg-slate-900 border-slate-800 text-slate-200' 
+                              : 'bg-white border-slate-200 text-slate-800 shadow-sm'
                           }`}
                         >
-                          Anterior
-                        </button>
-                        <button
-                          disabled={carteraListPage === totalPages}
-                          onClick={() => setCarteraListPage(prev => Math.min(totalPages, prev + 1))}
-                          className={`p-1 px-3 border rounded-lg text-[11px] font-bold transition-all ${
-                            carteraListPage === totalPages
-                              ? 'border-transparent text-slate-400 cursor-not-allowed'
-                              : isDarkMode ? 'border-gray-800 text-gray-300 hover:bg-slate-800' : 'border-gray-200 text-slate-800 hover:bg-slate-50'
-                          }`}
-                        >
-                          Siguiente
-                        </button>
+                          <option value={15}>15</option>
+                          <option value={30}>30</option>
+                          <option value={50}>50</option>
+                          <option value={100}>100</option>
+                        </select>
                       </div>
+
+                      {/* Controles de página */}
+                      {totalPages > 1 ? (
+                        <div className="flex items-center gap-3">
+                          <span className="text-[10px] font-black uppercase tracking-wider text-slate-450 dark:text-slate-500">
+                            Página {carteraListPage} de {totalPages}
+                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              disabled={carteraListPage === 1}
+                              onClick={() => setCarteraListPage(prev => Math.max(1, prev - 1))}
+                              className={`p-1 px-3 border rounded-lg text-[11px] font-bold transition-all ${
+                                carteraListPage === 1
+                                  ? 'border-transparent text-slate-400 cursor-not-allowed'
+                                  : isDarkMode ? 'border-gray-800 text-gray-300 hover:bg-slate-800' : 'border-gray-200 text-slate-800 hover:bg-slate-50'
+                              }`}
+                            >
+                              Anterior
+                            </button>
+                            <button
+                              disabled={carteraListPage === totalPages}
+                              onClick={() => setCarteraListPage(prev => Math.min(totalPages, prev + 1))}
+                              className={`p-1 px-3 border rounded-lg text-[11px] font-bold transition-all ${
+                                carteraListPage === totalPages
+                                  ? 'border-transparent text-slate-400 cursor-not-allowed'
+                                  : isDarkMode ? 'border-gray-800 text-gray-300 hover:bg-slate-800' : 'border-gray-200 text-slate-800 hover:bg-slate-50'
+                              }`}
+                            >
+                              Siguiente
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-450 dark:text-slate-500">
+                          Mostrando todos los clientes
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>
@@ -6582,15 +7001,12 @@ export default function App() {
                       <div className="space-y-2">
                         <div className="flex justify-between items-center px-1">
                           <span style={{ color: isDarkMode ? '#94A3B8' : '#64748B' }} className="text-[10px] font-extrabold uppercase tracking-wider">
-                            Documentos Pendientes ({selectedClienteDocs.length})
-                          </span>
-                          <span style={{ color: isDarkMode ? '#94A3B8' : '#64748B' }} className="text-[11px] font-black">
-                            Total: {formatCOP(carteraSelectedCliente.saldo_total)}
+                            Facturas Pendientes ({selectedClienteDocs.length})
                           </span>
                         </div>
 
                         {/* Listado Scrollable de Facturas */}
-                        <div className="space-y-2 max-h-[360px] overflow-y-auto pr-1 custom-scrollbar">
+                        <div className="space-y-2 max-h-[320px] overflow-y-auto pr-1 custom-scrollbar">
                           {selectedClienteDocs.map((doc, idx) => {
                             const isOverdue = doc.estado === 'Vencido' || doc.dias_mora > 0;
                             return (
@@ -6635,12 +7051,74 @@ export default function App() {
                             );
                           })}
                         </div>
+
+                        {/* Tarjeta del Total Pendiente */}
+                        <div className={`p-3 rounded-xl border flex items-center justify-between transition-all duration-300 mr-5 ${
+                          isDarkMode 
+                            ? 'bg-[#1e1b4b]/40 border-indigo-900/50 shadow-inner' 
+                            : 'bg-indigo-50/50 border-indigo-100/80 shadow-sm'
+                        }`}>
+                          <span className={`text-[10px] font-extrabold uppercase tracking-wider ${
+                            isDarkMode ? 'text-indigo-300/80' : 'text-indigo-600'
+                          }`}>
+                            Total Facturado Pendiente
+                          </span>
+                          <span className={`text-[15px] font-black tracking-tight ${
+                            isDarkMode ? 'text-indigo-200' : 'text-indigo-800'
+                          }`}>
+                            {formatCOP(carteraSelectedCliente.saldo_total)}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   )}
                 </div>
 
               </div>
+
+              {/* Gráfico de Cartera por Asesor Comercial (Al final de la página) */}
+              <section className={`p-5 rounded-2xl border transition-colors duration-300 mt-5 ${
+                isDarkMode ? 'bg-[#0f172a] border-slate-800/80 shadow-black/20 shadow-md' : 'bg-white border-slate-200 shadow-slate-100 shadow-sm'
+              }`}>
+                <div className="mb-4">
+                  <span className="text-[14px] font-semibold text-[#4f46e5] dark:text-[#a5b4fc] uppercase tracking-wider block mb-1">
+                    Análisis de Cartera por Asesor Comercial
+                  </span>
+                  <h3 style={{ color: isDarkMode ? '#F8FAFC' : '#0F172A' }} className="text-[18px] font-bold uppercase tracking-tight">
+                    Distribución y Envejecimiento (Aging) del Saldo Pendiente por Vendedor
+                  </h3>
+                </div>
+
+                <div className="w-full h-[400px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={carteraSellersChartData}
+                      layout="vertical"
+                      margin={{ top: 10, right: 30, left: 10, bottom: 5 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" horizontal={false} vertical={true} stroke={isDarkMode ? 'rgba(31,41,55,0.4)' : 'rgba(229,231,235,0.6)'} />
+                      <XAxis type="number" tick={{ fill: isDarkMode ? '#9ca3af' : '#4b5563', fontSize: 10, fontWeight: 'bold' }} axisLine={false} tickLine={false} tickFormatter={(val) => `$${Math.round(val)}M`} />
+                      <YAxis dataKey="vendedor" type="category" width={180} tick={{ fill: isDarkMode ? '#9ca3af' : '#4b5563', fontSize: 10, fontWeight: 'bold' }} axisLine={false} tickLine={false} />
+                      <Tooltip 
+                        content={(props: any) => <CarteraSellersTooltip {...props} isDarkMode={isDarkMode} />} 
+                        cursor={{ fill: isDarkMode ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.012)' }}
+                      />
+                      <Legend 
+                        verticalAlign="top" 
+                        height={36} 
+                        iconType="circle"
+                        iconSize={8}
+                        wrapperStyle={{ fontSize: '10px', fontWeight: 'extrabold', textTransform: 'uppercase', paddingBottom: '12px' }}
+                      />
+                      <Bar dataKey="corrienteMillions" name="Corriente" stackId="a" fill="#10b981" />
+                      <Bar dataKey="range1_30Millions" name="1-30 días" stackId="a" fill="#facc15" />
+                      <Bar dataKey="range31_60Millions" name="31-60 días" stackId="a" fill="#fb923c" />
+                      <Bar dataKey="range61_90Millions" name="61-90 días" stackId="a" fill="#ea580c" />
+                      <Bar dataKey="rangeOver90Millions" name=">90 días" stackId="a" fill="#dc2626" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </section>
             </div>
           );
         })()}
