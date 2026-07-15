@@ -1287,15 +1287,17 @@ export default function App() {
       const matchesVend = carteraVendedorFilter === 'TODOS' ||
         String(c.nombre_vend) === carteraVendedorFilter ||
         String(c.cod_vend) === carteraVendedorFilter;
-        
+
+      const matchesSidebarVendors = selectedVendors.includes(String(c.nombre_vend));
+
       let matchesStatus = true;
       if (carteraStatusFilter === 'MORA') {
         matchesStatus = Number(c.saldo_vencido) > 1.0;
       } else if (carteraStatusFilter === 'CORRIENTE') {
         matchesStatus = Number(c.saldo_vencido) <= 1.0;
       }
-      
-      return matchesSearch && matchesVend && matchesStatus;
+
+      return matchesSearch && matchesVend && matchesSidebarVendors && matchesStatus;
     });
 
     const filteredClientCodes = new Set(filteredClientes.map(c => String(c.cod_benf)));
@@ -1418,7 +1420,7 @@ export default function App() {
         rangeOver90
       }
     };
-  }, [rawCarteraClientes, rawCarteraDocumentos, carteraSearchQuery, carteraVendedorFilter, carteraStatusFilter, carteraAgingFilter, carteraSortColumn, carteraSortDirection, carteraExcludedClientes]);
+  }, [rawCarteraClientes, rawCarteraDocumentos, carteraSearchQuery, carteraVendedorFilter, selectedVendors, carteraStatusFilter, carteraAgingFilter, carteraSortColumn, carteraSortDirection, carteraExcludedClientes]);
 
   const carteraVendedores = useMemo(() => {
     const list = rawCarteraClientes.map(c => String(c.nombre_vend || 'Sin Vendedor'));
