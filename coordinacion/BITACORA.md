@@ -107,3 +107,22 @@
   - Diseñado e implementado el gráfico de barras apiladas (**Stacked Bar Chart**) de Aging por Asesor Comercial a la derecha de la distribución global de Aging (rediseñados como componentes side-by-side en una cuadrícula), con tooltip personalizado que desglosa detalladamente en COP los saldos corrientes y de mora de cada vendedor.
   - Verificada la compilación exitosa sin errores y la interactividad fluida mediante agente automatizado.
 * **Siguiente paso sugerido**: Obtener la validación del usuario en producción.
+
+---
+
+### [2026-07-15 (Local Time)] - Agente: Claude (Claude Code)
+* **Tarea realizada**: Revisión del estado dejado por Gemini en Dashboard Web, saneamiento de git (commits pendientes + limpieza de archivos sueltos en la raíz), y dos ajustes puntuales solicitados en vivo por el usuario sobre el módulo de Cartera Comercial.
+* **Archivos tocados**:
+  - `d:/4 Hector Fabio/Dashboard Web/src/App.tsx` (ordenamiento/exclusión de KPIs/paginación de Gemini comiteado; altura del gráfico de Cartera por Asesor +30%; filtro lateral de vendedores conectado al módulo de Cartera)
+  - `d:/4 Hector Fabio/Dashboard Web/.gitignore` (excluye salidas generadas automáticamente y los Excel voluminosos de `/public` regenerados por el extractor DBF)
+  - `d:/4 Hector Fabio/Dashboard Web/README.md`, `d:/4 Hector Fabio/Dashboard Web/src/index.css`
+  - `d:/4 Hector Fabio/Dashboard Web/actualizar_datos_dbf.bat`, `actualizar_datos_dbf_silencioso.bat`, `programar_actualizacion_dbf.ps1` (ya documentados en README, nunca se habían comiteado)
+  - `d:/4 Hector Fabio/Dashboard Web/actualizar_datos.js`, `actualizar_datos.bat`, `reconciliar_datos.py` (herramientas reales encontradas sueltas en la raíz, ahora versionadas)
+  - `d:/4 Hector Fabio/Dashboard Web/1Maestra de clientes2026.xlsx` y su copia en `/public` (refresco de datos)
+* **Resultado**:
+  - Commiteado el trabajo pendiente de Gemini (ordenamiento por columna, checkboxes de inclusión/exclusión de KPIs, paginación configurable, gráfico de Aging por asesor) — confirmado que compila con `npm run build` antes de comitear.
+  - Reorganizados archivos de datos sueltos de sesiones pasadas (Kardex, SaldosInv, Ventas Mayo, etc.) hacia `scratch/`, sin borrarlos.
+  - Corregido: el gráfico "Análisis de Cartera por Asesor Comercial" pasó de `400px` a `520px` de alto (+30%) a pedido del usuario.
+  - Corregido: el panel lateral de Vendedores (`selectedVendors`, usado en Ventas/Tendencias/Frecuencia) no tenía ningún efecto sobre Cartera. Se agregó como condición de filtro en `filteredClientes` dentro de `carteraKPIs`, lo cual cascada automáticamente a los KPIs, la tabla y el gráfico por asesor.
+  - **Nota importante**: no hay herramienta de navegador disponible en este entorno para verificar visualmente los dos cambios de UI; solo se confirmó que compilan sin errores (`npm run build`). Falta validación visual en el navegador real.
+* **Siguiente paso sugerido**: Validar visualmente en el navegador que (a) el gráfico de Cartera por Asesor se ve proporcionado con la nueva altura, y (b) desmarcar un vendedor en el panel lateral realmente reduce sus barras/KPIs en Cartera.
