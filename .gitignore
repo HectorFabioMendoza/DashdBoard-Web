@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Subproyectos independientes
+Inventario JRP/
+unilever/
