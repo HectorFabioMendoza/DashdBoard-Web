@@ -26,3 +26,18 @@ dist-ssr
 # Subproyectos independientes
 Inventario JRP/
 unilever/
+
+# Salidas generadas automaticamente (no versionar)
+__pycache__/
+*.pyc
+last_update.json
+public/last_update.json
+log_dbf_dashboard.txt
+
+# Archivos de trabajo transitorios del pipeline de importacion manual
+importar/*
+
+# Datos voluminosos de /public regenerados por el extractor DBF (no versionar)
+public/Cartera.xlsx
+public/Inventario.xlsx
+public/Ventas por linea.xlsx
