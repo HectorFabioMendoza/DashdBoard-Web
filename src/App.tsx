@@ -7091,7 +7091,7 @@ export default function App() {
                   </h3>
                 </div>
 
-                <div className="w-full h-[520px]">
+                <div className="w-full h-[676px]">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={carteraSellersChartData}
