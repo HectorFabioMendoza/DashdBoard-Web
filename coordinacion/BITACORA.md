@@ -139,3 +139,21 @@
   - El usuario corrigió: los 4 archivos `.xlsx` y `last_update.json` en el servidor los regenera `actualizar_dashboard_dbf.py` corriendo ahí mismo 4 veces al día leyendo del ERP — son más frescos que cualquier copia de desarrollo. Copiar el `dist/` completo hubiera sido un retroceso de datos.
   - Corregido el procedimiento de despliegue para excluir explícitamente los `.xlsx` y `last_update.json` de la copia al servidor (solo código estático: `index.html`, `assets/`, `excel.worker.js`, `xlsx.full.min.js`, `favicon.svg`, `icons.svg`). Documentado como regla fija en CONTEXTO.md para que no se repita el error en sesiones futuras (propias o de Gemini).
 * **Siguiente paso sugerido**: Ejecutar el despliegue real en el servidor usando el procedimiento corregido y validar en navegador que los datos de producción no se vieron afectados.
+
+---
+
+### [2026-07-16 (Local Time)] - Agente: Claude (Claude Code)
+* **Tarea realizada**: Despliegue completo de **Inventario JRP** (rebautizado "Inventario Distribuidora JR") a producción en el servidor de Buenaventura, resolviendo en vivo una cadena de problemas de red/IIS hasta dejarlo operativo con acceso remoto multi-ciudad.
+* **Archivos tocados**:
+  - `Inventario JRP/src/App.tsx`, `Inventario JRP/src/components/OperatorConsole.tsx` (rebranding "Inventario JRP" → "Inventario" / "Distribuidora JR" en los encabezados)
+  - `Inventario JRP/index.html` (título de pestaña actualizado)
+  - `Inventario JRP/manual_tunel_cloudflare.md` (reescrito para reflejar el flujo de producción y agregar sección de Tailscale como próximo paso)
+  - `Inventario JRP/dist/` (build de producción regenerado dos veces)
+  - En el servidor (fuera de este repo): sitio IIS `Inventario JRP` en `C:\inetpub\Inventario` (puerto `8081`), Aplicación IIS `/Inventario` bajo `Default Web Site`, regla de Firewall para el `8081`, binario `cloudflared.exe` instalado en `C:\cloudflared\`.
+* **Resultado**:
+  - Diseño acordado con el usuario: cada app del servidor vive en carpeta física y puerto propios (Dashboard Web `:80`, Inventario `:8081`) para que nunca se crucen; documentado en `CONTEXTO.md`.
+  - Troubleshooting en vivo: carpeta vacía en el primer intento (faltó `robocopy`), error 403.14 resuelto copiando el build; error 403.18 al montar `/Inventario` con un App Pool dedicado, resuelto reutilizando `DefaultAppPool`; `npx` no encontrado en el servidor (no tiene Node.js) resuelto instalando el binario standalone `cloudflared.exe`; timeout de red diagnosticado con `Test-NetConnection` hasta descubrir que la PC de prueba y el servidor están en redes físicas distintas (Palmira vs. Buenaventura) que coinciden por casualidad en el rango `192.168.1.x` — la solución final fue correr el túnel directamente en el servidor en vez de en una PC remota.
+  - El usuario confirmó que el túnel ya funciona de punta a punta, probado desde el celular.
+  - Se propuso Tailscale (ya usado por las otras dos filiales) como reemplazo futuro de la IP pública expuesta; el usuario lo marcó como su siguiente prioridad de infraestructura.
+  - **Pendiente**: Inventario JRP vive en su propio repositorio git independiente (separado de Dashboard Web) con un solo "Initial commit"; los cambios de esta sesión (rebranding + manual) quedaron sin comitear ahí, a la espera de que el usuario autorice explícitamente ese commit.
+* **Siguiente paso sugerido**: Confirmar con el usuario si se comitea en el repo de Inventario JRP, y cuando esté listo, planear la migración a Tailscale (instalación en el servidor + unión al tailnet existente).

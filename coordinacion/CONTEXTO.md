@@ -19,6 +19,13 @@ El servidor de producción es el **dueño de la verdad** de los 4 archivos `.xls
 * **Al desplegar una actualización de código**, copiar ÚNICAMENTE los artefactos estáticos del build (`index.html`, `assets/`, `excel.worker.js`, `xlsx.full.min.js`, `favicon.svg`, `icons.svg`) — **excluir explícitamente** cualquier `.xlsx` y `last_update.json` de la copia (ej. `robocopy ... /XF *.xlsx last_update.json`).
 * Copiar el `dist/` completo sin excluir estos archivos sobrescribe datos frescos del servidor con datos de desarrollo desactualizados — es un retroceso de datos, no una actualización.
 
+### 🏗️ Esquema de Alojamiento Multi-App en el Servidor
+El servidor de Buenaventura aloja más de una aplicación web (Dashboard Web + Inventario Distribuidora JR, y potencialmente más automatizaciones futuras). Convención acordada para que nunca se crucen entre sí:
+* **Carpeta física propia por app**, nunca anidada dentro de la de otra: `C:\inetpub\wwwroot` (Dashboard Web) y `C:\inetpub\Inventario` (Inventario Distribuidora JR). Un despliegue con `robocopy` mal apuntado a una no puede tocar los archivos de la otra.
+* **Puerto propio por app** en vez de hostname (no hay DNS local en la red de la empresa, y usar puertos evita tener que editar el archivo `hosts` de cada PC): Dashboard Web en `:80`, Inventario en `:8081`. La siguiente app futura debería tomar `:8082`, y así sucesivamente.
+* Adicionalmente, cada app puede montarse también como Aplicación IIS bajo `Default Web Site` (ruta amigable sin puerto, ej. `/Inventario`) para uso cómodo en LAN — pero **el sitio dedicado por puerto debe conservarse igual**, porque es el que se usa como origen del túnel de Cloudflare cuando se necesita acceso externo; si se tunelizara el sitio compartido en el puerto 80, Dashboard Web (sensible para gerencia) viajaría expuesto en el mismo túnel.
+* **Lección aprendida — Error IIS 403.18**: al crear una Aplicación IIS con un Application Pool dedicado nuevo bajo un sitio existente, puede aparecer `403.18 Forbidden` (conflicto de grupo de aplicaciones). Arreglo confiable: reutilizar el mismo Application Pool del sitio padre (`DefaultAppPool`) en vez de crear uno nuevo — para apps estáticas (sin código de servidor) esto no representa ningún riesgo real.
+
 ### Hallazgo Crítico: Corrupción de Valores Nulos (`\x00`) en DBFs
 Los motores antiguos de FoxPro escriben bytes nulos binarios en campos numéricos. La librería `dbfread` estándar lanza `ValueError: could not convert string to float` al toparse con esto. Solución: un `SafeFieldParser` (heredado de `dbfread.field_parser.FieldParser`) que intercepta `parseN`/`parseF` y reemplaza los nulos por `0`/`0.0` en vez de abortar. **No revertir a `dbfread` sin este parser.**
 
@@ -46,7 +53,12 @@ Dashboard web interactivo y consola móvil para la realización de inventarios f
 ### Arquitectura y Stack Tecnológico
 * **Frontend**: React (TypeScript + Vite). Componentes estructurados con diseño premium en Vanilla CSS y TailwindCSS para máxima adaptabilidad responsiva.
 * **Backend**: Serverless basado en Firebase Realtime Database. Sincronización en tiempo real mediante listeners `onValue` de Firebase.
-* **Red y Despliegue**: Los operarios acceden desde sus dispositivos móviles conectándose al servidor del supervisor. Para uso externo, se levanta un canal seguro mediante Cloudflare Tunnel (`cloudflared.exe`) exponiendo el puerto local de desarrollo (normalmente `5174` o `5175`).
+* **Red y Despliegue (ACTUALIZADO 2026-07-16)**: La app pasó de correr en modo desarrollo (`npm run dev` + `.bat`) a estar **alojada de forma permanente en IIS en el servidor de producción de Buenaventura**, como app independiente de Dashboard Web (ver sección 0 y la regla de "Esquema de Alojamiento Multi-App" más abajo). Nombre visible al usuario cambiado de "Inventario JRP" a **"Inventario Distribuidora JR"** (título de pestaña, encabezados de Supervisor y Operario).
+  - Sitio IIS dedicado en el puerto `8081` (nombre del sitio en IIS: `Inventario JRP`, carpeta física `C:\inetpub\Inventario`) — usado como origen del túnel de Cloudflare.
+  - Además, montado como Aplicación IIS en la ruta `/Inventario` bajo `Default Web Site` (mismo `DefaultAppPool` que Dashboard Web, tras un error 403.18 con un App Pool dedicado) — usado para acceso cómodo dentro de la LAN sin puerto (`http://<IP-servidor>/Inventario`).
+  - **Acceso externo temporal (operarios en otras ciudades)**: se usa Cloudflare Quick Tunnel, pero ahora corriendo el binario standalone `cloudflared.exe` (sin Node.js) **directamente en el servidor** vía RDP — no desde una PC remota, ya que el túnel solo puede reenviar tráfico hacia una dirección que él mismo pueda alcanzar por red. Comando: `C:\cloudflared\cloudflared.exe tunnel --url http://localhost:8081`. Se apaga con `Ctrl+C`, matando el enlace al instante. Guía completa en `Inventario JRP/manual_tunel_cloudflare.md`.
+  - Como el build de producción ya incluye `firebase_config.json`, ya no hace falta configurar Firebase manualmente al entrar por el túnel (a diferencia del flujo antiguo documentado previamente en el manual).
+  - **Próximo paso planeado (no implementado aún)**: migrar de IP pública + túnel a **Tailscale**, uniendo el servidor al mismo tailnet donde ya están las otras dos filiales, para eliminar la exposición pública por completo.
 
 ### Digitación Automática (Siesa / DataX ERP)
 Para cargar los saldos conciliados al ERP sin errores de digitación, se utiliza un script de emulación de teclado en Python (`digitar_ajustes_erp.py`) que lee el Excel exportado por el dashboard.
