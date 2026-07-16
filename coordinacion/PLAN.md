@@ -7,9 +7,9 @@
 ### Dashboard Web (proyecto principal)
 * *(No hay más tareas pendientes sin asignar en esta fase)*
 
-### Inventario Distribuidora JR (antes "Inventario JRP")
-- [ ] **Migración a Tailscale**: Instalar Tailscale en el servidor de Buenaventura y unirlo al tailnet donde ya están las otras dos filiales, para eliminar la exposición de la IP pública/puerto usada hoy para el túnel de Cloudflare. Marcada por el usuario como la siguiente prioridad de infraestructura (2026-07-16).
-- [ ] **Confirmar commit en el repo independiente**: el rebranding a "Inventario Distribuidora JR" y la actualización de `manual_tunel_cloudflare.md` quedaron sin comitear en el repo propio de Inventario JRP — pendiente de que el usuario autorice el commit.
+### Inventario Distribuidora JR (despliegue propio de Distribuidora JR, sobre el código de Inventario JRP / Cacharrería JRP)
+- [ ] **Migración a Tailscale**: Instalar Tailscale en el servidor de Buenaventura y sumarlo a la red Tailscale que **ya tiene funcionando Cacharrería JRP** (reutilizar esa red existente), para eliminar la exposición de la IP pública/puerto usada hoy para el túnel de Cloudflare. Marcada por el usuario como la siguiente prioridad de infraestructura (2026-07-16) — la ejecuta el usuario directamente.
+- [ ] **Confirmar commit en el repo de Inventario JRP (Cacharrería JRP)**: el rebranding de UI a "Inventario Distribuidora JR" (`App.tsx`, `OperatorConsole.tsx`, `index.html`) quedó sin comitear en ese repo — pendiente de que el usuario autorice el commit, y de decidir si ese cambio de marca debe vivir en una rama separada para no afectar el despliegue original de Cacharrería JRP si vuelven a compartir el mismo build.
 - [ ] **Pruebas de Concurrencia de Red**: Validar el correcto funcionamiento del buffer de congelación de grilla bajo condiciones de envío masivo y simultáneo de datos de conteo por parte de múltiples operarios.
 - [ ] **Alertas en Consola de Operarios**: Implementar una señal sonora (mediante Beep/Web Audio API) o una alerta visual parpadeante en `OperatorConsole.tsx` cuando un operario reciba un artículo devuelto para reconteo, mejorando la visibilidad del operador.
 - [ ] **Optimización del Build de Producción**: Evaluar la división de código (code-splitting) o imports dinámicos en Vite para reducir la advertencia de chunks superiores a 500kB.

@@ -1,7 +1,7 @@
 # Estado Actual del Proyecto - Coordinación
 
 ## En qué estamos ahora
-El foco de trabajo es **Dashboard Web** (el dashboard comercial de la distribuidora), pero en esta sesión también se llevó **Inventario Distribuidora JR** (antes "Inventario JRP") de modo desarrollo a **producción real en el servidor de Buenaventura**, con acceso remoto para operarios en otras ciudades vía túnel de Cloudflare corriendo en el propio servidor. `Extractor Unilever` sigue en pausa.
+El foco de trabajo es **Dashboard Web** (el dashboard comercial de la distribuidora), pero en esta sesión también se llevó **Inventario Distribuidora JR** — despliegue propio de Distribuidora JR sobre el código de "Inventario JRP" (herramienta construida originalmente para **Cacharrería JRP**, otra empresa, con su propio repo e infraestructura separada) — de modo desarrollo a **producción real en el servidor de Buenaventura**, con acceso remoto para operarios en otras ciudades vía túnel de Cloudflare corriendo en el propio servidor. `Extractor Unilever` sigue en pausa.
 
 En Dashboard Web, según el historial de commits reciente, ya se implementó: tabla interactiva de clientes con paginación/buscador/enlaces desde gráficos y KPIs, evaluación dinámica de recencia y riesgo de inactividad según el rango de meses seleccionado, y un candado de seguridad con contraseña para proteger las pestañas Ventas y Tendencias (con su botón reubicado encima del selector de modo oscuro).
 
@@ -25,8 +25,9 @@ En Dashboard Web, según el historial de commits reciente, ya se implementó: ta
 ## Últimas cosas completadas (Inventario Distribuidora JR — ahora EN PRODUCCIÓN)
 1. **Despliegue a producción en IIS**: la app pasó de `npm run dev` a vivir permanentemente en el servidor, con sitio dedicado en `:8081` y también montada como ruta `/Inventario` bajo el sitio principal. Detalles técnicos completos en `CONTEXTO.md`, sección "Esquema de Alojamiento Multi-App".
 2. **Rebranding**: "Inventario JRP" → "Inventario Distribuidora JR" en encabezados (Supervisor y Operario) y título de la pestaña del navegador.
-3. **Acceso remoto multi-ciudad resuelto**: `cloudflared.exe` (binario standalone, sin Node) corriendo directamente en el servidor abre un túnel temporal hacia `localhost:8081`, alcanzable por operarios en cualquier ciudad; se cierra con `Ctrl+C`. `manual_tunel_cloudflare.md` actualizado con el flujo nuevo y una sección de "Próximo Paso: Migración a Tailscale" (aún no implementada).
+3. **Acceso remoto multi-ciudad resuelto**: `cloudflared.exe` (binario standalone, sin Node) corriendo directamente en el servidor abre un túnel temporal hacia `localhost:8081`, alcanzable por operarios en cualquier ciudad; se cierra con `Ctrl+C`.
 4. **Confirmado funcionando de punta a punta** por el usuario: túnel generado, probado desde celular fuera de la red de la oficina.
+5. **Manual dedicado creado**: `Manual_Despliegue_Inventario_Distribuidora_JR.md` (raíz de este repo) documenta todo el flujo específico de Distribuidora JR. El manual original de Cacharrería JRP (`Inventario JRP/manual_tunel_cloudflare.md`) se restauró intacto a su versión original — no debe mezclarse con lo de Distribuidora JR.
 
 ## Últimas cosas completadas (Inventario JRP — hitos previos / Extractor Unilever — en pausa)
 1. **Congelado de Grilla (Supervisor)**: Botón de control manual y auto-congelado al marcar elementos, reteniendo actualizaciones concurrentes en un buffer con banner de recarga.
@@ -34,7 +35,7 @@ En Dashboard Web, según el historial de commits reciente, ya se implementó: ta
 3. **Independización de Repositorios**: `.gitignore` individuales y despliegue a repos propios de GitHub (`Inventario-JRP` y `Extractor-Unilever`).
 
 ## Siguiente paso recomendado
-* Confirmar con el usuario si se debe comitear al repo independiente de Inventario JRP (rebranding + manual actualizado) — quedaron los cambios sin comitear ahí, pendientes de autorización explícita.
-* Migración a Tailscale para Inventario Distribuidora JR (eliminar la IP pública expuesta) — el usuario la marcó como "lo próximo que debo generar".
+* Confirmar con el usuario si se debe comitear al repo independiente de Inventario JRP (Cacharrería JRP) el cambio de branding de UI ("Inventario Distribuidora JR" en `App.tsx`/`OperatorConsole.tsx`/`index.html`) — quedó sin comitear, y falta decidir si ese cambio visual debe vivir en una rama separada para no afectar el despliegue original de Cacharrería JRP.
+* Migración a Tailscale para Inventario Distribuidora JR: sumar el servidor a la red Tailscale que **ya tiene Cacharrería JRP funcionando** — el usuario la marcó como "lo próximo que debo generar", la ejecuta él directamente.
 * Validar visualmente en navegador real (Claude no tiene herramienta de navegador en este entorno) que el filtro de vendedores afecta correctamente el gráfico de Cartera de Dashboard Web y que la nueva altura se ve bien.
 * Validar en producción la experiencia de usuario y recopilar feedback sobre el ordenamiento y exclusión dinámica en la Cartera Comercial.

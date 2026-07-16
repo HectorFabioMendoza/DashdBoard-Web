@@ -157,3 +157,18 @@
   - Se propuso Tailscale (ya usado por las otras dos filiales) como reemplazo futuro de la IP pública expuesta; el usuario lo marcó como su siguiente prioridad de infraestructura.
   - **Pendiente**: Inventario JRP vive en su propio repositorio git independiente (separado de Dashboard Web) con un solo "Initial commit"; los cambios de esta sesión (rebranding + manual) quedaron sin comitear ahí, a la espera de que el usuario autorice explícitamente ese commit.
 * **Siguiente paso sugerido**: Confirmar con el usuario si se comitea en el repo de Inventario JRP, y cuando esté listo, planear la migración a Tailscale (instalación en el servidor + unión al tailnet existente).
+
+---
+
+### [2026-07-16 (Local Time)] - Agente: Claude (Claude Code)
+* **Tarea realizada**: Corrección de un error de organización — el usuario aclaró que "Inventario JRP" es una herramienta construida originalmente para **Cacharrería JRP** (otra empresa, repo e infraestructura separados), no para Distribuidora JR. El manual que reescribí en la entrada anterior mezclaba indebidamente el flujo de despliegue de Distribuidora JR dentro del repo/manual de Cacharrería JRP.
+* **Archivos tocados**:
+  - `Inventario JRP/manual_tunel_cloudflare.md` — **restaurado exactamente a su contenido original** (verificado con `git diff`, cero cambios respecto al commit existente).
+  - `Manual_Despliegue_Inventario_Distribuidora_JR.md` (nuevo, raíz de Dashboard Web) — manual específico y completo del despliegue de Distribuidora JR (IIS, puertos, túnel, troubleshooting, próximo paso Tailscale).
+  - `coordinacion/CONTEXTO.md` — separada la sección 1 (Inventario JRP / Cacharrería JRP, con nota de advertencia sobre la propiedad) de una nueva sección 0.1 (Inventario Distribuidora JR) con los detalles de este despliegue.
+  - `coordinacion/ESTADO.md`, `coordinacion/PLAN.md` — referencias corregidas al manual y aclarado que Cacharrería JRP ya tiene su propia red Tailscale funcionando (a reutilizar, no crear una nueva).
+* **Resultado**:
+  - Los dos manuales quedan completamente separados: uno por infraestructura/empresa.
+  - Dato nuevo importante: la migración a Tailscale de Distribuidora JR consiste en sumarse a la red que **ya existe y funciona en Cacharrería JRP**, no crear una desde cero. Pendiente, la ejecuta el usuario.
+  - Sigue pendiente de autorización: comitear en el repo de Inventario JRP (Cacharrería JRP) el cambio de branding de UI hecho en sesión anterior — y evaluar si ese cambio debería vivir en una rama separada, ya que el código fuente es compartido entre ambos despliegues.
+* **Siguiente paso sugerido**: Esperar decisión del usuario sobre el commit/rama del branding en el repo de Inventario JRP.

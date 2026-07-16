@@ -19,6 +19,17 @@ El servidor de producción es el **dueño de la verdad** de los 4 archivos `.xls
 * **Al desplegar una actualización de código**, copiar ÚNICAMENTE los artefactos estáticos del build (`index.html`, `assets/`, `excel.worker.js`, `xlsx.full.min.js`, `favicon.svg`, `icons.svg`) — **excluir explícitamente** cualquier `.xlsx` y `last_update.json` de la copia (ej. `robocopy ... /XF *.xlsx last_update.json`).
 * Copiar el `dist/` completo sin excluir estos archivos sobrescribe datos frescos del servidor con datos de desarrollo desactualizados — es un retroceso de datos, no una actualización.
 
+### 🖥️ 0.1 Inventario Distribuidora JR (despliegue propio, código reutilizado de Cacharrería JRP)
+Distribuidora JR reutiliza la herramienta "Inventario JRP" (ver sección 1 — construida originalmente para Cacharrería JRP) para su propio conteo físico de inventario. Es un **despliegue e infraestructura completamente separados** de los de Cacharrería JRP, aunque el código fuente es el mismo repositorio.
+
+* **Manual completo y específico de este despliegue**: `Manual_Despliegue_Inventario_Distribuidora_JR.md` (raíz de este repo). El manual original de Cacharrería JRP (`Inventario JRP/manual_tunel_cloudflare.md`) no debe editarse con detalles de Distribuidora JR.
+* La app pasó de correr en modo desarrollo (`npm run dev` + `.bat`) a estar **alojada de forma permanente en IIS en el servidor de producción de Buenaventura** (192.168.1.101), como app independiente de Dashboard Web (ver "Esquema de Alojamiento Multi-App" más abajo). Nombre visible al usuario cambiado de "Inventario JRP" a **"Inventario Distribuidora JR"** (título de pestaña, encabezados de Supervisor y Operario) — cambio hecho solo en el build desplegado para Distribuidora JR.
+  - Sitio IIS dedicado en el puerto `8081` (nombre del sitio en IIS: `Inventario JRP`, carpeta física `C:\inetpub\Inventario`) — usado como origen del túnel de Cloudflare.
+  - Además, montado como Aplicación IIS en la ruta `/Inventario` bajo `Default Web Site` (mismo `DefaultAppPool` que Dashboard Web, tras un error 403.18 con un App Pool dedicado) — usado para acceso cómodo dentro de la LAN sin puerto.
+  - **Acceso externo temporal (operarios en otras ciudades)**: Cloudflare Quick Tunnel corriendo con el binario standalone `cloudflared.exe` (sin Node.js) **directamente en el servidor** vía RDP — no desde una PC remota, ya que el túnel solo puede reenviar tráfico hacia una dirección que él mismo pueda alcanzar por red. Comando: `C:\cloudflared\cloudflared.exe tunnel --url http://localhost:8081`. Se apaga con `Ctrl+C`.
+  - Como el build de producción ya incluye `firebase_config.json`, no hace falta configurar Firebase manualmente al entrar por el túnel.
+  - **Próximo paso planeado (no implementado aún, lo ejecuta el usuario)**: migrar de IP pública + túnel a **Tailscale**, sumando el servidor de Distribuidora JR a la red Tailscale que **ya tiene funcionando Cacharrería JRP** (reutilizar esa red existente, no crear una nueva).
+
 ### 🏗️ Esquema de Alojamiento Multi-App en el Servidor
 El servidor de Buenaventura aloja más de una aplicación web (Dashboard Web + Inventario Distribuidora JR, y potencialmente más automatizaciones futuras). Convención acordada para que nunca se crucen entre sí:
 * **Carpeta física propia por app**, nunca anidada dentro de la de otra: `C:\inetpub\wwwroot` (Dashboard Web) y `C:\inetpub\Inventario` (Inventario Distribuidora JR). Un despliegue con `robocopy` mal apuntado a una no puede tocar los archivos de la otra.
@@ -48,17 +59,14 @@ Los motores antiguos de FoxPro escriben bytes nulos binarios en campos numérico
 ---
 
 ## 📦 1. Proyecto: Inventario JRP
-Dashboard web interactivo y consola móvil para la realización de inventarios físicos en tiempo real de la distribuidora.
+> ⚠️ **Ojo con la propiedad**: esta herramienta fue construida originalmente para **Cacharrería JRP** (otra empresa/filial, con su propio repositorio de GitHub independiente). Distribuidora JR **reutiliza este mismo código** para su propia operación (ver sección 0.1 más abajo). Los documentos y detalles específicos del despliegue de Cacharrería JRP viven dentro de la carpeta `Inventario JRP/` (ej. `manual_tunel_cloudflare.md`); los específicos de Distribuidora JR viven en la raíz de este repo (`Manual_Despliegue_Inventario_Distribuidora_JR.md`). **No mezclar los dos** — son dos despliegues/infraestructuras distintas sobre el mismo código base.
+
+Dashboard web interactivo y consola móvil para la realización de inventarios físicos en tiempo real.
 
 ### Arquitectura y Stack Tecnológico
 * **Frontend**: React (TypeScript + Vite). Componentes estructurados con diseño premium en Vanilla CSS y TailwindCSS para máxima adaptabilidad responsiva.
 * **Backend**: Serverless basado en Firebase Realtime Database. Sincronización en tiempo real mediante listeners `onValue` de Firebase.
-* **Red y Despliegue (ACTUALIZADO 2026-07-16)**: La app pasó de correr en modo desarrollo (`npm run dev` + `.bat`) a estar **alojada de forma permanente en IIS en el servidor de producción de Buenaventura**, como app independiente de Dashboard Web (ver sección 0 y la regla de "Esquema de Alojamiento Multi-App" más abajo). Nombre visible al usuario cambiado de "Inventario JRP" a **"Inventario Distribuidora JR"** (título de pestaña, encabezados de Supervisor y Operario).
-  - Sitio IIS dedicado en el puerto `8081` (nombre del sitio en IIS: `Inventario JRP`, carpeta física `C:\inetpub\Inventario`) — usado como origen del túnel de Cloudflare.
-  - Además, montado como Aplicación IIS en la ruta `/Inventario` bajo `Default Web Site` (mismo `DefaultAppPool` que Dashboard Web, tras un error 403.18 con un App Pool dedicado) — usado para acceso cómodo dentro de la LAN sin puerto (`http://<IP-servidor>/Inventario`).
-  - **Acceso externo temporal (operarios en otras ciudades)**: se usa Cloudflare Quick Tunnel, pero ahora corriendo el binario standalone `cloudflared.exe` (sin Node.js) **directamente en el servidor** vía RDP — no desde una PC remota, ya que el túnel solo puede reenviar tráfico hacia una dirección que él mismo pueda alcanzar por red. Comando: `C:\cloudflared\cloudflared.exe tunnel --url http://localhost:8081`. Se apaga con `Ctrl+C`, matando el enlace al instante. Guía completa en `Inventario JRP/manual_tunel_cloudflare.md`.
-  - Como el build de producción ya incluye `firebase_config.json`, ya no hace falta configurar Firebase manualmente al entrar por el túnel (a diferencia del flujo antiguo documentado previamente en el manual).
-  - **Próximo paso planeado (no implementado aún)**: migrar de IP pública + túnel a **Tailscale**, uniendo el servidor al mismo tailnet donde ya están las otras dos filiales, para eliminar la exposición pública por completo.
+* **Red y Despliegue (Cacharrería JRP, uso original)**: Los operarios acceden desde sus dispositivos móviles conectándose al servidor del supervisor. Para uso externo, se levanta un canal seguro mediante Cloudflare Tunnel (`cloudflared.exe`) exponiendo el puerto local de desarrollo (normalmente `5174` o `5175`). Cacharrería JRP **ya tiene una red Tailscale funcionando** para su propia infraestructura — dato relevante para la migración planeada de Distribuidora JR (ver 0.1).
 
 ### Digitación Automática (Siesa / DataX ERP)
 Para cargar los saldos conciliados al ERP sin errores de digitación, se utiliza un script de emulación de teclado en Python (`digitar_ajustes_erp.py`) que lee el Excel exportado por el dashboard.
