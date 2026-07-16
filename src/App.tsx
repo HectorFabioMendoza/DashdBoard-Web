@@ -578,6 +578,7 @@ export default function App() {
   const [carteraSortDirection, setCarteraSortDirection] = useState<'asc' | 'desc'>('desc');
   const [carteraExcludedClientes, setCarteraExcludedClientes] = useState<string[]>([]);
   const [carteraKpisCollapsed, setCarteraKpisCollapsed] = useState(false);
+  const [carteraAgingCollapsed, setCarteraAgingCollapsed] = useState(false);
 
   const [selectedMonths, setSelectedMonths] = useState<string[]>(MESES_CONFIG.map(m => m.id));
   const [selectedVendors, setSelectedVendors] = useState<string[]>([]);
@@ -6422,12 +6423,12 @@ export default function App() {
 
           return (
             <div className="space-y-5 animate-fade-in select-none">
-              {/* KPIs Bento Grid (Colapsable) */}
-              <section>
+              {/* Controles de Colapso (KPIs y Aging) */}
+              <div className="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
                   onClick={() => setCarteraKpisCollapsed(prev => !prev)}
-                  className={`flex items-center gap-2 mb-3 text-[11px] font-black uppercase tracking-wider transition-colors cursor-pointer ${
+                  className={`flex items-center gap-2 text-[11px] font-black uppercase tracking-wider transition-colors cursor-pointer ${
                     isDarkMode ? 'text-slate-400 hover:text-slate-200' : 'text-slate-500 hover:text-slate-800'
                   }`}
                 >
@@ -6435,6 +6436,22 @@ export default function App() {
                   {carteraKpisCollapsed ? 'Mostrar KPIs' : 'Ocultar KPIs'}
                 </button>
 
+                <span className={isDarkMode ? 'text-slate-700' : 'text-slate-300'}>•</span>
+
+                <button
+                  type="button"
+                  onClick={() => setCarteraAgingCollapsed(prev => !prev)}
+                  className={`flex items-center gap-2 text-[11px] font-black uppercase tracking-wider transition-colors cursor-pointer ${
+                    isDarkMode ? 'text-slate-400 hover:text-slate-200' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  {carteraAgingCollapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+                  {carteraAgingCollapsed ? 'Mostrar Aging' : 'Ocultar Aging'}
+                </button>
+              </div>
+
+              {/* KPIs Bento Grid (Colapsable) */}
+              <section>
                 {!carteraKpisCollapsed && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 animate-fade-in">
                 {/* KPI 1: Cartera Total */}
@@ -6553,7 +6570,9 @@ export default function App() {
                 <h3 style={{ color: isDarkMode ? '#F8FAFC' : '#0F172A' }} className="text-[13px] font-extrabold uppercase tracking-wider mb-4">
                   Distribución de Cartera por Envejecimiento (Aging)
                 </h3>
-                
+
+                {!carteraAgingCollapsed && (
+                <>
                 {/* Visual Aging Bar */}
                 <div className="w-full h-4 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden flex mb-6">
                   {([
@@ -6622,6 +6641,8 @@ export default function App() {
                     );
                   })}
                 </div>
+                </>
+                )}
               </section>
 
               {/* Filtros e Interfaz */}
