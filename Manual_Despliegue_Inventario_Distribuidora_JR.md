@@ -39,13 +39,27 @@ Usamos Cloudflare Quick Tunnel, pero **corriendo directamente en el servidor** (
 
 **Requisito ya instalado en el servidor**: binario standalone `C:\cloudflared\cloudflared.exe` (no requiere Node.js).
 
-**Abrir el túnel** (PowerShell, dentro de la sesión RDP del servidor):
+### Opción A (recomendada): doble clic en `Abrir_Tunel_Inventario_Distribuidora_JR.bat`
+Este `.bat` (junto con `abrir_tunel_inventario.ps1`, que debe estar en la misma carpeta) automatiza todo: abre el túnel, detecta la URL generada en el propio log, la resalta en un recuadro y la copia automáticamente al portapapeles — solo falta pegarla donde la vayas a compartir.
+
+**Instalación en el servidor (una sola vez)**: copia ambos archivos a `C:\cloudflared\` (misma carpeta que `cloudflared.exe`), por ejemplo vía `robocopy` con la unidad local redirigida en RDP:
+```powershell
+robocopy "\\tsclient\D\4 Hector Fabio\Dashboard Web" "C:\cloudflared" "abrir_tunel_inventario.ps1" "Abrir_Tunel_Inventario_Distribuidora_JR.bat"
+```
+
+**Uso**: doble clic en `Abrir_Tunel_Inventario_Distribuidora_JR.bat` dentro del servidor. Sigue mostrando todo el log de `cloudflared` en pantalla (útil si hay que diagnosticar algo), pero además resalta el enlace apenas aparece.
+
+**Cerrar el túnel**: `Ctrl+C` en esa misma ventana. El enlace muere de inmediato.
+
+### Opción B (manual, sin el `.bat`)
 ```powershell
 C:\cloudflared\cloudflared.exe tunnel --url http://localhost:8081
 ```
-Genera un enlace `https://xxxxx-xxxxx-xxxxx.trycloudflare.com`. Compártelo con los operarios (WhatsApp, correo, o QR). Como el build de producción ya incluye `firebase_config.json`, la app se autoconfigura sola al abrir el enlace — no hace falta configurar nada manualmente.
+Genera un enlace `https://xxxxx-xxxxx-xxxxx.trycloudflare.com` en medio del log — hay que ubicarlo a mano.
 
-**Cerrar el túnel**: `Ctrl+C` en esa misma consola. El enlace muere de inmediato.
+---
+
+En ambos casos: como el build de producción ya incluye `firebase_config.json`, la app se autoconfigura sola al abrir el enlace — no hace falta configurar nada manualmente.
 
 ## 5. Solución de problemas
 
