@@ -172,3 +172,17 @@
   - Dato nuevo importante: la migración a Tailscale de Distribuidora JR consiste en sumarse a la red que **ya existe y funciona en Cacharrería JRP**, no crear una desde cero. Pendiente, la ejecuta el usuario.
   - Sigue pendiente de autorización: comitear en el repo de Inventario JRP (Cacharrería JRP) el cambio de branding de UI hecho en sesión anterior — y evaluar si ese cambio debería vivir en una rama separada, ya que el código fuente es compartido entre ambos despliegues.
 * **Siguiente paso sugerido**: Esperar decisión del usuario sobre el commit/rama del branding en el repo de Inventario JRP.
+
+---
+
+### [2026-07-16 (Local Time)] - Agente: Claude (Claude Code)
+* **Tarea realizada**: Reanudación del subproyecto **Extractor Unilever** (estaba en pausa) a pedido del usuario, y creación de su sistema de coordinación multi-agente dedicado, replicando el protocolo ya usado en este repo raíz.
+* **Archivos tocados**:
+  - `d:/4 Hector Fabio/Dashboard Web/unilever/CLAUDE.md` (nuevo)
+  - `d:/4 Hector Fabio/Dashboard Web/unilever/coordinacion/CONTEXTO.md`, `ESTADO.md`, `PLAN.md`, `BITACORA.md` (nuevos)
+  - `d:/4 Hector Fabio/Dashboard Web/coordinacion/ESTADO.md` (actualizada la línea sobre Unilever: pasa de "en pausa" a "reanudado", con puntero al nuevo sistema dedicado)
+  - `d:/4 Hector Fabio/Dashboard Web/coordinacion/PLAN.md` (la sección "Extractor Unilever" ahora apunta al backlog detallado en `unilever/coordinacion/PLAN.md` en vez de duplicarlo)
+* **Resultado**:
+  - No se tocó ningún archivo de lógica de negocio ni de configuración del extractor. Solo se sentó la base documental, reutilizando lo ya escrito en `unilever/README.md` y `unilever/resumen_proyecto.md`.
+  - Se detectó (no corregido) un punto de atención de seguridad: `unilever/config_unilever.json` tiene una contraseña de aplicación de Gmail en texto plano y no está en `.gitignore`, por lo que queda commiteada al historial de ese repo independiente. Documentado en `unilever/coordinacion/CONTEXTO.md` y `PLAN.md`, pendiente de decisión del usuario.
+* **Siguiente paso sugerido**: Esperar a que el usuario indique la primera tarea concreta sobre el Extractor Unilever para esta sesión.

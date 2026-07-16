@@ -15,9 +15,7 @@
 - [ ] **Optimización del Build de Producción**: Evaluar la división de código (code-splitting) o imports dinámicos en Vite para reducir la advertencia de chunks superiores a 500kB.
 
 ### Extractor Unilever
-- [ ] **Validación de Bloqueo de Archivos DBF**: Comprobar el comportamiento de los scripts de extracción (`extraer_datos_unilever.py`, `buscar_facturas_dbf.py`) cuando los archivos DBF origen estén abiertos y siendo modificados en tiempo real por el software contable (FoxPro/Siesa/Olivia).
-- [ ] **Automatización de Ejecución de Tareas**: Configurar la tarea programada (`Requerimientos Unilever/programar_tarea.py` y `unilever_auto.py`) en el programador de tareas de Windows del servidor local y verificar la generación correcta de reportes en la carpeta `salidas/`.
-- [ ] **Mapeo de Productos Desalineados**: Depurar el archivo `productos_unilever_desalineados.xlsx` para corregir las inconsistencias de referencias cruzadas entre el inventario local y las plantillas solicitadas por Unilever.
+> ⚠️ **Reanudado (2026-07-16)**: este subproyecto ya tiene su propio sistema de coordinación dedicado — ver [`unilever/coordinacion/PLAN.md`](file:///d:/4%20Hector%20Fabio/Dashboard%20Web/unilever/coordinacion/PLAN.md) para el backlog detallado y actualizado. Esta sección solo queda como referencia histórica del resumen ejecutivo.
 
 ## Completadas
 - [x] **Fase 3: Desarrollo de la Interfaz de Cartera (React)**: Diseñar la pestaña de Cartera protegida por contraseña con KPIs de cartera, gráfico de aging (vencimientos), tabla de clientes y detalle expandible de facturas.
