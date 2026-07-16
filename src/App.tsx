@@ -577,6 +577,7 @@ export default function App() {
   const [carteraSortColumn, setCarteraSortColumn] = useState<'nombre' | 'prioridadScore' | 'cupo_asignado' | 'saldo_total' | 'saldo_vencido' | 'mora_maxima'>('prioridadScore');
   const [carteraSortDirection, setCarteraSortDirection] = useState<'asc' | 'desc'>('desc');
   const [carteraExcludedClientes, setCarteraExcludedClientes] = useState<string[]>([]);
+  const [carteraKpisCollapsed, setCarteraKpisCollapsed] = useState(false);
 
   const [selectedMonths, setSelectedMonths] = useState<string[]>(MESES_CONFIG.map(m => m.id));
   const [selectedVendors, setSelectedVendors] = useState<string[]>([]);
@@ -6421,8 +6422,21 @@ export default function App() {
 
           return (
             <div className="space-y-5 animate-fade-in select-none">
-              {/* KPIs Bento Grid */}
-              <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">
+              {/* KPIs Bento Grid (Colapsable) */}
+              <section>
+                <button
+                  type="button"
+                  onClick={() => setCarteraKpisCollapsed(prev => !prev)}
+                  className={`flex items-center gap-2 mb-3 text-[11px] font-black uppercase tracking-wider transition-colors cursor-pointer ${
+                    isDarkMode ? 'text-slate-400 hover:text-slate-200' : 'text-slate-500 hover:text-slate-800'
+                  }`}
+                >
+                  {carteraKpisCollapsed ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
+                  {carteraKpisCollapsed ? 'Mostrar KPIs' : 'Ocultar KPIs'}
+                </button>
+
+                {!carteraKpisCollapsed && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 animate-fade-in">
                 {/* KPI 1: Cartera Total */}
                 <div className={`p-4 rounded-xl border flex items-start gap-3.5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg dark:hover:shadow-black/30 cursor-pointer ${
                   isDarkMode ? 'bg-[#0f172a] border-slate-800/80 shadow-black/20 shadow-md' : 'bg-white border-slate-200/60 shadow-slate-100/50 shadow-sm'
@@ -6528,6 +6542,8 @@ export default function App() {
                     </span>
                   </div>
                 </div>
+                </div>
+                )}
               </section>
 
               {/* Aging (Proyección de Vencimientos) */}
