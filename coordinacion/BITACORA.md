@@ -126,3 +126,16 @@
   - Corregido: el panel lateral de Vendedores (`selectedVendors`, usado en Ventas/Tendencias/Frecuencia) no tenía ningún efecto sobre Cartera. Se agregó como condición de filtro en `filteredClientes` dentro de `carteraKPIs`, lo cual cascada automáticamente a los KPIs, la tabla y el gráfico por asesor.
   - **Nota importante**: no hay herramienta de navegador disponible en este entorno para verificar visualmente los dos cambios de UI; solo se confirmó que compilan sin errores (`npm run build`). Falta validación visual en el navegador real.
 * **Siguiente paso sugerido**: Validar visualmente en el navegador que (a) el gráfico de Cartera por Asesor se ve proporcionado con la nueva altura, y (b) desmarcar un vendedor en el panel lateral realmente reduce sus barras/KPIs en Cartera.
+
+---
+
+### [2026-07-16 (Local Time)] - Agente: Claude (Claude Code)
+* **Tarea realizada**: Ajustes adicionales al módulo de Cartera (segundo incremento de altura del gráfico por asesor, botón para colapsar la sección de Aging) y corrección de una guía de despliegue que hubiera sobrescrito datos de producción.
+* **Archivos tocados**:
+  - `d:/4 Hector Fabio/Dashboard Web/src/App.tsx` (altura del gráfico 520px → 676px; nuevo botón "Ocultar/Mostrar Aging" junto al de KPIs)
+  - `d:/4 Hector Fabio/Dashboard Web/coordinacion/CONTEXTO.md` (nueva regla fija de despliegue)
+* **Resultado**:
+  - El usuario pidió los pasos para desplegar a producción. Al dar la respuesta inicial, propuse copiar el `dist/` completo (código + Excel) al servidor.
+  - El usuario corrigió: los 4 archivos `.xlsx` y `last_update.json` en el servidor los regenera `actualizar_dashboard_dbf.py` corriendo ahí mismo 4 veces al día leyendo del ERP — son más frescos que cualquier copia de desarrollo. Copiar el `dist/` completo hubiera sido un retroceso de datos.
+  - Corregido el procedimiento de despliegue para excluir explícitamente los `.xlsx` y `last_update.json` de la copia al servidor (solo código estático: `index.html`, `assets/`, `excel.worker.js`, `xlsx.full.min.js`, `favicon.svg`, `icons.svg`). Documentado como regla fija en CONTEXTO.md para que no se repita el error en sesiones futuras (propias o de Gemini).
+* **Siguiente paso sugerido**: Ejecutar el despliegue real en el servidor usando el procedimiento corregido y validar en navegador que los datos de producción no se vieron afectados.
