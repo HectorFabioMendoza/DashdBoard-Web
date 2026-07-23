@@ -5,7 +5,8 @@ El foco de trabajo es **Dashboard Web** (el dashboard comercial de la distribuid
 
 En Dashboard Web, según el historial de commits reciente, ya se implementó: tabla interactiva de clientes con paginación/buscador/enlaces desde gráficos y KPIs, evaluación dinámica de recencia y riesgo de inactividad según el rango de meses seleccionado, y un candado de seguridad con contraseña para proteger las pestañas Ventas y Tendencias (con su botón reubicado encima del selector de modo oscuro).
 
-El 2026-07-22 se construyó y completó el subproyecto **Tablero Inventario Carapacho** en la carpeta `Dashboard Inventario Carapacho/`, diseñado para mostrar la página/pestaña de Inventario alimentada directamente de la base de datos ERP (DataX) del Servidor Carapacho. El extractor Python (`actualizar_inventario_carapacho.py`), la aplicación React/Vite/TypeScript (`src/App.tsx`), los scripts de automatización en Windows y la compilación estática de producción (`dist/`) quedaron completamente listos para ser desplegados en IIS bajo `http://localhost/tableroinventario/`.
+El 2026-07-22 y 2026-07-23 se construyó, completó y subió a GitHub el subproyecto **Tablero Inventario Carapacho** en la carpeta `Dashboard Inventario Carapacho/`, diseñado para mostrar la página/pestaña de Inventario alimentada directamente de la base de datos ERP (DataX) del Servidor Carapacho SM. El extractor Python (`actualizar_inventario_carapacho.py`), la aplicación React/Vite/TypeScript (`src/App.tsx`), el mapa de los 22 Grupos GA oficiales (GA01 al GA22), la prioridad enmascarada `#1..#N`, la UX invertida de filtrado por grupos, los scripts de automatización en Windows y la compilación estática de producción (`dist/`) quedaron 100% listos y sincronizados en GitHub (`HectorFabioMendoza/DashdBoard-Web`).
+
 
 
 ## Trabajo en progreso

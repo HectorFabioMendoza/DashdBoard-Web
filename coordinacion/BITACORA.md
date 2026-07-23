@@ -322,6 +322,22 @@
 
 * **Siguiente paso sugerido**: En el Servidor Carapacho, copiar los archivos estáticos de `dist/` a `C:\inetpub\wwwroot\tableroinventario` y refrescar `http://localhost/tableroinventario/`.
 
+---
+
+### [2026-07-23 14:03 (Local Time)] - Agente: Codex
+* **Tarea realizada**: Sincronización completa y subida al repositorio remoto de GitHub (`HectorFabioMendoza/DashdBoard-Web`, rama `main`).
+* **Archivos tocados**:
+  - `d:/4 Hector Fabio/Dashboard Web/Dashboard Inventario Carapacho/` (subproyecto completo)
+  - `d:/4 Hector Fabio/Dashboard Web/.gitignore`
+  - `d:/4 Hector Fabio/Dashboard Web/coordinacion/ESTADO.md`
+  - `d:/4 Hector Fabio/Dashboard Web/coordinacion/PLAN.md`
+  - `d:/4 Hector Fabio/Dashboard Web/coordinacion/BITACORA.md`
+* **Resultado**:
+  - Repositorio subido a GitHub exitosamente (`0d106c3..d8d5bb9 main -> main`).
+  - `.gitignore` configurado adecuadamente para excluir artefactos voluminosos de producción y temporales (`node_modules`, `dist`, `scratch/`, `.claude/`, `.xlsx` locales).
+* **Siguiente paso sugerido**: Desplegar los archivos de `dist/` al servidor IIS de Carapacho SM y programar la actualización de datos DBF 4 veces al día con `programar_actualizacion_dbf.ps1`.
+
+
 
 
 
