@@ -1,0 +1,12 @@
+{
+  "top_n": 25,
+  "email": {
+    "servidor_smtp": "smtp.gmail.com",
+    "puerto_smtp": 587,
+    "remitente": "tu_usuario@gmail.com",
+    "password": "tu_password_o_token",
+    "nombre_remitente": "Alertas de Inventario y Abastecimiento",
+    "destinatario": "hectorfabio.mendoza@gmail.com",
+    "cc": ""
+  }
+}

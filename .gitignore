@@ -25,6 +25,7 @@ dist-ssr
 
 # Subproyectos independientes
 Inventario JRP/
+Inventario Carapacho SM/
 unilever/
 
 # Salidas generadas automaticamente (no versionar)
@@ -33,6 +34,10 @@ __pycache__/
 last_update.json
 public/last_update.json
 log_dbf_dashboard.txt
+log_alertas_inventario.txt
+
+# Credenciales SMTP reales del envio de Alertas de Inventario (no versionar)
+config_alertas_inventario.local.json
 
 # Archivos de trabajo transitorios del pipeline de importacion manual
 importar/*
@@ -41,3 +46,8 @@ importar/*
 public/Cartera.xlsx
 public/Inventario.xlsx
 public/Ventas por linea.xlsx
+
+# Scratch y configuraciones locales
+scratch/
+.claude/
+

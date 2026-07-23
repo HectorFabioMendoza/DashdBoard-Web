@@ -1,0 +1,17 @@
+# Node & Vite
+node_modules/
+dist/
+*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# archivos de producción/datos locales regenerados por el script
+IN52*.xlsx
+~$*.xlsx
+public/*.xlsx
+public/last_update.json
+log_*.txt
+__pycache__/
+*.pyc
